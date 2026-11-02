@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques - Concours Virt_Dev</title>
+    <style>
+        :root {
+            --bleu-nuit: #0B2545;
+            --bleu-fonce: #081a30;
+            --bleu-clair: #13315C;
+            --accent: #8DA9C4;
+            --texte: #F4F7F6;
+            --or: #D4AF37;
+            --vert-neon: #00FF9D;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bleu-nuit);
+            color: var(--texte);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding-bottom: 50px;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 0%, var(--bleu-clair) 0%, var(--bleu-nuit) 70%);
+        }
+
+        .btn-back {
+            position: fixed;
+            top: 20px; left: 20px; z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            text-decoration: none; font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--or);
+            color: var(--bleu-nuit);
+            transform: scale(1.1);
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px 30px;
+            width: 100%;
+            max-width: 700px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: rgba(212, 175, 55, 0.2);
+            color: var(--or);
+            border: 1px solid var(--or);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            line-height: 1.2;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        h1 span { color: var(--or); }
+
+        /* --- STATS CARDS --- */
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            width: 90%;
+            max-width: 700px;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease 0.2s both;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card h3 {
+            color: var(--accent);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .stat-card p {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .stat-card p span {
+            font-size: 1rem;
+            color: var(--accent);
+            font-weight: normal;
+        }
+
+        .stat-card.highlight {
+            border-color: var(--vert-neon);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+        }
+        .stat-card.highlight p { color: var(--vert-neon); }
+
+        /* --- PROGRESS BAR --- */
+        .progress-container {
+            width: 90%;
+            max-width: 700px;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--or);
+            width: 10%; /* 1 sur 10 = 10% */
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* --- LISTE DES INSCRITS --- */
+        .list-container {
+            width: 90%;
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .list-container h2 {
+            color: var(--or);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .inscrit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .inscrit-item:last-child {
+            border-bottom: none;
+        }
+
+        .inscrit-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 40px; height: 40px;
+            background: var(--bleu-clair);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; color: var(--or);
+        }
+
+        .inscrit-name { font-weight: bold; font-size: 1.1rem; }
+        .inscrit-phone { font-size: 0.85rem; color: var(--accent); }
+        
+        .badge-valide {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--vert-neon);
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 1px solid rgba(0, 255, 157, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--accent);
+            padding: 20px 0;
+            font-style: italic;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .stat-card { padding: 15px; }
+            .stat-card p { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="btn-back" title="Retour à l'accueil">←</a>
+    <div class="bg-animation"></div>
+
+    <header>
+        <div class="badge">Suivi en direct</div>
+        <h1>Tableau de bord <span>Virt_Dev</span></h1>
+    </header>
+
+    <!-- CARTES DE STATISTIQUES -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>Places totales</h3>
+            <p>10</p>
+        </div>
+        <div class="stat-card highlight">
+            <h3>Places restantes</h3>
+            <p>9</p>
+        </div>
+        <div class="stat-card">
+            <h3>Inscrits</h3>
+            <p>1</p>
+        </div>
+    </div>
+
+    <!-- BARRE DE PROGRESSION -->
+    <div class="progress-container">
+        <div class="progress-text">
+            <span>Progression des inscriptions</span>
+            <span>1 / 10</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+
+    <!-- LISTE DES INSCRITS -->
+    <div class="list-container">
+        <h2>📋 Liste des participants</h2>
+        
+        <!-- Inscrit 1 -->
+        <div class="inscrit-item">
+            <div class="inscrit-info">
+                <div class="avatar">K</div>
+                <div>
+                    <div class="inscrit-name">Koudouss</div>
+                    <div class="inscrit-phone">+225 01 71 ** ** 30</div>
+                </div>
+            </div>
+            <div class="badge-valide">Validé ✅</div>
+        </div>
+
+        <!-- Emplacement vide pour les prochains -->
+        <div class="empty-state">
+            En attente des prochains inscrits...
+        </div>
+    </div>
+
+</body>
+</html>
