@@ -1,390 +1,198 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VirtTech - Site Officiel</title>
-    <style>
-        :root {
-            --bleu-nuit: #0B2545;
-            --bleu-clair: #13315C;
-            --accent: #8DA9C4;
-            --texte: #F4F7F6;
-            --or: #D4AF37;
-            --gris-fonce: #1a1a1a;
-            --vert-neon: #00FF9D;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VirtTech - Site officiel</title>
+<style>
+:root{--bleu-nuit:#0B2545;--bleu-clair:#13315C;--accent:#8DA9C4;--texte:#F4F7F6;--or:#D4AF37;--gris-fonce:#1a1a1a;--vert-neon:#00FF9D}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+html{scroll-behavior:smooth}
+body{background:#f4f6f9;color:var(--gris-fonce);line-height:1.6;display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+a:focus-visible,button:focus-visible{outline:3px solid var(--or);outline-offset:2px}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+/* MENU LATERAL */
+.side{position:sticky;top:0;height:100vh;background:var(--bleu-nuit);color:var(--texte);padding:30px 20px;display:flex;flex-direction:column;border-right:3px solid var(--or)}
+.logo-box{background:#fff;border-radius:22px;width:120px;height:120px;padding:14px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+.logo-box img{max-width:100%;max-height:100%;object-fit:contain}
+.brand{text-align:center;font-weight:900;letter-spacing:2px;font-size:1.4rem;margin-bottom:26px}
+.brand span{color:var(--or)}
+.side ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.side a{display:flex;align-items:center;gap:10px;color:var(--accent);text-decoration:none;padding:11px 14px;border-radius:12px;font-weight:600;transition:.2s}
+.side a:hover{background:rgba(255,255,255,.08);color:var(--texte)}
+.side a.actif{background:var(--or);color:var(--bleu-nuit)}
+.side a.cta{margin-top:12px;border:1px solid var(--or);color:var(--or);justify-content:center}
+.side a.cta:hover{background:var(--or);color:var(--bleu-nuit)}
+.side small{margin-top:auto;text-align:center;color:var(--accent);font-size:.78rem;border:1px solid rgba(141,169,196,.4);border-radius:20px;padding:6px 10px}
+.top{display:none}
 
-        body {
-            background-color: #f4f6f9;
-            color: var(--gris-fonce);
-            line-height: 1.6;
-        }
+/* CONTENU */
+.contenu{padding:40px 44px;max-width:980px}
+.entete{margin-bottom:30px}
+.entete h1{color:var(--bleu-nuit);font-size:2rem;line-height:1.2;margin-bottom:6px}
+.entete p{color:#666}
+.barre{height:4px;border-radius:2px;margin:18px 0 0;background:linear-gradient(90deg,var(--bleu-nuit),var(--or),var(--bleu-nuit))}
+h2{color:var(--bleu-nuit);font-size:1.3rem;margin:36px 0 14px}
+.grille{display:grid;grid-template-columns:3fr 2fr;gap:20px}
 
-        /* --- HEADER --- */
-        header {
-            background-color: var(--bleu-nuit);
-            color: var(--texte);
-            text-align: center;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+.une{grid-column:1/-1;display:flex;background:var(--bleu-nuit);color:var(--texte);border-radius:20px;overflow:hidden;box-shadow:0 12px 30px rgba(11,37,69,.25)}
+.une img{width:38%;object-fit:cover;background:var(--bleu-clair)}
+.une-body{padding:28px;flex:1}
+.etat{display:inline-block;background:#25D366;color:#fff;font-size:.75rem;font-weight:700;padding:4px 14px;border-radius:20px;margin-bottom:10px;animation:pulse 2s infinite}
+.etat.fin{background:#777;animation:none}.etat.dernier{background:var(--or);color:var(--bleu-nuit)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.7)}70%{box-shadow:0 0 0 10px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+.une h3{font-size:1.6rem;margin-bottom:6px}
+.une p{color:var(--accent)}
+.dates{display:inline-block;border:2px dashed var(--or);border-radius:12px;padding:8px 16px;margin:14px 0;font-weight:600}
+.dates span{color:var(--or)}
+.jauge{height:10px;background:rgba(255,255,255,.15);border-radius:6px;overflow:hidden;margin-bottom:4px}
+.jauge i{display:block;height:100%;width:10%;background:var(--vert-neon)}
+.jauge-txt{font-size:.9rem;color:var(--vert-neon);font-weight:700;margin-bottom:16px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;text-decoration:none;font-weight:700;padding:10px 26px;border-radius:30px;border:2px solid var(--or);transition:.25s}
+.btn-p{background:var(--or);color:var(--bleu-nuit)}.btn-p:hover{background:#fff;border-color:#fff}
+.btn-s{color:var(--or)}.btn-s:hover{background:var(--or);color:var(--bleu-nuit)}
 
-        .header-title {
-            font-size: 2rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-        }
+.bloc{background:#fff;border:1px solid #e0e0e0;border-radius:16px;padding:20px 22px;box-shadow:0 6px 20px rgba(0,0,0,.05)}
+.bloc h3{color:var(--bleu-nuit);font-size:1.1rem;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--or)}
+.bloc .item{padding:10px 0;border-bottom:1px solid #eee}.bloc .item:last-child{border:0}
+.bloc time{font-size:.78rem;font-weight:700;color:#8a6f10}
+.bloc .item b{display:block;color:var(--bleu-nuit)}
+.bloc .item span{color:#666;font-size:.92rem}
+.maj h3{border-color:var(--accent)}
 
-        .header-title span {
-            color: var(--or);
-        }
+footer{margin-top:44px;background:var(--bleu-nuit);color:var(--texte);border-radius:20px;padding:28px;text-align:center}
+footer h3{color:var(--or);margin-bottom:14px}
+.contacts{display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
+.contacts a{color:var(--texte);text-decoration:none}.contacts a:hover{color:var(--or)}
+.copy{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);font-size:.85rem;color:var(--accent)}
 
-        .logo-box {
-            background-color: white;
-            padding: 20px;
-            border-radius: 25px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            width: 200px;
-            height: 200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .logo-box img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .transition-text {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--accent);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            color: var(--accent);
-            font-weight: 500;
-        }
-
-        /* --- BARRE DE SÉPARATION --- */
-        .separator {
-            height: 4px;
-            background: linear-gradient(90deg, var(--bleu-nuit), var(--or), var(--bleu-nuit));
-            width: 80%;
-            margin: 30px auto;
-            border-radius: 2px;
-        }
-
-        /* --- SECTION CONTENU --- */
-        .main-content {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px 60px;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 1.5rem;
-            color: var(--bleu-nuit);
-            margin-bottom: 30px;
-            font-weight: bold;
-        }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease;
-            border: 1px solid #e0e0e0;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-
-        .card-image {
-            width: 100%;
-            height: 250px;
-            background-color: #e9ecef;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .card-body {
-            padding: 25px;
-            text-align: center;
-        }
-
-        .card-body h3 {
-            font-size: 1.5rem;
-            color: var(--bleu-nuit);
-            margin-bottom: 10px;
-        }
-
-        .card-body p {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 1rem;
-        }
-
-        /* --- NOUVEAU : SECTION DATES --- */
-        .dates-box {
-            background-color: #fff;
-            border: 2px dashed var(--or);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .dates-box .badge-date {
-            display: inline-block;
-            background: #25D366;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            animation: pulse 2s infinite;
-        }
-
-        .dates-box p {
-            margin: 5px 0;
-            font-size: 1.1rem;
-            color: var(--bleu-nuit);
-            font-weight: 600;
-        }
-
-        .dates-box span {
-            color: var(--or);
-        }
-
-        /* --- ANIMATIONS --- */
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-        }
-
-        @keyframes pulseGold {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-        }
-
-        /* --- BOUTONS --- */
-        .btn-voir {
-            display: inline-block;
-            background-color: var(--bleu-nuit);
-            color: white;
-            text-decoration: none;
-            padding: 12px 35px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(11, 37, 69, 0.3);
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-voir:hover {
-            background-color: var(--or);
-            color: var(--bleu-nuit);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4);
-        }
-
-        .btn-secondary {
-            display: inline-block;
-            background-color: transparent;
-            color: var(--bleu-nuit);
-            text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 1rem;
-            transition: all 0.3s;
-            border: 2px solid var(--bleu-nuit);
-            cursor: pointer;
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--bleu-nuit);
-            color: white;
-        }
-
-        /* --- BADGE INSCRITS --- */
-        .inscrit-badge {
-            background: rgba(0, 255, 157, 0.1);
-            border: 1px solid var(--vert-neon);
-            color: #008f58; /* Vert plus foncé pour la lisibilité sur fond blanc */
-            padding: 8px 15px;
-            border-radius: 10px;
-            display: inline-block;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            background-color: var(--bleu-nuit);
-            color: var(--texte);
-            text-align: center;
-            padding: 40px 20px;
-            margin-top: auto;
-        }
-
-        footer h3 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            color: var(--or);
-        }
-
-        .contact-links {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--texte);
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: color 0.3s;
-        }
-
-        .contact-item:hover {
-            color: var(--or);
-        }
-
-        .contact-icon {
-            font-size: 1.5rem;
-        }
-
-        .copyright {
-            margin-top: 30px;
-            font-size: 0.85rem;
-            color: var(--accent);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .card {
-                flex-direction: row;
-                height: 380px;
-            }
-            .card-image {
-                width: 40%;
-                height: 100%;
-            }
-            .card-body {
-                width: 60%;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                text-align: left;
-                padding: 30px;
-            }
-            .btn-voir, .btn-secondary {
-                align-self: flex-start;
-            }
-        }
-    </style>
+@media(max-width:860px){
+body{display:block}
+.side{display:none}
+.top{display:block;position:sticky;top:0;z-index:50;background:var(--bleu-nuit);border-bottom:2px solid var(--or)}
+.top .bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px}
+.top .brand{margin:0;font-size:1.2rem;color:var(--texte)}
+.top button{background:none;border:1px solid var(--accent);color:var(--texte);font-size:1.3rem;border-radius:8px;padding:2px 10px;cursor:pointer}
+.top ul{display:none;list-style:none;padding:0 16px 14px}.top ul.ouvert{display:block}
+.top a{display:block;color:var(--accent);text-decoration:none;padding:10px 12px;border-radius:10px;font-weight:600}
+.top a.actif{background:var(--or);color:var(--bleu-nuit)}
+.contenu{padding:24px 18px}
+.grille{grid-template-columns:1fr}
+.une{flex-direction:column}.une img{width:100%;height:200px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="header-title">VIRT<span>TECH</span></div>
-        <div class="logo-box">
-            <img src="logo.png" alt="Logo VirtTech">
-        </div>
-        <div class="transition-text">
-            Site officiel de VirtTech • En transition vers le domaine .com
-        </div>
-    </header>
+<aside class="side">
+  <div class="logo-box"><img src="logo.png" alt="Logo VirtTech"></div>
+  <div class="brand">VIRT<span>TECH</span></div>
+  <nav aria-label="Navigation principale">
+    <ul>
+      <li><a href="index.html" class="actif">🏠 Accueil</a></li>
+      <li><a href="#actus">📰 Actualités</a></li>
+      <li><a href="#concours">🏆 Concours</a></li>
+      <li><a href="statvirtdev.html">👥 Inscrits</a></li>
+      <li><a href="#contact">📞 Contact</a></li>
+      <li><a href="inscription.html" class="cta">M'inscrire</a></li>
+    </ul>
+  </nav>
+  <small>En transition vers le domaine .com</small>
+</aside>
 
-    <div class="separator"></div>
+<div class="top">
+  <div class="bar">
+    <div class="brand">VIRT<span style="color:var(--or)">TECH</span></div>
+    <button id="burger" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+  </div>
+  <ul id="menu">
+    <li><a href="index.html" class="actif">Accueil</a></li>
+    <li><a href="#actus">Actualités</a></li>
+    <li><a href="#concours">Concours</a></li>
+    <li><a href="statvirtdev.html">Inscrits</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="inscription.html">M'inscrire</a></li>
+  </ul>
+</div>
 
-    <main class="main-content">
-        <h2 class="section-title">Informations & Événements</h2>
+<div class="contenu">
+  <header class="entete">
+    <h1>Site officiel de VirtTech</h1>
+    <p>Annonces, mises à jour et actualités, au même endroit.</p>
+    <div class="barre"></div>
+  </header>
 
-        <div class="card">
-            <div class="card-image">
-                <img src="dev.png" alt="Affiche Concours Virt_Dev">
-            </div>
-            <div class="card-body">
-                <h3>Concours Virt_Dev</h3>
+  <h2 id="concours" style="margin-top:0">À la une</h2>
+  <article class="une">
+    <img src="dev.png" alt="Affiche Concours Virt_Dev">
+    <div class="une-body">
+      <span class="etat" id="etat">Inscriptions ouvertes</span>
+      <h3>Concours Virt_Dev</h3>
+      <p>Montre tes talents en HTML &amp; CSS. Crée la plus belle page de connexion et tente de gagner jusqu'à 2000 F !</p>
+      <div class="dates">Du <span>vendredi 30 octobre</span> au <span>lundi 2 novembre 2026</span></div>
+      <!-- Modifie les deux nombres ci-dessous quand le nombre d'inscrits change -->
+      <div class="jauge"><i id="jauge"></i></div>
+      <div class="jauge-txt">🔥 Déjà <span id="nb">1</span> inscrit sur <span id="max">10</span></div>
+      <div class="btns">
+        <a href="statvirtdev.html" class="btn btn-p">Voir les inscrits</a>
+        <a href="inscription.html" class="btn btn-s">M'inscrire</a>
+      </div>
+    </div>
+  </article>
 
-                <div class="dates-box">
-                    <div class="badge-date">Inscriptions ouvertes</div>
-                    <p>Début : <span>Vendredi 30 Octobre 2026</span></p>
-                    <p>Fin : <span>Lundi 2 Novembre 2026</span></p>
-                </div>
+  <h2 id="actus">Actualités &amp; mises à jour</h2>
+  <div class="grille">
+    <!-- Copie un bloc .item pour ajouter une annonce -->
+    <section class="bloc">
+      <h3>Annonces</h3>
+      <div class="item">
+        <time>30 octobre 2026</time>
+        <b>Ouverture des inscriptions au concours Virt_Dev</b>
+        <span>Ouvertes jusqu'au lundi 2 novembre 2026. Dix places disponibles.</span>
+      </div>
+      <div class="item">
+        <time>Octobre 2026</time>
+        <b>Transition vers le domaine .com</b>
+        <span>Ce site reste la référence officielle pendant le changement.</span>
+      </div>
+    </section>
+    <section class="bloc maj">
+      <h3>Mises à jour</h3>
+      <div class="item">
+        <time>Octobre 2026</time>
+        <b>Nouveau design du site</b>
+        <span>Menu de navigation et page d'accueil repensés.</span>
+      </div>
+      <div class="item">
+        <time>Octobre 2026</time>
+        <b>Compteur d'inscrits</b>
+        <span>Suivi en direct des places restantes.</span>
+      </div>
+    </section>
+  </div>
 
-                <p>Montre tes talents en HTML & CSS. Crée la plus belle page de connexion et tente de gagner jusqu'à 2000 F !</p>
-                
-                <!-- NOUVEAU BLOC INSCRITS & BOUTONS -->
-                <div class="inscrit-badge">
-                    🔥 Déjà <span style="font-size: 1.2rem;">1</span> inscrit sur 10
-                </div>
+  <footer id="contact">
+    <h3>Contactez-nous</h3>
+    <div class="contacts">
+      <a href="tel:+2250503588336">📞 +225 05 03 58 83 36</a>
+      <a href="https://wa.me/2250503588336" target="_blank" rel="noopener">💬 Écrivez-nous sur WhatsApp</a>
+    </div>
+    <div class="copy">&copy; 2026 VirtTech. Tous droits réservés.</div>
+  </footer>
+</div>
 
-                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px;">
-                    <a href="statvirtdev.html" class="btn-voir" style="animation: pulseGold 2s infinite;">Voir les inscrits</a>
-                    <a href="inscription.html" class="btn-secondary">M'inscrire</a>
-                </div>
-
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <h3>Contactez-nous</h3>
-        <div class="contact-links">
-            <a href="tel:+2250503588336" class="contact-item">
-                <span class="contact-icon">📞</span> +225 05 03 58 83 36
-            </a>
-            <a href="https://wa.me/2250503588336" target="_blank" class="contact-item">
-                <span class="contact-icon">💬</span> Écrivez-nous sur WhatsApp
-            </a>
-        </div>
-        <div class="copyright">
-            &copy; 2026 VirtTech. Tous droits réservés.
-        </div>
-    </footer>
-
+<script>
+var b=document.getElementById('burger'),m=document.getElementById('menu');
+b.onclick=function(){var o=m.classList.toggle('ouvert');b.setAttribute('aria-expanded',o)};
+m.onclick=function(e){if(e.target.tagName==='A')m.classList.remove('ouvert')};
+var nb=+document.getElementById('nb').textContent,mx=+document.getElementById('max').textContent;
+document.getElementById('jauge').style.width=Math.min(100,nb/mx*100)+'%';
+var d=new Date(),debut=new Date(2026,9,30),fin=new Date(2026,10,2,23,59,59),e=document.getElementById('etat');
+if(d>fin){e.textContent='Inscriptions closes';e.className='etat fin'}
+else if(d<debut){e.textContent='Bientôt ouvert';e.className='etat dernier'}
+else if(d.toDateString()===fin.toDateString()){e.textContent='Dernier jour pour s\u2019inscrire';e.className='etat dernier'}
+</script>
 </body>
 </html>
