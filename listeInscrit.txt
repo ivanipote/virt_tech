@@ -8,4 +8,16 @@ Inscrit N°1
 - Référence paiement : 2424398515
 - Statut : Validé ✅
 
+----------------------------------------------
+Inscrit N°2
+- Nom : Horo David
+- Date d'inscription : 02/11/2026 à 20h44
+- Montant payé : 500 F CFA
+- Référence paiement : 4123306327
+- Statut : Validé ✅
+
+==============================================
+Total des inscrits : 2 / 10
+Places restantes : 8
+Total récolté : 1000 F CFA
 ==============================================
