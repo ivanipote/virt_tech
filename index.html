@@ -12,6 +12,7 @@
             --texte: #F4F7F6;
             --or: #D4AF37;
             --gris-fonce: #1a1a1a;
+            --vert-neon: #00FF9D;
         }
 
         * {
@@ -186,12 +187,20 @@
             color: var(--or);
         }
 
+        /* --- ANIMATIONS --- */
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
             100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
+        @keyframes pulseGold {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+
+        /* --- BOUTONS --- */
         .btn-voir {
             display: inline-block;
             background-color: var(--bleu-nuit);
@@ -203,6 +212,8 @@
             font-size: 1.1rem;
             transition: all 0.3s;
             box-shadow: 0 4px 10px rgba(11, 37, 69, 0.3);
+            border: none;
+            cursor: pointer;
         }
 
         .btn-voir:hover {
@@ -210,6 +221,37 @@
             color: var(--bleu-nuit);
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background-color: transparent;
+            color: var(--bleu-nuit);
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s;
+            border: 2px solid var(--bleu-nuit);
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--bleu-nuit);
+            color: white;
+        }
+
+        /* --- BADGE INSCRITS --- */
+        .inscrit-badge {
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--vert-neon);
+            color: #008f58; /* Vert plus foncé pour la lisibilité sur fond blanc */
+            padding: 8px 15px;
+            border-radius: 10px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
 
         /* --- FOOTER --- */
@@ -263,7 +305,7 @@
         @media (min-width: 768px) {
             .card {
                 flex-direction: row;
-                height: 350px; /* Légèrement plus haut pour les dates */
+                height: 380px;
             }
             .card-image {
                 width: 40%;
@@ -277,7 +319,7 @@
                 text-align: left;
                 padding: 30px;
             }
-            .btn-voir {
+            .btn-voir, .btn-secondary {
                 align-self: flex-start;
             }
         }
@@ -307,15 +349,24 @@
             <div class="card-body">
                 <h3>Concours Virt_Dev</h3>
 
-                <!-- NOUVELLE SECTION DATES -->
                 <div class="dates-box">
                     <div class="badge-date">Inscriptions ouvertes</div>
                     <p>Début : <span>Vendredi 30 Octobre 2026</span></p>
                     <p>Fin : <span>Lundi 2 Novembre 2026</span></p>
                 </div>
 
-                <p>Montre tes talents en HTML & CSS. Crée la plus belle page de connexion et tente de gagner jusqu'à 2000 F ! Les places sont limitées.</p>
-                <a href="inscription.html" class="btn-voir">Voir !</a>
+                <p>Montre tes talents en HTML & CSS. Crée la plus belle page de connexion et tente de gagner jusqu'à 2000 F !</p>
+                
+                <!-- NOUVEAU BLOC INSCRITS & BOUTONS -->
+                <div class="inscrit-badge">
+                    🔥 Déjà <span style="font-size: 1.2rem;">1</span> inscrit sur 10
+                </div>
+
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px;">
+                    <a href="statvirtdev.html" class="btn-voir" style="animation: pulseGold 2s infinite;">Voir les inscrits</a>
+                    <a href="inscription.html" class="btn-secondary">M'inscrire</a>
+                </div>
+
             </div>
         </div>
     </main>
@@ -331,7 +382,7 @@
             </a>
         </div>
         <div class="copyright">
-            &copy; 2027 VirtTech. Tous droits réservés.
+            &copy; 2026 VirtTech. Tous droits réservés.
         </div>
     </footer>
 
