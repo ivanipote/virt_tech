@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VirtTech - Site Officiel</title>
+    <style>
+        :root {
+            --bleu-nuit: #0B2545;
+            --bleu-clair: #13315C;
+            --accent: #8DA9C4;
+            --texte: #F4F7F6;
+            --or: #D4AF37;
+            --gris-fonce: #1a1a1a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: var(--gris-fonce);
+            line-height: 1.6;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: var(--bleu-nuit);
+            color: var(--texte);
+            text-align: center;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .header-title span {
+            color: var(--or);
+        }
+
+        .logo-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .transition-text {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--accent);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* --- BARRE DE SÉPARATION --- */
+        .separator {
+            height: 4px;
+            background: linear-gradient(90deg, var(--bleu-nuit), var(--or), var(--bleu-nuit));
+            width: 80%;
+            margin: 30px auto;
+            border-radius: 2px;
+        }
+
+        /* --- SECTION CONTENU --- */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--bleu-nuit);
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 250px;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .card-body h3 {
+            font-size: 1.5rem;
+            color: var(--bleu-nuit);
+            margin-bottom: 10px;
+        }
+
+        .card-body p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        /* --- NOUVEAU : SECTION DATES --- */
+        .dates-box {
+            background-color: #fff;
+            border: 2px dashed var(--or);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .dates-box .badge-date {
+            display: inline-block;
+            background: #25D366;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        .dates-box p {
+            margin: 5px 0;
+            font-size: 1.1rem;
+            color: var(--bleu-nuit);
+            font-weight: 600;
+        }
+
+        .dates-box span {
+            color: var(--or);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        .btn-voir {
+            display: inline-block;
+            background-color: var(--bleu-nuit);
+            color: white;
+            text-decoration: none;
+            padding: 12px 35px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(11, 37, 69, 0.3);
+        }
+
+        .btn-voir:hover {
+            background-color: var(--or);
+            color: var(--bleu-nuit);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--bleu-nuit);
+            color: var(--texte);
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: auto;
+        }
+
+        footer h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--or);
+        }
+
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--texte);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        .contact-item:hover {
+            color: var(--or);
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+        }
+
+        .copyright {
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                flex-direction: row;
+                height: 350px; /* Légèrement plus haut pour les dates */
+            }
+            .card-image {
+                width: 40%;
+                height: 100%;
+            }
+            .card-body {
+                width: 60%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                text-align: left;
+                padding: 30px;
+            }
+            .btn-voir {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">VIRT<span>TECH</span></div>
+        <div class="logo-box">
+            <img src="logo.png" alt="Logo VirtTech">
+        </div>
+        <div class="transition-text">
+            Site officiel de VirtTech • En transition vers le domaine .com
+        </div>
+    </header>
+
+    <div class="separator"></div>
+
+    <main class="main-content">
+        <h2 class="section-title">Informations & Événements</h2>
+
+        <div class="card">
+            <div class="card-image">
+                <img src="dev.png" alt="Affiche Concours Virt_Dev">
+            </div>
+            <div class="card-body">
+                <h3>Concours Virt_Dev</h3>
+
+                <!-- NOUVELLE SECTION DATES -->
+                <div class="dates-box">
+                    <div class="badge-date">Inscriptions ouvertes</div>
+                    <p>Début : <span>Vendredi 30 Octobre 2026</span></p>
+                    <p>Fin : <span>Lundi 2 Novembre 2026</span></p>
+                </div>
+
+                <p>Montre tes talents en HTML & CSS. Crée la plus belle page de connexion et tente de gagner jusqu'à 2000 F ! Les places sont limitées.</p>
+                <a href="inscription.html" class="btn-voir">Voir !</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <h3>Contactez-nous</h3>
+        <div class="contact-links">
+            <a href="tel:+2250503588336" class="contact-item">
+                <span class="contact-icon">📞</span> +225 05 03 58 83 36
+            </a>
+            <a href="https://wa.me/2250503588336" target="_blank" class="contact-item">
+                <span class="contact-icon">💬</span> Écrivez-nous sur WhatsApp
+            </a>
+        </div>
+        <div class="copyright">
+            &copy; 2027 VirtTech. Tous droits réservés.
+        </div>
+    </footer>
+
+</body>
+</html>

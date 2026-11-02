@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consignes - Concours Virt_Dev</title>
+    <style>
+        :root {
+            --bleu-nuit: #0B2545;
+            --bleu-fonce: #081a30;
+            --bleu-clair: #13315C;
+            --accent: #8DA9C4;
+            --texte: #F4F7F6;
+            --or: #D4AF37;
+            --or-clair: #F6D58E;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bleu-nuit);
+            color: var(--texte);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding-bottom: 50px;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 0%, var(--bleu-clair) 0%, var(--bleu-nuit) 70%);
+        }
+
+        .btn-back {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--or);
+            color: var(--bleu-nuit);
+            transform: scale(1.1);
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px 30px;
+            width: 100%;
+            max-width: 700px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: rgba(212, 175, 55, 0.2);
+            color: var(--or);
+            border: 1px solid var(--or);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        h1 span {
+            color: var(--or);
+        }
+
+        .intro-text {
+            color: var(--accent);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .instructions-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 700px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .instructions-card h2 {
+            color: var(--or);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rule-list {
+            list-style: none;
+        }
+
+        .rule-list li {
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            color: var(--texte);
+            line-height: 1.6;
+        }
+
+        .rule-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--or);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .rule-list li.warning::before {
+            content: "⚠️";
+            font-size: 1rem;
+            top: 2px;
+        }
+
+        .rule-list li.warning {
+            color: #ffb3b3;
+            background: rgba(255, 0, 0, 0.1);
+            padding: 10px 10px 10px 35px;
+            border-radius: 8px;
+            border-left: 3px solid #ff4d4d;
+            margin-top: 20px;
+        }
+
+        .phone-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+            perspective: 1000px;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .phone {
+            width: 320px;
+            height: 650px;
+            background-color: #000;
+            border-radius: 45px;
+            padding: 12px;
+            box-shadow:
+                0 25px 60px rgba(0,0,0,0.6),
+                inset 0 0 0 2px #444,
+                0 0 40px rgba(212, 175, 55, 0.2);
+            position: relative;
+            transform: rotateX(5deg) rotateY(-5deg);
+            transition: transform 0.5s ease;
+        }
+
+        .phone:hover {
+            transform: rotateX(0deg) rotateY(0deg);
+        }
+
+        .notch {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 28px;
+            background-color: #000;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 10;
+        }
+
+        .screen {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .mockup-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mockup-logo {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .mockup-title {
+            color: var(--bleu-nuit);
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .mockup-input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: white;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .mockup-input:focus {
+            border-color: var(--or);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .mockup-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--bleu-nuit);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(11, 37, 69, 0.3);
+        }
+
+        .mockup-btn:hover {
+            background-color: var(--or);
+            color: var(--bleu-nuit);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .mockup-text {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .mockup-text:hover {
+            color: var(--bleu-nuit);
+            text-decoration: underline;
+        }
+
+        /* --- NOUVEAU BLOC DATES & ENVOI --- */
+        .submit-section {
+            width: 90%;
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--or);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 40px;
+            text-align: center;
+            animation: fadeInUp 1s ease 0.5s both;
+        }
+
+        .submit-section h3 {
+            color: var(--or);
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .submit-section p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .submit-section .date-limite {
+            color: #ffb3b3;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+        }
+
+        .cta-container {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .btn-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--or);
+            color: var(--bleu-nuit);
+            text-decoration: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-cta:hover {
+            background-color: white;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .instructions-card { padding: 20px; }
+            .phone { width: 280px; height: 580px; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="inscription.html" class="btn-back" title="Retour à l'inscription">←</a>
+
+    <div class="bg-animation"></div>
+
+    <header>
+        <div class="badge">Concours Virt_Dev</div>
+        <h1>Les <span>Consignes</span> Officielles</h1>
+        <p class="intro-text">Votre mission, si vous l'acceptez : reproduire cette interface avec la plus grande précision.</p>
+    </header>
+
+    <div class="instructions-card">
+        <h2>📋 Ce que vous devez faire :</h2>
+        <ul class="rule-list">
+            <li>Reproduire fidèlement le design du smartphone ci-dessous. IA permise.</li>
+            <li>Centrer parfaitement les éléments comme sur l'image.</li>
+            <li>Respecter les couleurs (Bleu nuit / Doré) et les espaces.</li>
+            <li>Intégrer le logo VirtTech que nous vous avons fourni.</li>
+            <li>Ajouter un effet au survol (hover) sur le bouton "Se connecter".</li>
+            <li>Ajouter un effet de bordure (focus) sur les champs de saisie.</li>
+            <li class="warning">Le téléphone ci-dessous est interactif. Cliquez dedans pour tester l'expérience utilisateur que vous devez recréer.</li>
+        </ul>
+    </div>
+
+    <div class="phone-container">
+        <div class="phone">
+            <div class="notch"></div>
+            <div class="screen">
+
+                <div class="mockup-content">
+                    <img src="logo.png" alt="Logo VirtTech" class="mockup-logo">
+                    <div class="mockup-title">CONNEXION</div>
+                    <input type="email" class="mockup-input" placeholder="Adresse Email">
+                    <input type="password" class="mockup-input" placeholder="Mot de passe">
+                    <button class="mockup-btn">Se connecter</button>
+                    <div class="mockup-text">Mot de passe oublié ?</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- NOUVEAU BLOC : RAPPEL DATE & ENVOI -->
+    <div class="submit-section">
+        <h3>📤 Prêt à rendre votre code ?</h3>
+        <p>Envoyez votre fichier HTML/CSS par message privé sur WhatsApp.</p>
+        <span class="date-limite">⏳ Date limite : Mercredi 4 Novembre 2026</span>
+        <a href="https://wa.me/2250503588336?text=Bonjour%20VirtTech%2C%20voici%20mon%20code%20pour%20le%20concours%20:" target="_blank" class="btn-whatsapp">
+            <span>💬</span> Envoyer mon code
+        </a>
+    </div>
+
+    <div class="cta-container">
+        <a href="inscription.html" class="btn-cta">
+            Je suis prêt, je m'inscris
+        </a>
+    </div>
+
+</body>
+</html>
