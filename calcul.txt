@@ -1,0 +1,21 @@
+==============================================
+   CALCULS FINANCIERS - CONCOURS VIRT_DEV
+==============================================
+
+1. ENTRÉES D'ARGENT (Recettes)
+----------------------------------------------
+- Frais d'inscription : 500 F CFA x 2 inscrits
+- TOTAL RÉCOLTÉ : 1 000 F CFA
+
+2. SORTIES D'ARGENT (Décision d'Ivan)
+----------------------------------------------
+- 1ère place : 2 000 F CFA (Financé par Ivan)
+- 2ème place : 1 000 F CFA (Financé par les frais d'inscription)
+- 3ème place : Aucun (seulement 2 participants)
+
+3. BILAN
+----------------------------------------------
+- Cagnotte des inscriptions : 1 000 F 
+- Argent ajouté par Ivan : 2 000 F
+- Total à distribuer : 3 000 F
+==============================================
