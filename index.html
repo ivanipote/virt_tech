@@ -37,16 +37,17 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--or);outline-offset:
 h2{color:var(--bleu-nuit);font-size:1.3rem;margin:36px 0 14px}
 .grille{display:grid;grid-template-columns:3fr 2fr;gap:20px}
 
+/* CARTE V3 ALLÉGÉE */
 .card-v3 {grid-column: 1/-1;background: linear-gradient(135deg, #0B2545 0%, #13315C 100%);color: var(--texte);border-radius: 24px;overflow: hidden;box-shadow: 0 20px 40px rgba(0,0,0,0.4);position: relative;border: 1px solid rgba(212, 175, 55, 0.3);}
 .card-v3::before {content: '';position: absolute;top: 0; left: 0; width: 100%; height: 5px;background: linear-gradient(90deg, var(--or), var(--vert-neon));}
 .card-v3-body {padding: 35px;}
-.card-v3 h3 {font-size: 2rem;color: var(--or);margin-bottom: 5px;}
-.card-v3 .prix {font-size: 2.5rem;font-weight: 900;color: var(--vert-neon);margin-bottom: 20px;text-shadow: 0 0 15px rgba(0, 255, 157, 0.3);}
-.card-v3 .prix span {font-size: 1rem;color: var(--accent);font-weight: normal;text-shadow: none;}
+.card-v3 h3 {font-size: 2rem;color: var(--or);margin-bottom: 10px;}
+.card-v3 p {color: var(--accent); margin-bottom: 20px; font-size: 1.1rem;}
 .card-v3 ul {list-style: none;margin-bottom: 30px;}
 .card-v3 ul li {padding: 8px 0;border-bottom: 1px solid rgba(255,255,255,0.1);color: var(--accent);}
 .card-v3 ul li strong {color: white;}
 
+/* BOUTONS */
 .btns { display: flex; flex-direction: column; gap: 12px; }
 .btn-row { display: flex; gap: 12px; }
 .btn {display: block; text-align: center; padding: 14px 20px; border-radius: 12px;font-weight: bold; text-decoration: none; font-size: 1rem;transition: 0.3s; cursor: pointer; border: none;}
@@ -54,10 +55,8 @@ h2{color:var(--bleu-nuit);font-size:1.3rem;margin:36px 0 14px}
 .btn-primaire:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 0 20px rgba(0,255,157,0.5);}
 .btn-consignes {background: rgba(141, 169, 196, 0.2); color: var(--texte);border: 1px solid var(--accent); flex: 1;}
 .btn-consignes:hover { background: var(--accent); color: var(--bleu-nuit); }
-.btn-inscrits {background: transparent; color: var(--or);border: 1px solid var(--or); flex: 1;}
-.btn-inscrits:hover { background: rgba(212, 175, 55, 0.1); }
-.btn-depot {background: transparent; color: var(--accent); border: 1px solid var(--accent); width: 100%;}
-.btn-depot:hover { background: var(--accent); color: var(--bleu-nuit); }
+.btn-modele {background: var(--or); color: var(--bleu-nuit); flex: 1;}
+.btn-modele:hover { background: #fce18e; transform: translateY(-2px); }
 
 /* BLOCS ACTUS */
 .bloc{background:#fff;border:1px solid #e0e0e0;border-radius:16px;padding:20px 22px;box-shadow:0 6px 20px rgba(0,0,0,.05)}
@@ -142,30 +141,26 @@ footer h3{color:var(--or);margin-bottom:14px}
 
   <h2 id="concours" style="margin-top:0">À la une</h2>
   
+  <!-- CARTE ALLÉGÉE -->
   <div class="card-v3">
     <div class="card-v3-body">
         <h3>Concours Virt_Dev</h3>
-        <div class="prix">2000 F <span>à gagner</span></div>
+        <p>Observe bien le modèle, reproduis-le, puis envoie-nous ton code !</p>
         
         <ul>
             <li><strong>Phase actuelle :</strong> Dépôt des codes</li>
             <li><strong>Date limite :</strong> Mercredi 4 Novembre à 23h59</li>
             <li><strong>Participants :</strong> 2 codeurs inscrits</li>
-            <li><strong>IA :</strong> Autorisée (Débutants bienvenus)</li>
+            <li><strong>IA :</strong> Autorisée</li>
         </ul>
 
         <div class="btns">
-            <!-- Bouton principal WhatsApp -->
-            <a href="https://wa.me/2250503588336?text=Bonjour%20VirtTech%2C%20voici%20mon%20code%20pour%20le%20concours%20:" target="_blank" class="btn btn-primaire">💬 Envoyer mon code sur WhatsApp</a>
-            
-            <!-- Boutons secondaires -->
+            <!-- Boutons de la carte -->
             <div class="btn-row">
-                <a href="consignes.html" class="btn btn-consignes">📋 Voir les consignes</a>
-                <a href="statvirtdev.html" class="btn btn-inscrits">👥 Voir les inscrits</a>
+                <a href="loginPage.html" class="btn btn-modele">👁️ Voir le modèle</a>
+                <a href="consignes.html" class="btn btn-consignes">📋 Consignes</a>
             </div>
-            
-            <!-- Nouveau bouton vers la page de dépôt -->
-            <a href="inscription.html" class="btn btn-depot">ℹ️ Infos sur le dépôt des codes</a>
+            <a href="https://wa.me/2250503588336?text=Bonjour%20VirtTech%2C%20voici%20mon%20code%20pour%20le%20concours%20:" target="_blank" class="btn btn-primaire">💬 Envoyer mon code (WhatsApp)</a>
         </div>
     </div>
   </div>
