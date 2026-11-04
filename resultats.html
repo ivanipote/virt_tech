@@ -15,91 +15,49 @@
   --ombre:#161F27;
   --blanc:#ffffff;
   --or:#D4AF37;
+  --ease:cubic-bezier(.22,.8,.3,1);
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
-body{background:var(--fond);color:var(--ombre);line-height:1.6;min-height:100vh}
+body{background:var(--fond);color:var(--ombre);line-height:1.6;min-height:100vh;overflow-x:hidden}
 a:focus-visible,button:focus-visible{outline:3px solid var(--ombre);outline-offset:2px}
 
+/* ===== ANIMATIONS D'AFFICHAGE ===== */
+@keyframes monter{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes entrer{from{opacity:0;transform:translateX(-34px)}to{opacity:1;transform:none}}
+@keyframes carte{from{opacity:0;transform:translateY(40px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes tracer{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes pop{0%{opacity:0;transform:scale(.5)}70%{transform:scale(1.08)}100%{opacity:1;transform:none}}
+@keyframes battement{0%{box-shadow:0 0 0 0 rgba(50,63,72,.55)}70%{box-shadow:0 0 0 12px rgba(50,63,72,0)}100%{box-shadow:0 0 0 0 rgba(50,63,72,0)}}
+
 /* CONTENU */
-.contenu{padding:30px 24px 80px;max-width:800px;margin:0 auto; min-height: 70vh; display: flex; flex-direction: column; justify-content: center;}
-h1 { text-align: center; color: var(--ombre); margin-bottom: 10px; font-size: 2.2rem; }
-p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40px; font-size: 1.1rem; }
+.contenu{padding:30px 24px 80px;max-width:800px;margin:0 auto;min-height:70vh;display:flex;flex-direction:column;justify-content:center}
+h1{text-align:center;color:var(--ombre);margin-bottom:10px;font-size:2.2rem;animation:monter .7s .1s var(--ease) backwards}
+p.sous-titre{text-align:center;color:var(--metal-fonce);margin-bottom:40px;font-size:1.1rem;animation:monter .7s .3s var(--ease) backwards}
 
-/* --- CARTE DU PROGRAMME --- */
-.carte-programme {
-    background: var(--blanc);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 10px 30px rgba(22,31,39,.15);
-    border-top: 6px solid var(--metal-fonce);
-    max-width: 500px;
-    margin: 0 auto;
-    width: 100%;
-}
+/* CARTE DU PROGRAMME */
+.carte-programme{background:var(--blanc);border-radius:20px;padding:30px;box-shadow:0 10px 30px rgba(22,31,39,.15);border-top:6px solid var(--metal-fonce);max-width:500px;margin:0 auto;width:100%;animation:carte .9s .5s var(--ease) backwards}
+.carte-programme h2{text-align:center;color:var(--ombre);margin-bottom:25px;font-size:1.4rem;border-bottom:2px solid var(--fond);padding-bottom:15px;position:relative}
+.carte-programme h2::after{content:"";position:absolute;left:0;bottom:-2px;width:100%;height:2px;background:var(--metal-fonce);transform-origin:left;animation:tracer .9s 1s var(--ease) backwards}
+.etape{display:flex;align-items:flex-start;gap:15px;margin-bottom:25px;animation:entrer .7s var(--ease) backwards}
+.etape:nth-of-type(1){animation-delay:1s}
+.etape:nth-of-type(2){animation-delay:1.25s}
+.etape:last-child{margin-bottom:0}
+.heure{background:var(--metal-fonce);color:var(--blanc);font-weight:900;padding:8px 12px;border-radius:10px;font-size:1.1rem;min-width:80px;text-align:center;animation:pop .6s backwards}
+.etape:nth-of-type(1) .heure{animation:pop .6s 1.15s backwards,battement 2.4s 2s infinite}
+.etape:nth-of-type(2) .heure{animation-delay:1.4s}
+.details h3{color:var(--ombre);font-size:1.1rem;margin-bottom:5px}
+.details p{color:var(--metal-fonce);font-size:.95rem}
 
-.carte-programme h2 {
-    text-align: center;
-    color: var(--ombre);
-    margin-bottom: 25px;
-    font-size: 1.4rem;
-    border-bottom: 2px solid var(--fond);
-    padding-bottom: 15px;
-}
-
-.etape {
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-.etape:last-child { margin-bottom: 0; }
-
-.heure {
-    background: var(--metal-fonce);
-    color: var(--blanc);
-    font-weight: 900;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    min-width: 80px;
-    text-align: center;
-}
-
-.details h3 {
-    color: var(--ombre);
-    font-size: 1.1rem;
-    margin-bottom: 5px;
-}
-.details p {
-    color: var(--metal-fonce);
-    font-size: 0.95rem;
-}
-
-.btn-accueil {
-    display: block;
-    width: 100%;
-    text-align: center;
-    background: var(--surface);
-    color: var(--ombre);
-    text-decoration: none;
-    padding: 15px;
-    border-radius: 12px;
-    font-weight: bold;
-    margin-top: 30px;
-    transition: 0.3s;
-    border: 2px solid var(--metal);
-}
-.btn-accueil:hover {
-    background: var(--metal-fonce);
-    color: var(--blanc);
-}
+.btn-accueil{display:block;width:100%;text-align:center;background:var(--surface);color:var(--ombre);text-decoration:none;padding:15px;border-radius:12px;font-weight:bold;margin-top:30px;transition:.3s;border:2px solid var(--metal);animation:monter .7s 1.7s var(--ease) backwards}
+.btn-accueil:hover{background:var(--metal-fonce);color:var(--blanc)}
 
 @media(max-width:600px){
-    .carte-programme { padding: 20px; }
-    h1 { font-size: 1.8rem; }
-    .etape { flex-direction: column; gap: 5px; }
-    .heure { width: 100%; }
+  .carte-programme{padding:20px}
+  h1{font-size:1.8rem}
+  .etape{flex-direction:column;gap:5px}
+  .heure{width:100%}
 }
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 <link rel="stylesheet" href="header.css">
 </head>
@@ -113,7 +71,7 @@ p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40p
 
     <div class="carte-programme">
         <h2>📅 Programme</h2>
-        
+
         <div class="etape">
             <div class="heure">21h00</div>
             <div class="details">
@@ -125,7 +83,7 @@ p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40p
         <div class="etape">
             <div class="heure">21h30</div>
             <div class="details">
-                <h3>Annonce officielle & Récompenses</h3>
+                <h3>Annonce officielle &amp; Récompenses</h3>
                 <p>Annonce sur le groupe WhatsApp, suivie des paiements Mobile Money pour les gagnants.</p>
             </div>
         </div>
