@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Résultats - Bientôt disponibles</title>
+<style>
+:root{
+  --fond:#CED3D6;
+  --surface:#D9E0E2;
+  --logo-fond:#D2D7DA;
+  --metal:#606A73;
+  --metal-moyen:#515B64;
+  --metal-fonce:#323F48;
+  --ombre:#161F27;
+  --blanc:#ffffff;
+  --or:#D4AF37;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+body{background:var(--fond);color:var(--ombre);line-height:1.6;min-height:100vh}
+a:focus-visible,button:focus-visible{outline:3px solid var(--ombre);outline-offset:2px}
+
+/* CONTENU */
+.contenu{padding:30px 24px 80px;max-width:800px;margin:0 auto; min-height: 70vh; display: flex; flex-direction: column; justify-content: center;}
+h1 { text-align: center; color: var(--ombre); margin-bottom: 10px; font-size: 2.2rem; }
+p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40px; font-size: 1.1rem; }
+
+/* --- CARTE DU PROGRAMME --- */
+.carte-programme {
+    background: var(--blanc);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(22,31,39,.15);
+    border-top: 6px solid var(--metal-fonce);
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.carte-programme h2 {
+    text-align: center;
+    color: var(--ombre);
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    border-bottom: 2px solid var(--fond);
+    padding-bottom: 15px;
+}
+
+.etape {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.etape:last-child { margin-bottom: 0; }
+
+.heure {
+    background: var(--metal-fonce);
+    color: var(--blanc);
+    font-weight: 900;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    min-width: 80px;
+    text-align: center;
+}
+
+.details h3 {
+    color: var(--ombre);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+.details p {
+    color: var(--metal-fonce);
+    font-size: 0.95rem;
+}
+
+.btn-accueil {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: var(--surface);
+    color: var(--ombre);
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: bold;
+    margin-top: 30px;
+    transition: 0.3s;
+    border: 2px solid var(--metal);
+}
+.btn-accueil:hover {
+    background: var(--metal-fonce);
+    color: var(--blanc);
+}
+
+@media(max-width:600px){
+    .carte-programme { padding: 20px; }
+    h1 { font-size: 1.8rem; }
+    .etape { flex-direction: column; gap: 5px; }
+    .heure { width: 100%; }
+}
+</style>
+<link rel="stylesheet" href="header.css">
+</head>
+<body>
+
+<!-- Le header s'injecte ici via header.js -->
+
+<div class="contenu">
+    <h1>Résultats du Concours</h1>
+    <p class="sous-titre">Le grand jour est arrivé ! Voici le programme de la soirée.</p>
+
+    <div class="carte-programme">
+        <h2>📅 Programme</h2>
+        
+        <div class="etape">
+            <div class="heure">21h00</div>
+            <div class="details">
+                <h3>Publication des résultats</h3>
+                <p>Rendez-vous sur cette page pour découvrir le podium et le classement final en exclusivité.</p>
+            </div>
+        </div>
+
+        <div class="etape">
+            <div class="heure">21h30</div>
+            <div class="details">
+                <h3>Annonce officielle & Récompenses</h3>
+                <p>Annonce sur le groupe WhatsApp, suivie des paiements Mobile Money pour les gagnants.</p>
+            </div>
+        </div>
+    </div>
+
+    <a href="index.html" class="btn-accueil">← Retour à l'accueil</a>
+</div>
+
+<script src="header.js"></script>
+
+</body>
+</html>
