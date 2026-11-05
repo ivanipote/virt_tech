@@ -1,0 +1,40 @@
+==============================================
+   RAPPORT OFFICIEL - CONCOURS VIRT_DEV
+==============================================
+
+1. CONTEXTE
+Ce rapport fait suite à la première édition du concours Virt_Dev, organisé par la communauté VirtTech.
+Date de lancement : 30 octobre 2026
+Date de clôture : 4 novembre 2026
+Cérémonie de remise des prix : 5 novembre 2026 à 21h00
+
+2. PARTICIPANTS
+- Horo David (1ère place)
+- Koudouss (2ème place)
+
+3. RÉSULTATS ET RÉCOMPENSES
+- 1er Prix : Horo David (2 000 F CFA)
+- 2ème Prix : Koudouss (1 000 F CFA)
+Les paiements ont été effectués par Mobile Money (Wave) et confirmés par captures d'écran le 5 novembre à 21h47.
+
+4. DÉCISION DU JURY
+Le gagnant a été choisi pour :
+- L'utilisation avancée de la technique Base64 pour intégrer le logo.
+- L'ajout d'animations 3D sur la maquette du téléphone.
+- Un design global très soigné et une bonne gestion de l'expérience utilisateur.
+Koudouss a été félicité pour la propreté de son code, mais a manqué les animations demandées.
+
+5. RETOUR D'EXPÉRIENCE DU GAGNANT (Horo David)
+"J'ai d'abord réalisé une première version non optimisée, puis je me suis aidé de l'IA pour améliorer le code. J'ai utilisé Base64 après des recherches, car je ne connaissais pas la technique. C'était une expérience enrichissante."
+
+6. BILAN FINANCIER
+- Recettes (inscriptions) : 1 000 F CFA
+- Prix distribués : 3 000 F CFA (1 000 F des inscriptions + 2 000 F ajoutés par Ivan)
+- Solde : -2 000 F CFA (investissement personnel du fondateur pour tenir la promesse)
+
+7. SUITE
+- Création du site officiel avec page de résultats et slide pour voir les codes.
+- Lancement prochain de formations gratuites (HTML/CSS) pour les débutants (information relayée par +225 0584454911 sur le groupe).
+- Objectif : Préparer la création d'un club informatique au lycée technique d'Abidjan.
+
+==============================================
