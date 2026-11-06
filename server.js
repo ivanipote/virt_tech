@@ -38,6 +38,11 @@ app.get('/contact', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'contact.html'));
 });
 
+// Rediriger /sitemap.xml/ vers /sitemap.xml pour éviter les erreurs de lecture
+app.get('/sitemap.xml/', (req, res) => {
+    res.redirect(301, '/sitemap.xml');
+});
+
 // --- IMPORTATION DES ROUTES API ---
 const contactRoutes = require('./routes/contact');
 app.use('/api/contact', contactRoutes);
