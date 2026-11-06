@@ -1,12 +1,21 @@
 // header.js
 document.addEventListener("DOMContentLoaded", function() {
-    const path = window.location.pathname.split("/").pop() || "index.html";
+    const path = window.location.pathname;
+
+    // On détermine quel onglet est actif
+    let actifAccueil = "";
+    let actifHistorique = "";
+    let actifResultats = "";
+
+    if (path === "/" || path === "/accueil") { actifAccueil = "actif"; }
+    else if (path === "/historique") { actifHistorique = "actif"; }
+    else if (path.includes("/virt-dev")) { actifResultats = "actif"; }
 
     const headerHTML = `
     <header class="top">
       <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="side"><i></i>Menu</button>
-      <a href="index.html" class="brand">VIRT<span>TECH</span></a>
-      <a href="resultats.html" class="top-lien">Résultats</a>
+      <a href="/" class="brand">VIRT<span>TECH</span></a>
+      <a href="/virt-dev" class="top-lien">Résultats</a>
     </header>
 
     <div class="voile" id="voile"></div>
@@ -14,29 +23,24 @@ document.addEventListener("DOMContentLoaded", function() {
     <aside class="side" id="side" aria-label="Menu principal">
       <div class="side-tete">
         <div class="side-id">
-          <div class="mini"><img src="logo.png" alt="Logo VirtTech"></div>
-          <a href="index.html" class="brand">VIRT<span>TECH</span></a>
+          <div class="mini"><img src="/logo.png" alt="Logo VirtTech"></div>
+          <a href="/" class="brand">VIRT<span>TECH</span></a>
         </div>
         <button class="fermer" id="fermer" aria-label="Fermer le menu">✕</button>
       </div>
       <nav aria-label="Navigation principale">
         <ul>
-          <li><a href="index.html" class="${path === 'index.html' ? 'actif' : ''}">Accueil</a></li>
-          
-          <!-- NOUVEL ONGLET -->
-          <li><a href="historique.html" class="${path === 'historique.html' ? 'actif' : ''}">Historique d'activité</a></li>
-          
-          <!-- ONGLET AVEC BADGE -->
+          <li><a href="/" class="${actifAccueil}">Accueil</a></li>
+          <li><a href="/historique" class="${actifHistorique}">Historique d'activité</a></li>
           <li>
-            <a href="resultats.html" class="${path === 'resultats.html' ? 'actif' : ''}">
+            <a href="/virt-dev" class="${actifResultats}">
               Résultats Virt_Dev
               <span class="badge-attention">Nouveau</span>
             </a>
           </li>
-          
-          <li><a href="index.html#actus">Actualités</a></li>
-          <li><a href="index.html#apropos">À propos</a></li>
-          <li><a href="index.html#contact">Contact</a></li>
+          <li><a href="/#actus">Actualités</a></li>
+          <li><a href="/#apropos">À propos</a></li>
+          <li><a href="/#contact">Contact</a></li>
         </ul>
       </nav>
       <small>En transition vers le domaine .com</small>

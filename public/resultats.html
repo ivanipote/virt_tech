@@ -5,18 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Résultats - Concours Virt_Dev</title>
 <script>document.documentElement.classList.add('js')</script>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/header.css">
-<link rel="stylesheet" href="css/resultats.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/resultats.css">
 </head>
 <body>
 
 <div class="contenu">
-    <!-- Animations ajoutées ici -->
     <h1 class="reveal">Résultats du Concours Virt_Dev</h1>
     <p class="sous-titre reveal" style="--d:.1s">Félicitations à nos deux participants pour leur travail !</p>
 
-    <!-- LE PODIUM (Animation Z = zoom) -->
     <div class="podium-container reveal z" style="--d:.2s">
         <div class="rank rank-2">
             <div class="step">
@@ -39,10 +37,8 @@
         </div>
     </div>
 
-    <!-- SECTION DECISION DU JURY (Animation G = glisse depuis la gauche) -->
     <div class="section-jury reveal g" style="--d:.3s">
         <h2>⚖️ Décision du Jury</h2>
-        
         <div class="jury-card gagnant">
             <h3>🥇 Horo David (1ère Place)</h3>
             <p>Horo David a fait preuve d'une maîtrise impressionnante pour un débutant. Voici ce qui a fait la différence :</p>
@@ -52,33 +48,29 @@
                 <li><strong>Les Animations :</strong> En plus des animations demandées, il a ajouté une perspective 3D au téléphone et un effet d'enfoncement au clic.</li>
             </ul>
         </div>
-
         <div class="jury-card">
             <h3>🥈 Koudouss (2ème Place)</h3>
             <p>Koudouss a rendu un travail très propre, avec un design soigné. Voici les points analysés :</p>
             <ul>
                 <li><strong>Le Logo :</strong> Il a correctement utilisé la vraie image `logo.png`.</li>
                 <li><strong>Le Design :</strong> Il a respecté les couleurs et le fond demandés.</li>
-                <li><strong>Ce qui a manqué :</strong> Il n'a pas inclus les animations demandées dans les consignes (effet de survol sur le bouton et effet de bordure sur les champs de saisie). C'est une excellente base pour la suite !</li>
+                <li><strong>Ce qui a manqué :</strong> Il n'a pas inclus les animations demandées dans les consignes. C'est une excellente base pour la suite !</li>
             </ul>
         </div>
     </div>
 
-    <!-- CARTES DES PARTICIPANTS -->
     <h2 class="reveal" style="text-align: center; color: var(--ombre); margin-bottom: 20px; font-size: 1.3rem; --d:.4s; border-bottom: none;">Découvrez leurs pages</h2>
-    
     <div class="section-cartes reveal" style="--d:.45s">
         <div class="carte-participant">
             <h3>Page de Horo David</h3>
-            <button class="btn-action btn-ouvrir-slide" data-target="participants/teste1.html" data-title="Page de Horo David">
+            <button class="btn-action btn-ouvrir-slide" data-target="/participants/teste1.html" data-title="Page de Horo David">
                 <svg viewBox="0 0 24 24"><path d="M17 2H7C5.346 2 4 3.346 4 5V19C4 20.654 5.346 22 7 22H17C18.654 22 20 20.654 20 19V5C20 3.346 18.654 2 17 2ZM18 19C18 19.552 17.552 20 17 20H7C6.448 20 6 19.552 6 19V5C6 4.448 6.448 4 7 4H17C17.552 4 18 4.448 18 5V19ZM12 18C12.552 18 13 17.552 13 17C13 16.448 12.552 16 12 16C11.448 16 11 16.448 11 17C11 17.552 11.448 18 12 18ZM13 5H11V6H13V5Z"/></svg>
                 Voir sa page
             </button>
         </div>
-
         <div class="carte-participant">
             <h3>Page de Koudouss</h3>
-            <button class="btn-action btn-ouvrir-slide" data-target="participants/kds.html" data-title="Page de Koudouss">
+            <button class="btn-action btn-ouvrir-slide" data-target="/participants/kds.html" data-title="Page de Koudouss">
                 <svg viewBox="0 0 24 24"><path d="M17 2H7C5.346 2 4 3.346 4 5V19C4 20.654 5.346 22 7 22H17C18.654 22 20 20.654 20 19V5C20 3.346 18.654 2 17 2ZM18 19C18 19.552 17.552 20 17 20H7C6.448 20 6 19.552 6 19V5C6 4.448 6.448 4 7 4H17C17.552 4 18 4.448 18 5V19ZM12 18C12.552 18 13 17.552 13 17C13 16.448 12.552 16 12 16C11.448 16 11 16.448 11 17C11 17.552 11.448 18 12 18ZM13 5H11V6H13V5Z"/></svg>
                 Voir sa page
             </button>
@@ -86,15 +78,13 @@
     </div>
 </div>
 
-<!-- BOUTON FLOTTANT (MODELE) -->
-<button class="btn-flottant btn-ouvrir-slide" data-target="participants/loginPage.html" data-title="Maquette à reproduire" title="Voir le modèle du concours">
+<button class="btn-flottant btn-ouvrir-slide" data-target="/participants/loginPage.html" data-title="Maquette à reproduire" title="Voir le modèle du concours">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M17 2H7C5.346 2 4 3.346 4 5V19C4 20.654 5.346 22 7 22H17C18.654 22 20 20.654 20 19V5C20 3.346 18.654 2 17 2ZM18 19C18 19.552 17.552 20 17 20H7C6.448 20 6 19.552 6 19V5C6 4.448 6.448 4 7 4H17C17.552 4 18 4.448 18 5V19ZM12 18C12.552 18 13 17.552 13 17C13 16.448 12.552 16 12 16C11.448 16 11 16.448 11 17C11 17.552 11.448 18 12 18ZM13 5H11V6H13V5Z"/>
     </svg>
     Voir le modèle
 </button>
 
-<!-- SLIDE UNIQUE -->
 <div class="slide-overlay" id="slide-overlay"></div>
 <div class="slide-panel" id="slide-panel">
     <div class="slide-header">
@@ -106,8 +96,7 @@
     </div>
 </div>
 
-<!-- Appels uniques des scripts -->
-<script src="js/header.js"></script>
-<script src="js/resultats.js"></script>
+<script src="/js/header.js"></script>
+<script src="/js/resultats.js"></script>
 </body>
 </html>
