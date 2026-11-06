@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact - VirtTech</title>
+<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/contact.css">
+</head>
+<body>
+
+<div class="contenu">
+    <h1 class="reveal">Contactez-nous</h1>
+    <p class="sous-titre reveal" style="--d:.1s">Une question ? Un projet ? Une idée ? Écrivez-nous, nous vous répondrons dans les plus brefs délais.</p>
+
+    <div class="form-container reveal z" style="--d:.2s">
+        <form id="formContact">
+            <div class="form-group">
+                <label for="nom">Votre Nom</label>
+                <input type="text" id="nom" name="nom" placeholder="Ex: Ivan" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Votre Email</label>
+                <input type="email" id="email" name="email" placeholder="Ex: ivan@exemple.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Votre Message</label>
+                <textarea id="message" name="message" rows="5" placeholder="Décrivez votre demande..." required></textarea>
+            </div>
+
+            <button type="submit" id="btnEnvoyer" class="btn-envoyer">
+                <span>Envoyer le message</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </form>
+        <div id="reponse" class="reponse-message"></div>
+    </div>
+</div>
+
+<script src="/js/header.js"></script>
+<script src="/js/contact.js"></script>
+</body>
+</html>

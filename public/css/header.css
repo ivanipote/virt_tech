@@ -45,3 +45,66 @@
 }
 
 @media(max-width:600px){.top-lien{display:none}}
+/* Bouton contact dans la sidebar */
+.btn-side-contact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--surface);
+    border: 2px solid var(--metal);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-side-contact:hover {
+    background: var(--surface);
+    color: var(--ombre);
+    border-color: var(--surface);
+    transform: translateY(-2px);
+}
+
+.btn-side-contact svg {
+    flex-shrink: 0;
+}
+/* --- Bouton contact dans le footer de la sidebar --- */
+.btn-side-contact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(217, 224, 226, 0.1);
+    color: var(--surface);
+    border: 1px solid var(--metal);
+    border-radius: 16px;
+    padding: 12px;
+    margin-top: auto; /* Pousse le bouton tout en bas */
+    margin-bottom: 2px; /* L'espace de 2px avec le texte en dessous */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-side-contact:hover {
+    background: var(--surface);
+    color: var(--ombre);
+    border-color: var(--surface);
+    transform: translateY(-2px);
+}
+
+.btn-side-contact svg {
+    flex-shrink: 0;
+}
+
+/* On s'assure que le texte "En transition..." colle au bouton */
+.side small {
+    margin-top: 0; /* Retire la marge du haut qui pourrait créer un espace */
+    margin-bottom: 10px; /* Laisse un peu d'espace avec le bord bas de l'écran */
+}

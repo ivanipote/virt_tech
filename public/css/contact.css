@@ -1,0 +1,111 @@
+/* --- contact.css : Styles de la page contact --- */
+
+h1 { text-align: center; color: var(--ombre); margin-bottom: 10px; font-size: 2rem; }
+p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40px; font-size: 1.1rem; }
+
+/* Formulaire */
+.form-container {
+    background: var(--blanc);
+    border: 2px solid var(--metal);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(22,31,39,.1);
+    border-top: 6px solid var(--metal-fonce);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--metal-fonce);
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid var(--surface);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #fdfdfd;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--metal-fonce);
+    box-shadow: 0 0 0 4px rgba(96, 106, 115, 0.1);
+    background: var(--blanc);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Bouton d'envoi */
+.btn-envoyer {
+    width: 100%;
+    padding: 16px;
+    background: var(--metal-fonce);
+    color: var(--blanc);
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(22,31,39,0.2);
+}
+
+.btn-envoyer:hover {
+    background: var(--ombre);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(22,31,39,0.3);
+}
+
+.btn-envoyer:disabled {
+    background: var(--metal-moyen);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Message de réponse */
+.reponse-message {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.reponse-message.succes { color: #2e7d32; }
+.reponse-message.erreur { color: #c62828; }
+
+/* Animations */
+@keyframes monter{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.js .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease) var(--d,0s),transform .7s var(--ease) var(--d,0s)}
+.js .reveal.z{transform:scale(.93)}
+.js .reveal.vu{opacity:1;transform:none}
+
+/* Responsive */
+@media(max-width:600px) {
+    .form-container { padding: 25px; }
+    h1 { font-size: 1.6rem; }
+}
+@media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .js .reveal{opacity:1;transform:none}
+}

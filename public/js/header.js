@@ -40,9 +40,17 @@ document.addEventListener("DOMContentLoaded", function() {
           </li>
           <li><a href="/#actus">Actualités</a></li>
           <li><a href="/#apropos">À propos</a></li>
+          <!-- Lien vers la section contact de l'accueil -->
           <li><a href="/#contact">Contact</a></li>
         </ul>
       </nav>
+      
+      <!-- BOUTON FORMULAIRE (Dans le footer de la sidebar) -->
+      <a href="/contact" class="btn-side-contact">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          Laissez-nous un mail
+      </a>
+
       <small>En transition vers le domaine .com</small>
     </aside>
     `;
