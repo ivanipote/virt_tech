@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Historique d'activité - VirtTech</title>
+<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/header.css">
+<link rel="stylesheet" href="css/historique.css">
+</head>
+<body>
+
+<div class="contenu">
+    <h1 class="reveal">Historique des Activités</h1>
+    <p class="sous-titre reveal" style="--d:.1s">Retrouvez tous les événements et projets réalisés par la communauté VirtTech.</p>
+
+    <div class="grille-historique">
+        
+        <!-- CARTE VIRT_DEV -->
+        <div class="carte-activite carte-virtdev reveal" style="--d:.2s" onclick="ouvrirSlide('virtdev')">
+            <h3>🏆 Concours Virt_Dev</h3>
+            <p>La première édition du concours de développement web de VirtTech. Découvrez le déroulement, les gagnants et l'analyse du jury.</p>
+            <div class="indice">Cliquez pour lire l'histoire ➔</div>
+        </div>
+
+    </div>
+</div>
+
+<!-- LE SLIDE -->
+<div class="slide-overlay" id="slide-overlay" onclick="fermerSlide()"></div>
+<div class="slide-panel" id="slide-panel">
+    <div class="slide-header">
+        <h3 id="slide-title">Chargement...</h3>
+        <button class="btn-fermer-slide" onclick="fermerSlide()">✕</button>
+    </div>
+    <div class="slide-contenu" id="slide-contenu">
+        <!-- Le contenu sera injecté par le JS -->
+    </div>
+</div>
+
+<script src="js/header.js"></script>
+<script src="js/historique.js"></script>
+</body>
+</html>

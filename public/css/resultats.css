@@ -1,0 +1,78 @@
+/* --- resultats.css : Styles spécifiques à la page des résultats --- */
+
+h1 { text-align: center; color: var(--ombre); margin-bottom: 10px; font-size: 2rem; }
+p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40px; font-size: 1.1rem; }
+
+/* --- ANIMATIONS D'APPARITION --- */
+@keyframes monter{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes zoom{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.4) rotate(-8deg)}70%{transform:scale(1.08) rotate(2deg)}100%{opacity:1;transform:none}}
+
+.js .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease) var(--d,0s),transform .7s var(--ease) var(--d,0s)}
+.js .reveal.g{transform:translateX(-34px)}
+.js .reveal.z{transform:scale(.93)}
+.js .reveal.vu{opacity:1;transform:none}
+
+/* --- PODIUM --- */
+.podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 40px; margin-bottom: 50px; padding-bottom: 20px; }
+.rank { display: flex; flex-direction: column; align-items: center; width: 120px; }
+.step { width: 100%; border-radius: 15px 15px 0 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 20px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); position: relative; transition: transform 0.3s ease; }
+.rank:hover .step { transform: translateY(-5px); }
+.rank-1 .step { height: 220px; background: linear-gradient(180deg, var(--or), #b8952d); border: 2px solid #fce18e; }
+.rank-2 .step { height: 160px; background: linear-gradient(180deg, var(--surface), #b0bcc2); border: 2px solid var(--blanc); }
+.rank-3 .step { height: 110px; background: linear-gradient(180deg, #888, #555); border: 2px solid #aaa; opacity: 0.6; }
+.rank-name { font-size: 1.1rem; font-weight: 900; color: var(--ombre); text-align: center; padding: 0 5px; }
+.rank-1 .rank-name { color: var(--ombre); font-size: 1.3rem; }
+.rank-3 .rank-name { color: #ccc; }
+.rank-icon { font-size: 2rem; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+.crown { position: absolute; top: -35px; font-size: 2rem; animation: float 2s infinite ease-in-out; }
+@keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0); } }
+
+/* --- SECTION DECISION DU JURY --- */
+.section-jury { margin-bottom: 50px; }
+.section-jury h2 { text-align: center; color: var(--ombre); margin-bottom: 20px; font-size: 1.5rem; border-bottom: 3px solid var(--metal-fonce); display: inline-block; padding-bottom: 5px; left: 50%; position: relative; transform: translateX(-50%); }
+.jury-card { background: var(--blanc); border-left: 6px solid var(--metal-fonce); border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(22,31,39,.1); }
+.jury-card.gagnant { border-left-color: var(--or); background: linear-gradient(to right, #fffdf5, var(--blanc)); }
+.jury-card h3 { color: var(--ombre); font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+.jury-card p { color: var(--metal-fonce); font-size: 0.95rem; margin-bottom: 10px; }
+.jury-card ul { list-style-type: none; padding-left: 0; }
+.jury-card ul li { position: relative; padding-left: 25px; margin-bottom: 8px; color: var(--metal-fonce); font-size: 0.95rem; }
+.jury-card ul li::before { content: "✅"; position: absolute; left: 0; top: 0; font-size: 0.85rem; }
+
+/* --- CARTES DES PARTICIPANTS --- */
+.section-cartes { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; margin-bottom: 40px; }
+.carte-participant { background: var(--blanc); border: 2px solid var(--metal); border-radius: 15px; padding: 20px; width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 8px 20px rgba(22,31,39,.1); text-align: center; }
+.carte-participant h3 { color: var(--ombre); font-size: 1.2rem; border-bottom: 2px solid var(--fond); padding-bottom: 10px; }
+.btn-action { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 0.95rem; transition: 0.3s; cursor: pointer; border: 2px solid transparent; background: var(--metal-fonce); color: var(--blanc); }
+.btn-action:hover { background: var(--metal); }
+.btn-action svg { width: 18px; height: 18px; fill: currentColor; }
+
+/* --- BOUTON FLOTTANT --- */
+.btn-flottant { position: fixed; bottom: 20px; right: 20px; z-index: 80; display: inline-flex; align-items: center; gap: 8px; background: var(--metal-fonce); color: var(--surface); text-decoration: none; padding: 12px 20px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 8px 20px rgba(22,31,39,.4); transition: all 0.3s ease; border: 2px solid var(--metal); cursor: pointer; }
+.btn-flottant:hover { background: var(--surface); color: var(--ombre); transform: translateY(-3px); }
+.btn-flottant svg { width: 18px; height: 18px; fill: currentColor; }
+
+/* --- LE SLIDE --- */
+.slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,31,39,0.7); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+.slide-overlay.ouvert { opacity: 1; visibility: visible; }
+.slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 85vh; background: var(--fond); border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 1001; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 0.8, 0.3, 1); display: flex; flex-direction: column; overflow: hidden; }
+.slide-panel.ouvert { transform: translateY(0); }
+.slide-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--metal-fonce); color: var(--surface); border-bottom: 2px solid var(--metal); }
+.slide-header h3 { font-size: 1.1rem; margin: 0; }
+.btn-fermer-slide { background: none; border: none; color: var(--surface); font-size: 1.5rem; cursor: pointer; }
+.slide-content { flex: 1; width: 100%; height: 100%; background: #fff; }
+.slide-content iframe { width: 100%; height: 100%; border: none; }
+
+/* Responsive */
+@media(max-width:600px){
+    .podium-container { gap: 5px; }
+    .rank { width: 90px; }
+    .rank-1 .step { height: 180px; }
+    .rank-2 .step { height: 130px; }
+    .rank-3 .step { height: 90px; }
+    .rank-name { font-size: 0.85rem; }
+    .rank-1 .rank-name { font-size: 1rem; }
+    .btn-flottant { bottom: 15px; right: 15px; padding: 10px 15px; font-size: 0.8rem; }
+    .slide-panel { height: 90vh; }
+    .jury-card { padding: 15px; }
+}

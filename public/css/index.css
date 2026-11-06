@@ -1,0 +1,49 @@
+/* --- index.css : Styles spécifiques à la page d'accueil --- */
+
+/* ===== ANIMATIONS D'AFFICHAGE ===== */
+@keyframes monter{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes zoom{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.4) rotate(-8deg)}70%{transform:scale(1.08) rotate(2deg)}100%{opacity:1;transform:none}}
+@keyframes tracer{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(217,224,226,.55)}70%{box-shadow:0 0 0 12px rgba(217,224,226,0)}100%{box-shadow:0 0 0 0 rgba(217,224,226,0)}}
+
+.js .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease) var(--d,0s),transform .7s var(--ease) var(--d,0s)}
+.js .reveal.g{transform:translateX(-34px)}
+.js .reveal.z{transform:scale(.93)}
+.js .reveal.vu{opacity:1;transform:none}
+
+/* ===== BANNIÈRE + BOUTONS SOCIAUX ===== */
+.banniere-card{background:var(--surface);border:2px solid var(--metal-fonce);border-radius:22px;padding:25px 20px;display:flex;flex-direction:column;align-items:center;gap:15px;width:100%;box-shadow:0 14px 34px rgba(22,31,39,.25);margin-bottom:30px;animation:zoom .8s .25s var(--ease) backwards}
+.banniere-card img.logo{width:90px;height:90px;object-fit:contain;animation:pop .8s .6s backwards}
+.banniere-card .btns{display:flex;gap:10px;width:100%;flex-wrap:nowrap}
+.btn-social{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 5px;border-radius:12px;font-weight:bold;text-decoration:none;font-size:.85rem;transition:.3s;flex:1;white-space:nowrap;animation:monter .6s var(--ease) backwards}
+.btn-whatsapp{animation-delay:.85s}.btn-tiktok{animation-delay:1s}
+.btn-social svg{width:18px;height:18px;fill:currentColor;flex-shrink:0}
+.btn-whatsapp{background:var(--blanc);color:var(--ombre);border:2px solid var(--metal)}
+.btn-whatsapp:hover{background:var(--metal-fonce);color:var(--blanc);border-color:var(--metal-fonce)}
+.btn-tiktok{background:var(--metal-moyen);color:var(--surface);border:2px solid var(--metal-moyen);cursor:not-allowed;opacity:.5}
+
+/* ===== EN-TÊTE DE LA PAGE ===== */
+.entete h1{font-size:2rem;line-height:1.2;margin-bottom:4px;color:var(--ombre);animation:monter .7s .5s var(--ease) backwards}
+.entete p{color:var(--metal-fonce);animation:monter .7s .65s var(--ease) backwards}
+.barre{height:4px;border-radius:2px;margin:16px 0 0;background:linear-gradient(90deg,var(--metal-fonce),var(--metal),var(--metal-fonce));transform-origin:left;animation:tracer 1s .9s var(--ease) backwards}
+
+/* ===== CARTE DU CONCOURS (L'événement) ===== */
+.une{display:flex;flex-direction:column;gap:14px;background:linear-gradient(135deg,var(--metal-fonce),var(--ombre));color:var(--surface);border-radius:20px;padding:30px;border-left:8px solid var(--metal);box-shadow:0 12px 30px rgba(22,31,39,.35)}
+.etat{align-self:flex-start;background:var(--surface);color:var(--ombre);font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:4px 16px;border-radius:20px}
+.une h3{font-size:1.6rem}
+.une p{opacity:.85}
+.btn{align-self:flex-start;display:inline-block;text-decoration:none;font-weight:900;text-transform:uppercase;letter-spacing:1px;padding:16px 30px;border-radius:12px;background:var(--surface);color:var(--ombre);border:2px solid var(--surface);box-shadow:0 8px 20px rgba(22,31,39,.5);transition:.3s;animation:pulse 2.4s infinite}
+.btn:hover{background:transparent;color:var(--surface);transform:translateY(-4px)}
+
+/* ===== RESPONSIVE (Mobiles) ===== */
+@media(max-width:600px){
+  .banniere-card{padding:20px 10px}
+  .banniere-card img.logo{width:70px;height:70px}
+  .btn-social{font-size:.75rem;padding:10px 4px;gap:4px}
+  .btn-social svg{width:16px;height:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .js .reveal{opacity:1;transform:none}
+}
