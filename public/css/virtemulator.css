@@ -1,22 +1,35 @@
 /* --- virtemulator.css --- */
 body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--fond); }
 
-/* Conteneur principal */
-.emulator-container {
+/* =========================================
+   LAYOUT GÉNÉRAL (Mobile First)
+   ========================================= */
+.main-layout {
     position: absolute; top: 70px; left: 10px; right: 10px; bottom: 10px;
     display: flex; flex-direction: column;
+}
+
+/* L'aperçu PC est caché par défaut (mobile) */
+.preview-pc-panel {
+    display: none;
+}
+
+/* Le conteneur de l'éditeur */
+.emulator-container {
+    display: flex; flex-direction: column; width: 100%; height: 100%;
     border-radius: 20px; overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     background: #282a36;
 }
 
-/* HEADER FIXE */
+/* =========================================
+   HEADER DE L'ÉDITEUR (Onglets + Boutons)
+   ========================================= */
 .editor-header-wrapper {
     display: flex; justify-content: space-between;
     background: #1e1e1e; border-bottom: 1px solid #444;
     height: 40px; flex-shrink: 0;
 }
-
 .editor-tabs {
     display: flex; align-items: center;
     overflow-x: auto; white-space: nowrap; flex: 1;
@@ -53,7 +66,9 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 }
 .btn-header-action:hover { background: #444; color: white; }
 
-/* CORPS SCROLLABLE */
+/* =========================================
+   CORPS DE L'ÉDITEUR
+   ========================================= */
 .editor-body { 
     flex: 1; 
     position: relative; 
@@ -67,7 +82,9 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
     overflow: auto !important; 
 }
 
-/* BOUTON PLAY */
+/* =========================================
+   BOUTON PLAY (Mobile)
+   ========================================= */
 .btn-play-footer {
     position: fixed; bottom: 25px; right: 25px; z-index: 100;
     width: 55px; height: 55px; border-radius: 50%;
@@ -78,7 +95,9 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 }
 .btn-play-footer:hover { background: var(--surface); color: var(--ombre); transform: scale(1.1); }
 
-/* OVERLAY CREATION */
+/* =========================================
+   MODAL / SLIDE MOBILE
+   ========================================= */
 .overlay-create {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.7); backdrop-filter: blur(3px);
@@ -101,7 +120,6 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 .btn-annuler { background: #555; color: white; }
 .btn-creer { background: var(--or); color: var(--ombre); }
 
-/* SLIDE MOBILE */
 .slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; }
 .slide-overlay.ouvert { opacity: 1; visibility: visible; }
 .slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: #2d2d2d; border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 1001; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 0.8, 0.3, 1); display: flex; flex-direction: column; }
@@ -109,85 +127,73 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 .slide-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #1e1e1e; color: var(--surface); border-bottom: 1px solid var(--metal); border-radius: 25px 25px 0 0; min-height: 40px; }
 .slide-header h3 { font-size: 1rem; margin: 0; color: white; }
 .btn-fermer { background: none; border: none; color: var(--surface); font-size: 1.2rem; cursor: pointer; }
-
 .slide-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: auto; text-align: center; }
 
-/* FAUX TELEPHONE ANDROID */
+/* Téléphone Android */
 .iphone-frame { 
-    width: 320px; 
-    height: 650px; 
-    background: #000; 
-    border-radius: 35px; 
-    padding: 0;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.6), inset 0 0 0 2px #444; 
-    position: relative; 
-    transition: transform 0.3s ease; 
-    transform-origin: center center; 
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    width: 320px; height: 650px; background: #000; border-radius: 35px; 
+    padding: 0; box-shadow: 0 25px 60px rgba(0,0,0,0.6), inset 0 0 0 2px #444; 
+    position: relative; transition: transform 0.3s ease; transform-origin: center center; 
+    flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden;
 }
-
-.status-bar {
-    background: #000;
-    color: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 15px;
-    font-size: 0.75rem;
-    font-family: sans-serif;
-    height: 25px;
-    flex-shrink: 0;
-}
+.status-bar { background: #000; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 5px 15px; font-size: 0.75rem; font-family: sans-serif; height: 25px; flex-shrink: 0; }
 .status-icons { display: flex; gap: 5px; align-items: center; }
-
-.iphone-screen { 
-    background: #fff; 
-    width: 100%; 
-    flex: 1;
-    overflow: hidden; 
-}
+.iphone-screen { background: #fff; width: 100%; flex: 1; overflow: hidden; }
 .iphone-screen iframe { width: 100%; height: 100%; border: none; }
+.nav-bar-android { background: #000; height: 40px; display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; border-top: 1px solid #333; }
+.nav-btn { width: 15px; height: 15px; background: transparent; border: 2px solid #666; border-radius: 3px; }
+.nav-btn.home { border-radius: 50%; width: 18px; height: 18px; }
 
-.nav-bar-android {
-    background: #000;
-    height: 40px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-shrink: 0;
-    border-top: 1px solid #333;
-}
-.nav-btn {
-    width: 15px; height: 15px;
-    background: transparent;
-    border: 2px solid #666;
-    border-radius: 3px;
-}
-.nav-btn.home {
-    border-radius: 50%;
-    width: 18px; height: 18px;
-}
+/* Boutons de zoom */
+.btn-zoom-header { background: var(--metal-fonce); color: white; border: 1px solid var(--metal); width: 30px; height: 30px; border-radius: 50%; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+.btn-zoom-header:hover { background: var(--surface); color: var(--ombre); }
 
-/* BOUTONS DE ZOOM DANS LE HEADER */
-.btn-zoom-header {
-    background: var(--metal-fonce);
-    color: white;
-    border: 1px solid var(--metal);
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: 0.2s;
-}
-.btn-zoom-header:hover {
-    background: var(--surface);
-    color: var(--ombre);
+/* =========================================
+   MEDIA QUERY : ECRAN PC (Desktop Layout)
+   ========================================= */
+@media(min-width: 900px) {
+    /* On cache le bouton Play mobile */
+    .btn-play-footer { display: none; }
+
+    /* On transforme le layout en ligne (côte à côte) */
+    .main-layout {
+        flex-direction: row;
+        gap: 15px;
+    }
+
+    /* On affiche l'aperçu PC à gauche (30%) */
+    .preview-pc-panel {
+        display: flex;
+        flex-direction: column;
+        width: 30%;
+        height: 100%;
+        background: #1e1e1e;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .preview-header {
+        padding: 10px 15px;
+        background: #2d2d2d;
+        color: #ccc;
+        font-size: 0.85rem;
+        border-bottom: 1px solid #444;
+        text-align: center;
+    }
+    .preview-body {
+        flex: 1;
+        background: #fff;
+    }
+    .preview-body iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /* L'éditeur prend le reste de la place (70%) */
+    .emulator-container {
+        width: 70%;
+        height: 100%;
+        border-radius: 20px;
+    }
 }

@@ -4,22 +4,16 @@ document.addEventListener("DOMContentLoaded", function() {
     let activeFile = "index.html";
     let editor;
     let zoomLevel = 1;
+    let debounceTimer;
     const iphoneFrame = document.querySelector('.iphone-frame');
 
     // --- INITIALISATION ---
     function init() {
-        // 1. On charge les fichiers sauvegardés s'ils existent
         const savedFiles = localStorage.getItem('virtemulator_files');
         if (savedFiles) {
-            try {
-                files = JSON.parse(savedFiles);
-            } catch (e) {
-                console.error("Erreur de lecture du localStorage", e);
-                files = {};
-            }
+            try { files = JSON.parse(savedFiles); } catch (e) { files = {}; }
         }
         
-        // 2. Si aucun fichier n'est trouvé, on crée l'index.html par défaut
         if (!files["index.html"]) {
             files["index.html"] = `<!DOCTYPE html>
 <html>
@@ -31,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function() {
 </html>`;
         }
 
-        // 3. Initialisation de CodeMirror
         editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
             mode: "htmlmixed", theme: "dracula", lineNumbers: true,
             lineWrapping: false, indentUnit: 2, tabSize: 2, viewportMargin: Infinity,
@@ -39,11 +32,10 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         document.getElementById('editorBody').appendChild(editor.getWrapperElement());
 
-        // 4. On ouvre le premier fichier (ou l'index.html)
         ouvrirFichier(files["index.html"] ? "index.html" : Object.keys(files)[0]);
         mettreAJourOnglets();
         
-        // 5. Horloge Android
+        // Horloge Android
         function updateTime() {
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
@@ -54,18 +46,35 @@ document.addEventListener("DOMContentLoaded", function() {
         setInterval(updateTime, 1000);
         updateTime();
 
-        // 6. SAUVEGARDE INSTANTANÉE À CHAQUE FRAPPE
+        // MISE A JOUR EN TEMPS REEL (PC)
         editor.on('change', function() {
             files[activeFile] = editor.getValue();
             localStorage.setItem('virtemulator_files', JSON.stringify(files));
+            
+            // Debounce pour ne pas surcharger l'iframe
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                mettreAJourPreviewPC();
+            }, 500); 
         });
+        
+        // Premier chargement de l'aperçu PC
+        mettreAJourPreviewPC();
 
-        // 7. Restauration du zoom sauvegardé
+        // Restauration du zoom
         const savedZoom = localStorage.getItem('virtemulator_zoom');
-        if (savedZoom) {
-            zoomLevel = parseFloat(savedZoom);
+        if (savedZoom) { zoomLevel = parseFloat(savedZoom); }
+        updateZoom(); 
+    }
+
+    // --- MISE A JOUR DE L'APERCU PC ---
+    function mettreAJourPreviewPC() {
+        const pcIframe = document.getElementById('pcIframe');
+        if (pcIframe) {
+            const code = editor.getValue();
+            const doc = pcIframe.contentDocument || pcIframe.contentWindow.document;
+            doc.open(); doc.write(code); doc.close();
         }
-        updateZoom(); // On applique le zoom (défini ou sauvegardé)
     }
 
     // --- GESTION DES ONGLETS ---
@@ -89,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function() {
             };
             header.insertBefore(tab, header.lastChild);
         });
-
         document.getElementById('btnAddTab').onclick = ouvrirModalCreate;
     }
 
@@ -100,21 +108,17 @@ document.addEventListener("DOMContentLoaded", function() {
         activeFile = nomFichier;
         editor.setValue(files[nomFichier]);
         mettreAJourOnglets();
+        mettreAJourPreviewPC(); // Met à jour l'aperçu au changement d'onglet
     }
 
     function supprimerFichier(nomFichier) {
-        if (Object.keys(files).length <= 1) {
-            alert("Tu ne peux pas supprimer le dernier fichier.");
-            return;
-        }
+        if (Object.keys(files).length <= 1) { alert("Tu ne peux pas supprimer le dernier fichier."); return; }
         delete files[nomFichier];
-        if (activeFile === nomFichier) {
-            activeFile = Object.keys(files)[0];
-        }
+        if (activeFile === nomFichier) { activeFile = Object.keys(files)[0]; }
         ouvrirFichier(activeFile);
     }
 
-    // --- CREATION DE FICHIER (MODAL) ---
+    // --- CREATION DE FICHIER ---
     const overlayCreate = document.getElementById('overlayCreate');
     const inputNomFichier = document.getElementById('inputNomFichier');
 
@@ -132,16 +136,14 @@ document.addEventListener("DOMContentLoaded", function() {
         let nom = inputNomFichier.value.trim();
         if (!nom) return;
         if (!nom.endsWith('.html')) nom += '.html';
-        if (files[nom]) {
-            alert("Ce fichier existe déjà !");
-            return;
-        }
+        if (files[nom]) { alert("Ce fichier existe déjà !"); return; }
+        
         files[nom] = `<!DOCTYPE html>\n<html>\n<head><title>${nom}</title></head>\n<body>\n  <h1>Fichier ${nom}</h1>\n</body>\n</html>`;
         overlayCreate.classList.remove('ouvert');
         ouvrirFichier(nom);
     };
 
-    // --- BOUTON PLAY (Aperçu) ---
+    // --- BOUTON PLAY (Mobile) ---
     document.getElementById('btnPlay').onclick = () => {
         const code = editor.getValue();
         const doc = document.getElementById('mobileIframe').contentDocument;
@@ -168,25 +170,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function updateZoom() { 
         iphoneFrame.style.transform = `scale(${zoomLevel})`; 
-        // Sauvegarde du niveau de zoom
         localStorage.setItem('virtemulator_zoom', zoomLevel);
     }
+    btnZoomIn.onclick = () => { if (zoomLevel < 1.5) { zoomLevel += 0.1; updateZoom(); } };
+    btnZoomOut.onclick = () => { if (zoomLevel > 0.5) { zoomLevel -= 0.1; updateZoom(); } };
 
-    btnZoomIn.onclick = () => { 
-        if (zoomLevel < 1.5) { 
-            zoomLevel += 0.1; 
-            updateZoom(); 
-        } 
-    };
-    
-    btnZoomOut.onclick = () => { 
-        if (zoomLevel > 0.5) { 
-            zoomLevel -= 0.1; 
-            updateZoom(); 
-        } 
-    };
-
-    // --- BOUTONS SAVE ET EXPORT ---
+    // --- SAVE & EXPORT ---
     const btnSave = document.getElementById('btnSaveCode');
     const btnExport = document.getElementById('btnExportCode');
 
@@ -194,11 +183,8 @@ document.addEventListener("DOMContentLoaded", function() {
         btnSave.onclick = function() {
             files[activeFile] = editor.getValue();
             localStorage.setItem('virtemulator_files', JSON.stringify(files));
-            
             btnSave.innerHTML = "✅ Sauvegardé";
-            setTimeout(() => {
-                btnSave.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> Save`;
-            }, 2000);
+            setTimeout(() => { btnSave.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> Save`; }, 2000);
         };
     }
 
@@ -208,17 +194,11 @@ document.addEventListener("DOMContentLoaded", function() {
             const blob = new Blob([code], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = activeFile;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            a.href = url; a.download = activeFile;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
             btnExport.innerHTML = "✅ Exporté";
-            setTimeout(() => {
-                btnExport.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Exporter`;
-            }, 2000);
+            setTimeout(() => { btnExport.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Exporter`; }, 2000);
         };
     }
 
