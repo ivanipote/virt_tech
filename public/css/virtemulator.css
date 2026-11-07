@@ -17,7 +17,7 @@ body, html {
     bottom: 0;
     display: flex;
     flex-direction: column;
-    padding: 7px 10px 10px 10px; /* 7px de padding top comme demandé */
+    padding: 7px 10px 10px 10px; /* 7px de padding top */
     box-sizing: border-box;
 }
 
@@ -27,16 +27,15 @@ body, html {
     height: auto !important;
     font-size: 14px;
     font-family: 'Courier New', Courier, monospace;
-    border-radius: 20px 20px 0 0;
+    border-radius: 20px 20px 0 0; /* Arrondi uniquement en haut */
     border: 2px solid #333; 
     border-bottom: none; 
 }
 
 /* Scroll X et Y au glissement */
 .CodeMirror-scroll {
-    overflow: auto !important; /* Permet le scroll dans les deux sens */
+    overflow: auto !important; 
     border-radius: 20px 20px 0 0;
-    /* Pour un scroll fluide au doigt sur mobile */
     -webkit-overflow-scrolling: touch; 
 }
 
@@ -81,27 +80,34 @@ body, html {
 .slide-header h3 { font-size: 1.1rem; margin: 0; color: white;}
 .btn-fermer { background: none; border: none; color: var(--surface); font-size: 1.5rem; cursor: pointer; }
 
-/* Conteneur du téléphone (Scrollable) */
+/* Conteneur du téléphone (Centré et Scrollable) */
 .slide-content { 
     flex: 1; 
     display: flex; 
     justify-content: center; 
     align-items: center; 
     padding: 20px; 
-    overflow: auto; /* Permet de scroller si le téléphone est trop grand */
+    overflow: auto; 
     -webkit-overflow-scrolling: touch;
+    text-align: center; 
 }
 
-/* Le conteneur du téléphone avec transition pour le zoom */
+/* Le téléphone */
 .iphone-frame { 
-    width: 320px; height: 650px; 
+    width: 320px; 
+    height: 650px; 
     background: #000; 
     border-radius: 45px; 
     padding: 12px; 
     box-shadow: 0 25px 60px rgba(0,0,0,0.6), inset 0 0 0 2px #444; 
     position: relative; 
-    transition: transform 0.3s ease; /* Animation fluide pour le zoom */
-    transform-origin: top center; /* Le zoom part du haut */
+    transition: transform 0.3s ease; 
+    
+    /* L'origine du zoom est au centre */
+    transform-origin: center center; 
+    
+    /* Empêche le téléphone de rétrécir dans le flex */
+    flex-shrink: 0; 
 }
 
 .notch { 
