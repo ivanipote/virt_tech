@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Démo VirtEmulator V2</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+<!-- CodeMirror -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+<style>
+    body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--fond); }
+    
+    .emulator-container {
+        position: absolute; top: 70px; left: 10px; right: 10px; bottom: 10px;
+        display: flex; flex-direction: column;
+        border-radius: 20px; overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        background: #282a36;
+    }
+
+    /* Header de l'éditeur avec les onglets */
+    .editor-header {
+        display: flex; align-items: center;
+        background: #1e1e1e; border-bottom: 1px solid #444;
+        height: 40px; flex-shrink: 0;
+        overflow-x: auto; /* Scroll horizontal si trop d'onglets */
+        white-space: nowrap;
+    }
+    .editor-header::-webkit-scrollbar { height: 4px; }
+    .editor-header::-webkit-scrollbar-thumb { background: #555; }
+
+    .tab {
+        display: flex; align-items: center; gap: 5px;
+        padding: 0 15px; height: 100%;
+        color: #888; cursor: pointer; font-size: 0.85rem;
+        border-right: 1px solid #333;
+    }
+    .tab:hover { background: #2d2d2d; color: #ccc; }
+    .tab.active { background: #282a36; color: #fff; border-top: 2px solid var(--or); }
+    
+    .tab-close {
+        color: #888; font-size: 1rem; margin-left: 5px;
+        cursor: pointer; padding: 0 2px;
+    }
+    .tab-close:hover { color: #ff5555; }
+
+    .btn-add-tab {
+        background: transparent; border: none; color: #888;
+        font-size: 1.2rem; padding: 0 15px; cursor: pointer; height: 100%;
+    }
+    .btn-add-tab:hover { color: white; }
+
+    /* Zone du code */
+    .editor-body { flex: 1; position: relative; }
+    .CodeMirror { height: 100% !important; font-size: 14px; }
+
+    /* Bouton Play */
+    .btn-play-footer {
+        position: fixed; bottom: 25px; right: 25px; z-index: 100;
+        width: 55px; height: 55px; border-radius: 50%;
+        background: var(--metal-fonce); color: white;
+        display: flex; justify-content: center; align-items: center;
+        border: 2px solid var(--metal); cursor: pointer; transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    }
+    .btn-play-footer:hover { background: var(--surface); color: var(--ombre); transform: scale(1.1); }
+
+    /* Overlay de création de fichier */
+    .overlay-create {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7); backdrop-filter: blur(3px);
+        display: flex; justify-content: center; align-items: center;
+        z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s;
+    }
+    .overlay-create.ouvert { opacity: 1; visibility: visible; }
+    
+    .modal-create {
+        background: #2d2d2d; padding: 25px; border-radius: 15px;
+        border: 1px solid #444; width: 300px; text-align: center;
+    }
+    .modal-create h3 { color: white; margin-top: 0; }
+    .modal-create input {
+        width: 100%; padding: 10px; margin: 15px 0;
+        border-radius: 8px; border: 1px solid #555;
+        background: #1e1e1e; color: white; outline: none;
+    }
+    .modal-create .btns { display: flex; gap: 10px; }
+    .modal-create button {
+        flex: 1; padding: 10px; border-radius: 8px; border: none;
+        font-weight: bold; cursor: pointer;
+    }
+    .btn-annuler { background: #555; color: white; }
+    .btn-creer { background: var(--or); color: var(--ombre); }
+
+    /* Slide mobile */
+    .slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; }
+    .slide-overlay.ouvert { opacity: 1; visibility: visible; }
+    .slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: #2d2d2d; border-radius: 25px 25px 0 0; z-index: 1001; transform: translateY(100%); transition: transform 0.4s; display: flex; flex-direction: column; }
+    .slide-panel.ouvert { transform: translateY(0); }
+    .slide-header { display: flex; justify-content: space-between; padding: 15px; background: #1e1e1e; color: white; border-radius: 25px 25px 0 0; }
+    .btn-fermer { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+    .slide-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: auto; }
+    .iphone-frame { width: 320px; height: 650px; background: #000; border-radius: 45px; padding: 12px; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; flex-shrink: 0; }
+    .notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 110px; height: 28px; background: #000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; }
+    .iphone-screen { background: #fff; width: 100%; height: 100%; border-radius: 35px; overflow: hidden; }
+    .iphone-screen iframe { width: 100%; height: 100%; border: none; }
+</style>
+</head>
+<body>
+
+<div class="emulator-container">
+    <!-- HEADER AVEC ONGLETS -->
+    <div class="editor-header" id="editorHeader">
+        <!-- Les onglets seront générés ici par JS -->
+        <button class="btn-add-tab" id="btnAddTab" title="Nouveau fichier">+</button>
+    </div>
+
+    <!-- ZONE DE CODE -->
+    <div class="editor-body" id="editorBody">
+        <textarea id="codeInput" style="display:none;"></textarea>
+    </div>
+</div>
+
+<!-- BOUTON PLAY -->
+<button class="btn-play-footer" id="btnPlay" title="Voir le rendu">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+</button>
+
+<!-- OVERLAY CREATION -->
+<div class="overlay-create" id="overlayCreate">
+    <div class="modal-create">
+        <h3>Nouveau fichier</h3>
+        <input type="text" id="inputNomFichier" placeholder="ex: page2.html">
+        <div class="btns">
+            <button class="btn-annuler" id="btnAnnulerCreate">Annuler</button>
+            <button class="btn-creer" id="btnValiderCreate">Créer</button>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE MOBILE -->
+<div class="slide-overlay" id="slideOverlay"></div>
+<div class="slide-panel" id="slidePanel">
+    <div class="slide-header">
+        <h3 id="slideTitle">Aperçu Mobile</h3>
+        <button class="btn-fermer" id="btnFermerSlide">✕</button>
+    </div>
+    <div class="slide-content">
+        <div class="iphone-frame">
+            <div class="notch"></div>
+            <div class="iphone-screen">
+                <iframe id="mobileIframe" title="Aperçu"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/header.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // --- VARIABLES GLOBALES ---
+    let files = {}; // Stocke tous les fichiers { "index.html": "code..." }
+    let activeFile = "index.html";
+    let editor;
+
+    // --- INITIALISATION ---
+    function init() {
+        // On charge depuis le localStorage ou on crée un index.html par défaut
+        const savedFiles = localStorage.getItem('virtemulator_files');
+        if (savedFiles) {
+            files = JSON.parse(savedFiles);
+        } else {
+            files["index.html"] = `<!DOCTYPE html>
+<html>
+<head><title>Mon site</title></head>
+<body>
+  <h1>Bienvenue sur VirtEmulator !</h1>
+  <p>Crée un nouveau fichier avec le bouton +</p>
+</body>
+</html>`;
+        }
+
+        // Initialisation de CodeMirror sur le textarea caché
+        editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
+            mode: "htmlmixed",
+            theme: "dracula",
+            lineNumbers: true,
+            autoCloseBrackets: true,
+            autoCloseTags: true
+        });
+        document.getElementById('editorBody').appendChild(editor.getWrapperElement());
+
+        // On affiche le premier fichier
+        ouvrirFichier("index.html");
+        mettreAJourOnglets();
+    }
+
+    // --- GESTION DES ONGLETS ---
+    function mettreAJourOnglets() {
+        const header = document.getElementById('editorHeader');
+        // On garde le bouton "+" et on supprime les anciens onglets
+        header.innerHTML = '<button class="btn-add-tab" id="btnAddTab" title="Nouveau fichier">+</button>';
+        
+        // On recrée les onglets
+        Object.keys(files).forEach(nomFichier => {
+            const tab = document.createElement('div');
+            tab.className = 'tab' + (nomFichier === activeFile ? ' active' : '');
+            tab.innerHTML = `
+                <span class="tab-name">${nomFichier}</span>
+                <span class="tab-close" data-file="${nomFichier}">✕</span>
+            `;
+            // Clic pour changer de fichier
+            tab.onclick = (e) => {
+                if (e.target.classList.contains('tab-close')) {
+                    supprimerFichier(e.target.getAttribute('data-file'));
+                } else {
+                    ouvrirFichier(nomFichier);
+                }
+            };
+            header.insertBefore(tab, header.lastChild);
+        });
+
+        // On réattache l'événement au bouton +
+        document.getElementById('btnAddTab').onclick = ouvrirModalCreate;
+    }
+
+    function ouvrirFichier(nomFichier) {
+        if (activeFile && files[activeFile] !== undefined) {
+            // On sauvegarde le code du fichier qu'on quitte
+            files[activeFile] = editor.getValue();
+        }
+        activeFile = nomFichier;
+        editor.setValue(files[nomFichier]);
+        mettreAJourOnglets();
+    }
+
+    function supprimerFichier(nomFichier) {
+        if (Object.keys(files).length <= 1) {
+            alert("Tu ne peux pas supprimer le dernier fichier.");
+            return;
+        }
+        delete files[nomFichier];
+        if (activeFile === nomFichier) {
+            activeFile = Object.keys(files)[0];
+        }
+        ouvrirFichier(activeFile);
+    }
+
+    // --- CREATION DE FICHIER (MODAL) ---
+    const overlayCreate = document.getElementById('overlayCreate');
+    const inputNomFichier = document.getElementById('inputNomFichier');
+
+    function ouvrirModalCreate() {
+        overlayCreate.classList.add('ouvert');
+        inputNomFichier.value = "";
+        inputNomFichier.focus();
+    }
+
+    document.getElementById('btnAnnulerCreate').onclick = () => {
+        overlayCreate.classList.remove('ouvert');
+    };
+
+    document.getElementById('btnValiderCreate').onclick = () => {
+        let nom = inputNomFichier.value.trim();
+        if (!nom) return;
+        
+        // On ajoute .html si ce n'est pas déjà là
+        if (!nom.endsWith('.html')) nom += '.html';
+
+        if (files[nom]) {
+            alert("Ce fichier existe déjà !");
+            return;
+        }
+
+        // On crée le nouveau fichier avec un contenu de base
+        files[nom] = `<!DOCTYPE html>
+<html>
+<head><title>${nom}</title></head>
+<body>
+  <h1>Fichier ${nom}</h1>
+</body>
+</html>`;
+        overlayCreate.classList.remove('ouvert');
+        ouvrirFichier(nom);
+    };
+
+    // --- BOUTON PLAY (Aperçu du fichier en cours) ---
+    document.getElementById('btnPlay').onclick = () => {
+        // On récupère le code du fichier actif
+        const code = editor.getValue();
+        
+        // On affiche dans l'iframe
+        const doc = document.getElementById('mobileIframe').contentDocument;
+        doc.open();
+        doc.write(code);
+        doc.close();
+
+        document.getElementById('slideTitle').textContent = "Aperçu de " + activeFile;
+        document.getElementById('slideOverlay').classList.add('ouvert');
+        document.getElementById('slidePanel').classList.add('ouvert');
+    };
+
+    document.getElementById('btnFermerSlide').onclick = () => {
+        document.getElementById('slideOverlay').classList.remove('ouvert');
+        document.getElementById('slidePanel').classList.remove('ouvert');
+    };
+    document.getElementById('slideOverlay').onclick = () => {
+        document.getElementById('slideOverlay').classList.remove('ouvert');
+        document.getElementById('slidePanel').classList.remove('ouvert');
+    };
+
+    // --- SAUVEGARDE AUTOMATIQUE ---
+    setInterval(() => {
+        files[activeFile] = editor.getValue();
+        localStorage.setItem('virtemulator_files', JSON.stringify(files));
+    }, 3000); // Sauvegarde toutes les 3 secondes
+
+    // --- LANCEMENT ---
+    init();
+});
+</script>
+
+</body>
+</html>
