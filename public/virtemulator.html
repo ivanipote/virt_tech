@@ -7,7 +7,6 @@
 
 <!-- SEO & Réseaux Sociaux -->
 <meta name="description" content="Teste ton code HTML, CSS et JavaScript directement dans ton navigateur avec VirtEmulator. Un outil gratuit et intuitif pour les débutants en développement web." />
-<meta name="keywords" content="VirtEmulator, éditeur de code en ligne, HTML, CSS, JavaScript, débutant, VirtTech, test code, bac à sable, programmation." />
 <meta property="og:title" content="VirtEmulator - L'éditeur de code en ligne" />
 <meta property="og:description" content="Teste ton code HTML, CSS et JavaScript directement dans ton navigateur. Un outil gratuit pour les débutants en développement web." />
 <meta property="og:image" content="https://virttech.site/logo.png" />
@@ -15,23 +14,31 @@
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="VirtTech" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="VirtEmulator - L'éditeur de code en ligne" />
-<meta name="twitter:description" content="Teste ton code HTML, CSS et JavaScript directement dans ton navigateur. Un outil gratuit pour les débutants en web." />
-<meta name="twitter:image" content="https://virttech.site/logo.png" />
 
-<!-- Liens CSS -->
+<!-- CSS -->
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
 <link rel="stylesheet" href="/css/virtemulator.css">
-<!-- Librairie CodeMirror pour l'éditeur -->
+<!-- CodeMirror -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 </head>
 <body>
 
-<div class="emulator-wrapper">
-    <!-- La zone de texte cachée qui contient le code par défaut -->
-    <textarea id="codeInput" style="display:none;">
+<div class="emulator-container">
+    
+    <!-- LE FAUX HEADER DE L'ÉDITEUR -->
+    <div class="editor-header">
+        <span class="editor-title">index.html</span>
+        <button class="btn-save-editor" id="btnSaveCode">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+            Save
+        </button>
+    </div>
+
+    <!-- LA ZONE DU CODE (L'ÉDITEUR) -->
+    <div class="editor-body">
+        <textarea id="codeInput" style="display:none;">
 <!DOCTYPE html>
 <html>
 <head>
@@ -48,10 +55,11 @@
   </script>
 </body>
 </html>
-    </textarea>
+        </textarea>
+    </div>
 </div>
 
-<!-- Bouton Play -->
+<!-- BOUTON PLAY (En bas à droite) -->
 <button class="btn-play-footer" id="btnPlay" title="Voir le rendu">
     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 </button>
@@ -71,22 +79,22 @@
             </div>
         </div>
     </div>
-    
-    <!-- LES BOUTONS DE ZOOM -->
+    <!-- Boutons de zoom -->
     <div class="zoom-controls">
         <button class="btn-zoom" id="btnZoomOut" title="Zoom arrière">-</button>
         <button class="btn-zoom" id="btnZoomIn" title="Zoom avant">+</button>
     </div>
 </div>
 
-<!-- Scripts (Header, CodeMirror et ton script) -->
+<!-- Scripts -->
 <script src="/js/header.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
 <script src="/js/virtemulator.js"></script>
-
 </body>
 </html>
