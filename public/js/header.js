@@ -6,10 +6,14 @@ document.addEventListener("DOMContentLoaded", function() {
     let actifAccueil = "";
     let actifHistorique = "";
     let actifResultats = "";
+    let actifContact = "";
+    let actifVirtEmulator = "";
 
     if (path === "/" || path === "/accueil") { actifAccueil = "actif"; }
     else if (path === "/historique") { actifHistorique = "actif"; }
     else if (path.includes("/virt-dev")) { actifResultats = "actif"; }
+    else if (path === "/contact") { actifContact = "actif"; }
+    else if (path === "/virtemulator") { actifVirtEmulator = "actif"; }
 
     const headerHTML = `
     <header class="top">
@@ -32,6 +36,15 @@ document.addEventListener("DOMContentLoaded", function() {
         <ul>
           <li><a href="/" class="${actifAccueil}">Accueil</a></li>
           <li><a href="/historique" class="${actifHistorique}">Historique d'activité</a></li>
+          
+          <!-- NOUVEAU : VirtEmulator -->
+          <li>
+            <a href="/virtemulator" class="${actifVirtEmulator}">
+              VirtEmulator
+              <span class="badge-attention" style="background: var(--metal-moyen);">Outil</span>
+            </a>
+          </li>
+          
           <li>
             <a href="/virt-dev" class="${actifResultats}">
               Résultats Virt_Dev
@@ -40,12 +53,11 @@ document.addEventListener("DOMContentLoaded", function() {
           </li>
           <li><a href="/#actus">Actualités</a></li>
           <li><a href="/#apropos">À propos</a></li>
-          <!-- Lien vers la section contact de l'accueil -->
           <li><a href="/#contact">Contact</a></li>
         </ul>
       </nav>
       
-      <!-- BOUTON FORMULAIRE (Dans le footer de la sidebar) -->
+      <!-- BOUTON CONTACT -->
       <a href="/contact" class="btn-side-contact">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
           Laissez-nous un mail

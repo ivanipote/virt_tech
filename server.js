@@ -39,6 +39,7 @@ morgan.format('virttech', (tokens, req, res) => {
     if (url === '/') url = 'ACCUEIL';
     else if (url.includes('/virt-dev')) url = 'RESULTATS';
     else if (url.includes('/historique')) url = 'HISTORIQUE';
+    else if (url.includes('/virtemulator')) url = 'VIRTEMULATOR';
     else if (url.includes('/contact')) url = 'CONTACT';
     else if (url.includes('/api/contact')) url = 'API_CONTACT';
     
@@ -55,14 +56,14 @@ morgan.format('virttech', (tokens, req, res) => {
     return `[${heure}] ${appareil} | ${statusStr} | ${url} | 🌍 ${referent} (${temps})`;
 });
 
-// On utilise notre format en ignorant les fichiers techniques (CSS, JS, images)
+// On utilise notre format en ignorant les fichiers techniques
 app.use(morgan('virttech', {
     skip: function (req, res) {
         return req.originalUrl.includes('/css/') || 
                req.originalUrl.includes('/js/') || 
                req.originalUrl.includes('/logo.png') ||
                req.originalUrl.includes('/favicon.ico') ||
-               req.originalUrl.includes('/participants/'); // On ignore aussi les iframes des participants
+               req.originalUrl.includes('/participants/'); 
     }
 }));
 
@@ -95,6 +96,9 @@ app.get('/virt-dev', (req, res) => res.sendFile(path.join(__dirname, 'public', '
 app.get('/virt-dev/resultat', (req, res) => res.sendFile(path.join(__dirname, 'public', 'resultats.html')));
 app.get('/historique', (req, res) => res.sendFile(path.join(__dirname, 'public', 'historique.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contact.html')));
+
+// --- NOUVELLE ROUTE : VIRTEMULATOR ---
+app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator.html')));
 
 // Routes API
 const contactRoutes = require('./routes/contact');

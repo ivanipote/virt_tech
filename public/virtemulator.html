@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VirtEmulator - VirtTech</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+<!-- Librairie CodeMirror pour l'éditeur (CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+<style>
+    /* Plein écran, pas de marges */
+    body, html { 
+        margin: 0; 
+        padding: 0; 
+        height: 100%; 
+        overflow: hidden; 
+        background: #000; /* Noir pur */
+    }
+
+    /* Conteneur principal sous le header */
+    .emulator-wrapper {
+        position: absolute;
+        top: 70px; /* Hauteur du header */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* La zone de l'éditeur */
+    .CodeMirror {
+        flex: 1; /* Prend toute la place restante */
+        height: auto !important;
+        font-size: 14px;
+        font-family: 'Courier New', Courier, monospace;
+        border-radius: 0; /* Bords collés à l'écran */
+        border-top: 2px solid #333;
+    }
+
+    /* Ajustements CodeMirror pour le plein écran */
+    .CodeMirror-scroll {
+        overflow-y: auto !important;
+        overflow-x: hidden !important; /* Pas de scroll horizontal */
+    }
+
+    /* Le bouton Play (Footer) */
+    .btn-play-footer {
+        position: fixed;
+        bottom: 20px; right: 20px; z-index: 100;
+        width: 55px; height: 55px; border-radius: 50%;
+        background: var(--metal-fonce); color: white;
+        display: flex; justify-content: center; align-items: center;
+        border: 2px solid var(--metal); cursor: pointer; transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    }
+    .btn-play-footer:hover { background: var(--surface); color: var(--ombre); transform: scale(1.1); }
+
+    /* --- LE SLIDE (Aperçu mobile) --- */
+    .slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .slide-overlay.ouvert { opacity: 1; visibility: visible; }
+    .slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: #2d2d2d; border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 1001; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 0.8, 0.3, 1); display: flex; flex-direction: column; }
+    .slide-panel.ouvert { transform: translateY(0); }
+    .slide-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #1e1e1e; color: var(--surface); border-bottom: 2px solid var(--metal); border-radius: 25px 25px 0 0; }
+    .slide-header h3 { font-size: 1.1rem; margin: 0; color: white;}
+    .btn-fermer { background: none; border: none; color: var(--surface); font-size: 1.5rem; cursor: pointer; }
+    .slide-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+    .iphone-frame { width: 320px; height: 650px; background: #000; border-radius: 45px; padding: 12px; box-shadow: 0 25px 60px rgba(0,0,0,0.6), inset 0 0 0 2px #444; position: relative; }
+    .notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 110px; height: 28px; background: #000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; }
+    .iphone-screen { background: #fff; width: 100%; height: 100%; border-radius: 35px; overflow: hidden; }
+    .iphone-screen iframe { width: 100%; height: 100%; border: none; }
+
+    /* Conteneur principal sous le header */
+    .emulator-wrapper {
+        position: absolute;
+        top: 70px; /* Hauteur du header */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        /* On ajoute un petit padding pour voir l'arrondi */
+        padding: 0 10px 10px 10px; 
+        box-sizing: border-box;
+    }
+
+    /* La zone de l'éditeur */
+    .CodeMirror {
+        flex: 1; /* Prend toute la place restante */
+        height: auto !important;
+        font-size: 14px;
+        font-family: 'Courier New', Courier, monospace;
+        /* L'arrondi UNIQUEMENT en haut */
+        border-radius: 20px 20px 0 0; 
+        /* Une bordure fine pour délimiter */
+        border: 2px solid #333; 
+        border-bottom: none; /* On enlève la bordure du bas pour coller à l'écran */
+    }
+</style>
+</head>
+<body>
+
+<div class="emulator-wrapper">
+    <textarea id="codeInput" style="display:none;">
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: sans-serif; text-align: center; padding-top: 50px; background: #f0f2f5; }
+  h1 { color: #D4AF37; }
+</style>
+</head>
+<body>
+  <h1>Salut VirtTech !</h1>
+  <p>Écris ton code ici.</p>
+  <script>
+    console.log("JS OK");
+  </script>
+</body>
+</html>
+    </textarea>
+</div>
+
+<!-- Bouton Play -->
+<button class="btn-play-footer" id="btnPlay" title="Voir le rendu">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+</button>
+
+<!-- SLIDE MOBILE -->
+<div class="slide-overlay" id="slideOverlay"></div>
+<div class="slide-panel" id="slidePanel">
+    <div class="slide-header">
+        <h3>Aperçu Mobile</h3>
+        <button class="btn-fermer" id="btnFermerSlide">✕</button>
+    </div>
+    <div class="slide-content">
+        <div class="iphone-frame">
+            <div class="notch"></div>
+            <div class="iphone-screen">
+                <iframe id="mobileIframe" title="Aperçu mobile"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="/js/header.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+
+<script>
+    // Initialisation de CodeMirror
+    const textarea = document.getElementById('codeInput');
+    const editor = CodeMirror.fromTextArea(textarea, {
+        mode: "htmlmixed", // Reconnaît HTML, CSS et JS
+        theme: "dracula",  // Thème sombre (noir/violet)
+        lineNumbers: true, // Numéros de ligne
+        lineWrapping: false, // Pas de retour à la ligne automatique (pas de scroll horizontal)
+        indentUnit: 2,
+        tabSize: 2,
+        viewportMargin: Infinity // Charge tout le code
+    });
+
+    // On attache l'éditeur au conteneur
+    document.querySelector('.emulator-wrapper').appendChild(editor.getWrapperElement());
+
+    // --- LOGIQUE DU SLIDE ---
+    const btnPlay = document.getElementById('btnPlay');
+    const overlay = document.getElementById('slideOverlay');
+    const panel = document.getElementById('slidePanel');
+    const btnFermer = document.getElementById('btnFermerSlide');
+    const mobileIframe = document.getElementById('mobileIframe');
+
+    btnPlay.onclick = function() {
+        const code = editor.getValue(); // Récupère le code depuis CodeMirror
+        const doc = mobileIframe.contentDocument || mobileIframe.contentWindow.document;
+        doc.open();
+        doc.write(code);
+        doc.close();
+        
+        overlay.classList.add('ouvert');
+        panel.classList.add('ouvert');
+    };
+
+    function fermerSlide() {
+        overlay.classList.remove('ouvert');
+        panel.classList.remove('ouvert');
+    }
+    btnFermer.onclick = fermerSlide;
+    overlay.onclick = fermerSlide;
+</script>
+</body>
+</html>
