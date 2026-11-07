@@ -1,0 +1,74 @@
+==============================================================
+   RAPPORT DE MIGRATION - VIRTTECH
+   Date : 07 Novembre 2026
+==============================================================
+
+1. OBJECTIF DU PROJET
+Passer d'un site statique hébergé sur GitHub Pages à une architecture
+serveur professionnelle (Node.js + Express) avec un nom de domaine
+personnalisé, un service d'envoi d'emails et une indexation Google.
+
+2. NOUVELLE ARCHITECTURE TECHNIQUE
+- Serveur : Node.js avec Express.js
+- Hébergement : Render (Plan gratuit, Web Service)
+- Nom de domaine : virttech.site (acheté chez Namecheap)
+- Emails : SendGrid (via clé API et domaine authentifié)
+- Base de données : Aucune pour l'instant (stockage des emails en local)
+
+3. STRUCTURE DU PROJET
+📁 virt_tech/
+   ├── 📄 server.js            (Serveur Express)
+   ├── 📄 package.json         (Dépendances)
+   ├── 📄 .env                 (Clés secrètes - NE PAS PARTAGER)
+   ├── 📄 .gitignore           (Ignore node_modules et .env)
+   ├── 📁 services/
+   │   └── 📄 emailService.js  (Logique d'envoi d'email)
+   ├── 📁 routes/
+   │   └── 📄 contact.js       (Route API pour le formulaire)
+   └── 📁 public/
+       ├── 📄 index.html       (Accueil)
+       ├── 📄 resultats.html   (Résultats Virt_Dev)
+       ├── 📄 historique.html  (Historique des activités)
+       ├── 📄 contact.html     (Formulaire de contact)
+       ├── 📄 404.html         (Page d'erreur personnalisée)
+       ├── 📄 sitemap.xml      (Plan du site pour Google)
+       ├── 📄 robots.txt       (Instructions pour les robots)
+       ├── 📁 css/             (style.css, header.css, index.css, etc.)
+       ├── 📁 js/              (header.js, index.js, resultats.js, etc.)
+       └── 📁 participants/    (Pages des codes participants au concours)
+
+4. URL INTELLIGENTES (Routes Express)
+- https://virttech.site/           -> index.html
+- https://virttech.site/virt-dev   -> resultats.html
+- https://virttech.site/historique -> historique.html
+- https://virttech.site/contact    -> contact.html
+- Page 404 personnalisée pour toute autre URL.
+
+5. SÉCURITÉ ET BONNES PRATIQUES
+- Clés API et emails stockés dans un fichier .env ignoré par Git.
+- Formulaire de contact fonctionnel (envoi via SendGrid).
+- Adresse email professionnelle : virtapp@megane-market.online
+- Page 404 personnalisée.
+
+6. RÉFÉRENCEMENT (SEO)
+- Fichier sitemap.xml créé et soumis à Google Search Console.
+- Fichier robots.txt configuré.
+- Indexation Google validée ("Success", 4 pages découvertes le 06/11/2026).
+- Balises Open Graph (OG) ajoutées pour le partage sur les réseaux.
+
+7. DÉPLOIEMENT ET DOMAINE
+- Domaine acheté : virttech.site (Namecheap, 1,18 $ la première année).
+- Configuration DNS : A record (@) -> 216.24.57.1, CNAME (www) -> virttech-xtes.onrender.com
+- Certificat SSL généré automatiquement par Render (HTTPS).
+- Statut Render : Vérifié.
+
+8. CE QU'IL RESTE À FAIRE (Prochaines étapes)
+- Attendre l'émission du certificat SSL (en cours).
+- Mettre en place un moniteur UptimeRobot pour garder le serveur éveillé.
+- Créer l'Espace Admin (publication d'annonces sans toucher au code).
+- Remplir la page historique avec les prochaines activités.
+- Surveiller la consommation du forfait mobile lors des tests.
+
+==============================================================
+   Fin du rapport - Fierté et travail accompli.
+==============================================================
