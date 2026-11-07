@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://virttech-xtes.onrender.com/sitemap.xml
+Sitemap: https://virttech.site/sitemap.xml
