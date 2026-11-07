@@ -1,0 +1,19 @@
+# VirtTech
+
+> VirtTech est une communauté de développeurs et une plateforme de formation gratuite basée à Abidjan, en Côte d'Ivoire. Elle aide les débutants à apprendre le développement web (HTML, CSS, JavaScript) à travers des formations, des défis pratiques et des concours récompensés.
+
+## À propos
+- **Nom officiel** : VirtTech (aussi orthographié Virtech ou Virt Tech)
+- **Localisation** : Abidjan, Côte d'Ivoire
+- **Public cible** : Débutants en développement web, étudiants, autodidactes.
+- **Objectif** : Rendre le code accessible à tous grâce à des formations simples et des projets concrets.
+
+## Pages principales
+- [Accueil](https://virttech.site/) : Présentation de la communauté, des actualités et des événements à venir.
+- [Résultats Virt_Dev](https://virttech.site/virt-dev) : Podium, analyse du jury et liens vers les projets des participants du premier concours de développement web.
+- [Historique des activités](https://virttech.site/historique) : Retour sur les événements passés (concours, formations) et les projets réalisés.
+- [Contact](https://virttech.site/contact) : Formulaire pour poser une question ou proposer un projet.
+
+## Activités et Concours
+- **Virt_Dev** : Concours de développement web (HTML/CSS) où les participants doivent reproduire une maquette. Les gagnants reçoivent des récompenses financières.
+- **Formations** : Sessions gratuites sur les bases du web (organisation des fichiers, arborescence, HTML, CSS).
