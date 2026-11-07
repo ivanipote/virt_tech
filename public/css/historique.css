@@ -1,9 +1,9 @@
-/* --- historique.css : Styles spécifiques à la page historique --- */
+/* --- historique.css : Styles de la page historique --- */
 
 h1 { text-align: center; color: var(--ombre); margin-bottom: 10px; font-size: 2rem; }
 p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40px; font-size: 1.1rem; }
 
-/* --- ANIMATIONS --- */
+/* --- ANIMATIONS D'APPARITION --- */
 @keyframes monter{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
 .js .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease) var(--d,0s),transform .7s var(--ease) var(--d,0s)}
 .js .reveal.g{transform:translateX(-34px)}
@@ -18,7 +18,7 @@ p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40p
     margin-top: 20px;
 }
 
-/* --- CARTES --- */
+/* --- CARTES GÉNÉRIQUES --- */
 .carte-activite {
     background: var(--blanc);
     border: 2px solid var(--metal);
@@ -38,7 +38,6 @@ p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40p
 }
 .carte-activite h3 {
     font-size: 1.4rem;
-    color: var(--metal-fonce);
     margin-bottom: 10px;
 }
 .carte-activite p {
@@ -53,8 +52,14 @@ p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40p
     color: var(--metal);
     text-transform: uppercase;
 }
+
+/* Style spécifique pour Virt_Dev */
 .carte-virtdev { border-top: 6px solid var(--or); }
 .carte-virtdev h3 { color: var(--or); }
+
+/* Style spécifique pour la Formation */
+.carte-formation { border-top: 6px solid var(--metal-fonce); }
+.carte-formation h3 { color: var(--metal-fonce); }
 
 /* --- LE SLIDE --- */
 .slide-overlay {
@@ -93,9 +98,57 @@ p.sous-titre { text-align: center; color: var(--metal-fonce); margin-bottom: 40p
 .slide-contenu h4 { color: var(--metal-fonce); margin-top: 25px; margin-bottom: 10px; font-size: 1.15rem; border-bottom: 1px solid var(--surface); padding-bottom: 5px; }
 .slide-contenu p { color: var(--metal-moyen); margin-bottom: 15px; }
 .slide-contenu ul { margin-left: 20px; margin-bottom: 15px; color: var(--metal-moyen); }
+.slide-contenu li { margin-bottom: 5px; }
+
 .badge-gagnant { display: inline-block; background: var(--or); color: var(--ombre); padding: 5px 12px; border-radius: 10px; font-weight: bold; font-size: 0.9rem; margin-bottom: 5px;}
 .lien-resultats { display: inline-block; margin-top: 15px; color: var(--metal-fonce); font-weight: bold; text-decoration: none; border-bottom: 2px solid var(--or); }
 .lien-resultats:hover { color: var(--or); }
+
+/* --- BLOCS DE CODE INTERACTIFS (Nouveau) --- */
+.slide-contenu .code-block {
+    background: #1e1e1e;
+    border-radius: 10px;
+    margin: 15px 0;
+    border: 1px solid #444;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.slide-contenu .code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2d2d2d;
+    padding: 8px 15px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: 1px solid #444;
+}
+.slide-contenu .code-lang { color: #888; font-size: 0.8rem; font-family: monospace; }
+.slide-contenu .btn-copier {
+    background: transparent;
+    color: var(--surface);
+    border: 1px solid #555;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.slide-contenu .btn-copier:hover { background: #444; color: white; }
+.slide-contenu .code-content {
+    padding: 15px;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    color: #d4d4d4;
+    white-space: pre;
+}
+
+/* Couleurs syntaxiques pour le code */
+.hl-tag { color: #569cd6; }
+.hl-attr { color: #9cdcfe; }
+.hl-str { color: #ce9178; }
+.hl-comment { color: #6a9955; }
+.hl-folder { color: #d4af37; font-weight: bold; }
 
 /* Responsive */
 @media(max-width:600px){

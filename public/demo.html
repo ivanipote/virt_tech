@@ -3,331 +3,246 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Démo VirtEmulator V2</title>
+<title>Historique - VirtTech</title>
 <link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/css/header.css">
-<!-- CodeMirror -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 <style>
-    body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--fond); }
+    /* Styles de base pour la démo */
+    body { background: var(--fond); padding: 20px; font-family: sans-serif; }
+    .btn-demo { padding: 10px 20px; background: var(--metal-fonce); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
     
-    .emulator-container {
-        position: absolute; top: 70px; left: 10px; right: 10px; bottom: 10px;
-        display: flex; flex-direction: column;
-        border-radius: 20px; overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        background: #282a36;
-    }
-
-    /* Header de l'éditeur avec les onglets */
-    .editor-header {
-        display: flex; align-items: center;
-        background: #1e1e1e; border-bottom: 1px solid #444;
-        height: 40px; flex-shrink: 0;
-        overflow-x: auto; /* Scroll horizontal si trop d'onglets */
-        white-space: nowrap;
-    }
-    .editor-header::-webkit-scrollbar { height: 4px; }
-    .editor-header::-webkit-scrollbar-thumb { background: #555; }
-
-    .tab {
-        display: flex; align-items: center; gap: 5px;
-        padding: 0 15px; height: 100%;
-        color: #888; cursor: pointer; font-size: 0.85rem;
-        border-right: 1px solid #333;
-    }
-    .tab:hover { background: #2d2d2d; color: #ccc; }
-    .tab.active { background: #282a36; color: #fff; border-top: 2px solid var(--or); }
-    
-    .tab-close {
-        color: #888; font-size: 1rem; margin-left: 5px;
-        cursor: pointer; padding: 0 2px;
-    }
-    .tab-close:hover { color: #ff5555; }
-
-    .btn-add-tab {
-        background: transparent; border: none; color: #888;
-        font-size: 1.2rem; padding: 0 15px; cursor: pointer; height: 100%;
-    }
-    .btn-add-tab:hover { color: white; }
-
-    /* Zone du code */
-    .editor-body { flex: 1; position: relative; }
-    .CodeMirror { height: 100% !important; font-size: 14px; }
-
-    /* Bouton Play */
-    .btn-play-footer {
-        position: fixed; bottom: 25px; right: 25px; z-index: 100;
-        width: 55px; height: 55px; border-radius: 50%;
-        background: var(--metal-fonce); color: white;
-        display: flex; justify-content: center; align-items: center;
-        border: 2px solid var(--metal); cursor: pointer; transition: 0.3s;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.6);
-    }
-    .btn-play-footer:hover { background: var(--surface); color: var(--ombre); transform: scale(1.1); }
-
-    /* Overlay de création de fichier */
-    .overlay-create {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.7); backdrop-filter: blur(3px);
-        display: flex; justify-content: center; align-items: center;
-        z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s;
-    }
-    .overlay-create.ouvert { opacity: 1; visibility: visible; }
-    
-    .modal-create {
-        background: #2d2d2d; padding: 25px; border-radius: 15px;
-        border: 1px solid #444; width: 300px; text-align: center;
-    }
-    .modal-create h3 { color: white; margin-top: 0; }
-    .modal-create input {
-        width: 100%; padding: 10px; margin: 15px 0;
-        border-radius: 8px; border: 1px solid #555;
-        background: #1e1e1e; color: white; outline: none;
-    }
-    .modal-create .btns { display: flex; gap: 10px; }
-    .modal-create button {
-        flex: 1; padding: 10px; border-radius: 8px; border: none;
-        font-weight: bold; cursor: pointer;
-    }
-    .btn-annuler { background: #555; color: white; }
-    .btn-creer { background: var(--or); color: var(--ombre); }
-
-    /* Slide mobile */
-    .slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; }
+    /* --- LE SLIDE --- */
+    .slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,31,39,0.8); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
     .slide-overlay.ouvert { opacity: 1; visibility: visible; }
-    .slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: #2d2d2d; border-radius: 25px 25px 0 0; z-index: 1001; transform: translateY(100%); transition: transform 0.4s; display: flex; flex-direction: column; }
+    
+    .slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: var(--fond); border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 1001; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 0.8, 0.3, 1); display: flex; flex-direction: column; }
     .slide-panel.ouvert { transform: translateY(0); }
-    .slide-header { display: flex; justify-content: space-between; padding: 15px; background: #1e1e1e; color: white; border-radius: 25px 25px 0 0; }
-    .btn-fermer { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
-    .slide-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: auto; }
-    .iphone-frame { width: 320px; height: 650px; background: #000; border-radius: 45px; padding: 12px; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; flex-shrink: 0; }
-    .notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 110px; height: 28px; background: #000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; }
-    .iphone-screen { background: #fff; width: 100%; height: 100%; border-radius: 35px; overflow: hidden; }
-    .iphone-screen iframe { width: 100%; height: 100%; border: none; }
+    
+    .slide-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--metal-fonce); color: var(--blanc); border-bottom: 2px solid var(--metal); border-radius: 25px 25px 0 0; }
+    .slide-header h3 { margin: 0; font-size: 1.2rem; }
+    .btn-fermer { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+    
+    .slide-contenu { padding: 20px; overflow-y: auto; flex: 1; }
+    .slide-contenu h4 { color: var(--ombre); margin-top: 25px; margin-bottom: 10px; border-bottom: 2px solid var(--metal); padding-bottom: 5px; display: inline-block;}
+    .slide-contenu p { color: var(--metal-fonce); margin-bottom: 15px; line-height: 1.6;}
+    .slide-contenu ul { margin-left: 20px; margin-bottom: 15px; color: var(--metal-fonce); }
+    .slide-contenu li { margin-bottom: 5px; }
+
+    /* --- BLOC DE CODE INTERACTIF --- */
+    .code-block {
+        background: #1e1e1e;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 1px solid #444;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .code-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #2d2d2d;
+        padding: 8px 15px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom: 1px solid #444;
+    }
+    .code-lang { color: #888; font-size: 0.8rem; font-family: monospace; }
+    .btn-copier {
+        background: transparent;
+        color: var(--surface);
+        border: 1px solid #555;
+        padding: 3px 8px;
+        border-radius: 5px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .btn-copier:hover { background: #444; color: white; }
+    
+    .code-content {
+        padding: 15px;
+        overflow-x: auto;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9rem;
+        color: #d4d4d4;
+        white-space: pre;
+    }
+    /* Couleurs syntaxiques basiques */
+    .hl-tag { color: #569cd6; }
+    .hl-attr { color: #9cdcfe; }
+    .hl-str { color: #ce9178; }
+    .hl-comment { color: #6a9955; }
+    .hl-folder { color: #d4af37; font-weight: bold; } /* Pour les dossiers dans l'arborescence */
 </style>
 </head>
 <body>
 
-<div class="emulator-container">
-    <!-- HEADER AVEC ONGLETS -->
-    <div class="editor-header" id="editorHeader">
-        <!-- Les onglets seront générés ici par JS -->
-        <button class="btn-add-tab" id="btnAddTab" title="Nouveau fichier">+</button>
-    </div>
+<h1>Démo Historique</h1>
+<p>Clique pour voir le détail de la formation du 7 Novembre.</p>
+<button class="btn-demo" id="btnOuvrir">Lire l'activité</button>
 
-    <!-- ZONE DE CODE -->
-    <div class="editor-body" id="editorBody">
-        <textarea id="codeInput" style="display:none;"></textarea>
-    </div>
-</div>
-
-<!-- BOUTON PLAY -->
-<button class="btn-play-footer" id="btnPlay" title="Voir le rendu">
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-</button>
-
-<!-- OVERLAY CREATION -->
-<div class="overlay-create" id="overlayCreate">
-    <div class="modal-create">
-        <h3>Nouveau fichier</h3>
-        <input type="text" id="inputNomFichier" placeholder="ex: page2.html">
-        <div class="btns">
-            <button class="btn-annuler" id="btnAnnulerCreate">Annuler</button>
-            <button class="btn-creer" id="btnValiderCreate">Créer</button>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE MOBILE -->
+<!-- LE SLIDE -->
 <div class="slide-overlay" id="slideOverlay"></div>
 <div class="slide-panel" id="slidePanel">
     <div class="slide-header">
-        <h3 id="slideTitle">Aperçu Mobile</h3>
-        <button class="btn-fermer" id="btnFermerSlide">✕</button>
+        <h3>Formation : Arborescence et Liaison (7 Nov 2026)</h3>
+        <button class="btn-fermer" id="btnFermer">✕</button>
     </div>
-    <div class="slide-content">
-        <div class="iphone-frame">
-            <div class="notch"></div>
-            <div class="iphone-screen">
-                <iframe id="mobileIframe" title="Aperçu"></iframe>
+    <div class="slide-contenu">
+        
+        <h4>📁 C'est quoi un dossier ?</h4>
+        <p>Un dossier, c'est comme une <strong>boîte</strong>, un <strong>sac</strong>, ou un <strong>lieu</strong> où l'on range tout ce dont on a besoin pour atteindre un objectif. En informatique, c'est l'espace où l'on stocke les fichiers d'un projet.</p>
+
+        <h4>🌳 C'est quoi l'arborescence ?</h4>
+        <p>L'arborescence, c'est la <strong>structure</strong> que tu vois dans ton dossier de travail. En un mot, ce sont tous les fichiers et dossiers qui constituent ton projet, organisés de manière logique.</p>
+
+        <h4>🎯 Comment choisir une bonne arborescence ?</h4>
+        <p>Tout dépend du projet. Si ton projet est uniquement du <strong>front-end</strong> (pas de backend/serveur), tu as la liberté de structurer tes fichiers comme tu veux. Voici des exemples concrets :</p>
+
+        <h4>📂 Exemple 1 : Projet Minimal (Tout à la racine)</h4>
+        <p>C'est le plus simple pour débuter. Idéal pour un site vitrine statique.</p>
+        
+        <!-- ARBORESCENCE 1 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">STRUCTURE</span>
+                <button class="btn-copier" data-code="Mon-Ecole/
+├── index.html
+├── contact.html
+├── style.css
+├── script.js
+└── images/
+    ├── logo.png
+    └── banniere.jpg">📋 Copier</button>
             </div>
+            <div class="code-content">
+<span class="hl-folder">Mon-Ecole/</span>
+├── index.html
+├── contact.html
+├── style.css
+├── script.js
+└── <span class="hl-folder">images/</span>
+    ├── logo.png
+    └── banniere.jpg</div>
         </div>
+
+        <h4>📂 Exemple 2 : Projet Structuré (Avec sous-dossiers)</h4>
+        <p>Quand le projet grandit, on sépare le CSS, le JS et les médias dans des dossiers dédiés.</p>
+        
+        <!-- ARBORESCENCE 2 -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">STRUCTURE</span>
+                <button class="btn-copier" data-code="Mon-Portfolio/
+├── index.html
+├── a-propos.html
+├── css/
+│   ├── style.css
+│   └── responsive.css
+├── js/
+│   └── script.js
+└── assets/
+    ├── images/
+    │   └── profil.jpg
+    └── videos/
+        └── presentation.mp4">📋 Copier</button>
+            </div>
+            <div class="code-content">
+<span class="hl-folder">Mon-Portfolio/</span>
+├── index.html
+├── a-propos.html
+├── <span class="hl-folder">css/</span>
+│   ├── style.css
+│   └── responsive.css
+├── <span class="hl-folder">js/</span>
+│   └── script.js
+└── <span class="hl-folder">assets/</span>
+    ├── <span class="hl-folder">images/</span>
+    │   └── profil.jpg
+    └── <span class="hl-folder">videos/</span>
+        └── presentation.mp4</div>
+        </div>
+
+        <h4>🔗 Lier les fichiers entre eux</h4>
+        <p>Une fois l'arborescence créée, il faut dire au fichier HTML où trouver le CSS et le JS.</p>
+        
+        <p><strong>1. Lier le CSS</strong> (dans la balise <code>&lt;head&gt;</code>) :</p>
+        <!-- BLOC DE CODE CSS -->
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">HTML</span>
+                <button class="btn-copier" data-code="<link rel='stylesheet' href='style.css'>">📋 Copier</button>
+            </div>
+            <div class="code-content"><span class="hl-tag">&lt;link</span> <span class="hl-attr">rel</span>=<span class="hl-str">"stylesheet"</span> <span class="hl-attr">href</span>=<span class="hl-str">"style.css"</span><span class="hl-tag">&gt;</span></div>
+        </div>
+        <p><em>Si le CSS est dans un dossier (ex: <code>css/style.css</code>), on précise le chemin :</em></p>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">HTML</span>
+                <button class="btn-copier" data-code="<link rel='stylesheet' href='css/style.css'>">📋 Copier</button>
+            </div>
+            <div class="code-content"><span class="hl-tag">&lt;link</span> <span class="hl-attr">rel</span>=<span class="hl-str">"stylesheet"</span> <span class="hl-attr">href</span>=<span class="hl-str">"css/style.css"</span><span class="hl-tag">&gt;</span></div>
+        </div>
+
+        <p><strong>2. Lier le JS</strong> (juste avant la fermeture de <code>&lt;/body&gt;</code>) :</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">HTML</span>
+                <button class="btn-copier" data-code="<script src='script.js'></script>">📋 Copier</button>
+            </div>
+            <div class="code-content"><span class="hl-tag">&lt;script</span> <span class="hl-attr">src</span>=<span class="hl-str">"script.js"</span><span class="hl-tag">&gt;&lt;/script&gt;</span></div>
+        </div>
+
+        <h4>💡 Le secret des chemins</h4>
+        <p>La règle d'or : <strong>mettre le nom du sous-dossier, un slash, jusqu'à atteindre le fichier cible.</strong></p>
+        <p>Exemple : si ton image est dans <code>assets/images/logo.png</code>, tu écriras dans ton HTML :</p>
+        <div class="code-block">
+            <div class="code-header">
+                <span class="code-lang">HTML</span>
+                <button class="btn-copier" data-code="<img src='assets/images/logo.png' alt='Logo'>">📋 Copier</button>
+            </div>
+            <div class="code-content"><span class="hl-tag">&lt;img</span> <span class="hl-attr">src</span>=<span class="hl-str">"assets/images/logo.png"</span> <span class="hl-attr">alt</span>=<span class="hl-str">"Logo"</span><span class="hl-tag">&gt;</span></div>
+        </div>
+
     </div>
 </div>
 
-<script src="/js/header.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
-
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // --- VARIABLES GLOBALES ---
-    let files = {}; // Stocke tous les fichiers { "index.html": "code..." }
-    let activeFile = "index.html";
-    let editor;
+    // --- LOGIQUE DU SLIDE ---
+    const btnOuvrir = document.getElementById('btnOuvrir');
+    const overlay = document.getElementById('slideOverlay');
+    const panel = document.getElementById('slidePanel');
+    const btnFermer = document.getElementById('btnFermer');
 
-    // --- INITIALISATION ---
-    function init() {
-        // On charge depuis le localStorage ou on crée un index.html par défaut
-        const savedFiles = localStorage.getItem('virtemulator_files');
-        if (savedFiles) {
-            files = JSON.parse(savedFiles);
-        } else {
-            files["index.html"] = `<!DOCTYPE html>
-<html>
-<head><title>Mon site</title></head>
-<body>
-  <h1>Bienvenue sur VirtEmulator !</h1>
-  <p>Crée un nouveau fichier avec le bouton +</p>
-</body>
-</html>`;
-        }
+    function ouvrirSlide() {
+        overlay.classList.add('ouvert');
+        panel.classList.add('ouvert');
+        document.body.style.overflow = 'hidden';
+    }
 
-        // Initialisation de CodeMirror sur le textarea caché
-        editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
-            mode: "htmlmixed",
-            theme: "dracula",
-            lineNumbers: true,
-            autoCloseBrackets: true,
-            autoCloseTags: true
+    function fermerSlide() {
+        overlay.classList.remove('ouvert');
+        panel.classList.remove('ouvert');
+        document.body.style.overflow = '';
+    }
+
+    btnOuvrir.addEventListener('click', ouvrirSlide);
+    btnFermer.addEventListener('click', fermerSlide);
+    overlay.addEventListener('click', fermerSlide);
+
+    // --- LOGIQUE DU BOUTON COPIER ---
+    document.querySelectorAll('.btn-copier').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const codeACopier = this.getAttribute('data-code');
+            try {
+                await navigator.clipboard.writeText(codeACopier);
+                const originalText = this.innerHTML;
+                this.innerHTML = "✅ Copié !";
+                setTimeout(() => { this.innerHTML = originalText; }, 2000);
+            } catch (err) {
+                alert("Erreur lors de la copie.");
+            }
         });
-        document.getElementById('editorBody').appendChild(editor.getWrapperElement());
-
-        // On affiche le premier fichier
-        ouvrirFichier("index.html");
-        mettreAJourOnglets();
-    }
-
-    // --- GESTION DES ONGLETS ---
-    function mettreAJourOnglets() {
-        const header = document.getElementById('editorHeader');
-        // On garde le bouton "+" et on supprime les anciens onglets
-        header.innerHTML = '<button class="btn-add-tab" id="btnAddTab" title="Nouveau fichier">+</button>';
-        
-        // On recrée les onglets
-        Object.keys(files).forEach(nomFichier => {
-            const tab = document.createElement('div');
-            tab.className = 'tab' + (nomFichier === activeFile ? ' active' : '');
-            tab.innerHTML = `
-                <span class="tab-name">${nomFichier}</span>
-                <span class="tab-close" data-file="${nomFichier}">✕</span>
-            `;
-            // Clic pour changer de fichier
-            tab.onclick = (e) => {
-                if (e.target.classList.contains('tab-close')) {
-                    supprimerFichier(e.target.getAttribute('data-file'));
-                } else {
-                    ouvrirFichier(nomFichier);
-                }
-            };
-            header.insertBefore(tab, header.lastChild);
-        });
-
-        // On réattache l'événement au bouton +
-        document.getElementById('btnAddTab').onclick = ouvrirModalCreate;
-    }
-
-    function ouvrirFichier(nomFichier) {
-        if (activeFile && files[activeFile] !== undefined) {
-            // On sauvegarde le code du fichier qu'on quitte
-            files[activeFile] = editor.getValue();
-        }
-        activeFile = nomFichier;
-        editor.setValue(files[nomFichier]);
-        mettreAJourOnglets();
-    }
-
-    function supprimerFichier(nomFichier) {
-        if (Object.keys(files).length <= 1) {
-            alert("Tu ne peux pas supprimer le dernier fichier.");
-            return;
-        }
-        delete files[nomFichier];
-        if (activeFile === nomFichier) {
-            activeFile = Object.keys(files)[0];
-        }
-        ouvrirFichier(activeFile);
-    }
-
-    // --- CREATION DE FICHIER (MODAL) ---
-    const overlayCreate = document.getElementById('overlayCreate');
-    const inputNomFichier = document.getElementById('inputNomFichier');
-
-    function ouvrirModalCreate() {
-        overlayCreate.classList.add('ouvert');
-        inputNomFichier.value = "";
-        inputNomFichier.focus();
-    }
-
-    document.getElementById('btnAnnulerCreate').onclick = () => {
-        overlayCreate.classList.remove('ouvert');
-    };
-
-    document.getElementById('btnValiderCreate').onclick = () => {
-        let nom = inputNomFichier.value.trim();
-        if (!nom) return;
-        
-        // On ajoute .html si ce n'est pas déjà là
-        if (!nom.endsWith('.html')) nom += '.html';
-
-        if (files[nom]) {
-            alert("Ce fichier existe déjà !");
-            return;
-        }
-
-        // On crée le nouveau fichier avec un contenu de base
-        files[nom] = `<!DOCTYPE html>
-<html>
-<head><title>${nom}</title></head>
-<body>
-  <h1>Fichier ${nom}</h1>
-</body>
-</html>`;
-        overlayCreate.classList.remove('ouvert');
-        ouvrirFichier(nom);
-    };
-
-    // --- BOUTON PLAY (Aperçu du fichier en cours) ---
-    document.getElementById('btnPlay').onclick = () => {
-        // On récupère le code du fichier actif
-        const code = editor.getValue();
-        
-        // On affiche dans l'iframe
-        const doc = document.getElementById('mobileIframe').contentDocument;
-        doc.open();
-        doc.write(code);
-        doc.close();
-
-        document.getElementById('slideTitle').textContent = "Aperçu de " + activeFile;
-        document.getElementById('slideOverlay').classList.add('ouvert');
-        document.getElementById('slidePanel').classList.add('ouvert');
-    };
-
-    document.getElementById('btnFermerSlide').onclick = () => {
-        document.getElementById('slideOverlay').classList.remove('ouvert');
-        document.getElementById('slidePanel').classList.remove('ouvert');
-    };
-    document.getElementById('slideOverlay').onclick = () => {
-        document.getElementById('slideOverlay').classList.remove('ouvert');
-        document.getElementById('slidePanel').classList.remove('ouvert');
-    };
-
-    // --- SAUVEGARDE AUTOMATIQUE ---
-    setInterval(() => {
-        files[activeFile] = editor.getValue();
-        localStorage.setItem('virtemulator_files', JSON.stringify(files));
-    }, 3000); // Sauvegarde toutes les 3 secondes
-
-    // --- LANCEMENT ---
-    init();
-});
+    });
 </script>
 
 </body>

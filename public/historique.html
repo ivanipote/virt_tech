@@ -6,7 +6,7 @@
 <title>Historique - VirtTech</title>
 
 <!-- SEO & Réseaux Sociaux -->
-<meta name="description" content="Retrouvez l'historique de tous les événements, concours et projets réalisés par la communauté de développeurs VirtTech." />
+<meta name="description" content="Retrouvez l'historique de tous les événements, concours et formations réalisés par la communauté de développeurs VirtTech." />
 <meta property="og:title" content="Historique d'activité - VirtTech" />
 <meta property="og:description" content="Retrouve tous les événements et projets réalisés par la communauté VirtTech." />
 <meta property="og:image" content="https://virttech.site/logo.png" />
@@ -30,14 +30,23 @@
     <p class="sous-titre reveal" style="--d:.1s">Retrouvez tous les événements et projets réalisés par la communauté VirtTech.</p>
 
     <div class="grille-historique">
+        <!-- CARTE 1 : VIRT_DEV -->
         <div class="carte-activite carte-virtdev reveal" style="--d:.2s" onclick="ouvrirSlide('virtdev')">
             <h3>🏆 Concours Virt_Dev</h3>
             <p>La première édition du concours de développement web de VirtTech. Découvrez le déroulement, les gagnants et l'analyse du jury.</p>
             <div class="indice">Cliquez pour lire l'histoire ➔</div>
         </div>
+
+        <!-- CARTE 2 : FORMATION ARBORESCENCE -->
+        <div class="carte-activite carte-formation reveal" style="--d:.3s" onclick="ouvrirSlide('formation')">
+            <h3>📚 Formation : Arborescence</h3>
+            <p>Apprendre à structurer un projet web et à lier les fichiers (CSS, JS) correctement.</p>
+            <div class="indice">Cliquez pour lire l'histoire ➔</div>
+        </div>
     </div>
 </div>
 
+<!-- LE SLIDE -->
 <div class="slide-overlay" id="slide-overlay" onclick="fermerSlide()"></div>
 <div class="slide-panel" id="slide-panel">
     <div class="slide-header">
