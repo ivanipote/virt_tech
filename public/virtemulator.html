@@ -69,7 +69,12 @@
 <div class="slide-panel" id="slidePanel">
     <div class="slide-header">
         <h3 id="slideTitle">Aperçu</h3>
-        <button class="btn-fermer" id="btnFermerSlide">✕</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <!-- Boutons de zoom déplacés ici -->
+            <button class="btn-zoom-header" id="btnZoomOut" title="Zoom arrière">-</button>
+            <button class="btn-zoom-header" id="btnZoomIn" title="Zoom avant">+</button>
+            <button class="btn-fermer" id="btnFermerSlide">✕</button>
+        </div>
     </div>
     <div class="slide-content">
         <div class="iphone-frame">
@@ -93,11 +98,6 @@
                 <div class="nav-btn"></div>
             </div>
         </div>
-    </div>
-    <!-- Boutons de zoom -->
-    <div class="zoom-controls">
-        <button class="btn-zoom" id="btnZoomOut" title="Zoom arrière">-</button>
-        <button class="btn-zoom" id="btnZoomIn" title="Zoom avant">+</button>
     </div>
 </div>
 

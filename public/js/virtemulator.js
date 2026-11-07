@@ -59,6 +59,13 @@ document.addEventListener("DOMContentLoaded", function() {
             files[activeFile] = editor.getValue();
             localStorage.setItem('virtemulator_files', JSON.stringify(files));
         });
+
+        // 7. Restauration du zoom sauvegardé
+        const savedZoom = localStorage.getItem('virtemulator_zoom');
+        if (savedZoom) {
+            zoomLevel = parseFloat(savedZoom);
+        }
+        updateZoom(); // On applique le zoom (défini ou sauvegardé)
     }
 
     // --- GESTION DES ONGLETS ---
@@ -143,7 +150,6 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('slideTitle').textContent = "Aperçu de " + activeFile;
         document.getElementById('slideOverlay').classList.add('ouvert');
         document.getElementById('slidePanel').classList.add('ouvert');
-        zoomLevel = 1; updateZoom();
     };
 
     // --- GESTION DU SLIDE ---
@@ -159,9 +165,26 @@ document.addEventListener("DOMContentLoaded", function() {
     // --- ZOOM ---
     const btnZoomIn = document.getElementById('btnZoomIn');
     const btnZoomOut = document.getElementById('btnZoomOut');
-    function updateZoom() { iphoneFrame.style.transform = `scale(${zoomLevel})`; }
-    btnZoomIn.onclick = () => { if (zoomLevel < 1.5) { zoomLevel += 0.1; updateZoom(); } };
-    btnZoomOut.onclick = () => { if (zoomLevel > 0.5) { zoomLevel -= 0.1; updateZoom(); } };
+
+    function updateZoom() { 
+        iphoneFrame.style.transform = `scale(${zoomLevel})`; 
+        // Sauvegarde du niveau de zoom
+        localStorage.setItem('virtemulator_zoom', zoomLevel);
+    }
+
+    btnZoomIn.onclick = () => { 
+        if (zoomLevel < 1.5) { 
+            zoomLevel += 0.1; 
+            updateZoom(); 
+        } 
+    };
+    
+    btnZoomOut.onclick = () => { 
+        if (zoomLevel > 0.5) { 
+            zoomLevel -= 0.1; 
+            updateZoom(); 
+        } 
+    };
 
     // --- BOUTONS SAVE ET EXPORT ---
     const btnSave = document.getElementById('btnSaveCode');

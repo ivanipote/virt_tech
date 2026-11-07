@@ -171,7 +171,23 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
     width: 18px; height: 18px;
 }
 
-/* ZOOM */
-.zoom-controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; background: rgba(30,30,30,0.9); padding: 10px 20px; border-radius: 30px; border: 1px solid var(--metal); z-index: 1002; }
-.btn-zoom { background: var(--metal-fonce); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
-.btn-zoom:hover { background: var(--surface); color: var(--ombre); }
+/* BOUTONS DE ZOOM DANS LE HEADER */
+.btn-zoom-header {
+    background: var(--metal-fonce);
+    color: white;
+    border: 1px solid var(--metal);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+}
+.btn-zoom-header:hover {
+    background: var(--surface);
+    color: var(--ombre);
+}
