@@ -10,14 +10,13 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
     background: #282a36;
 }
 
-/* Header de l'éditeur */
+/* HEADER FIXE */
 .editor-header-wrapper {
     display: flex; justify-content: space-between;
     background: #1e1e1e; border-bottom: 1px solid #444;
     height: 40px; flex-shrink: 0;
 }
 
-/* Onglets */
 .editor-tabs {
     display: flex; align-items: center;
     overflow-x: auto; white-space: nowrap; flex: 1;
@@ -42,7 +41,6 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 }
 .btn-add-tab:hover { color: white; }
 
-/* Boutons d'action */
 .editor-actions {
     display: flex; align-items: center; gap: 5px;
     padding: 0 10px; border-left: 1px solid #333;
@@ -55,11 +53,21 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 }
 .btn-header-action:hover { background: #444; color: white; }
 
-/* Zone de code */
-.editor-body { flex: 1; position: relative; }
-.CodeMirror { height: 100% !important; font-size: 14px; }
+/* CORPS SCROLLABLE */
+.editor-body { 
+    flex: 1; 
+    position: relative; 
+    overflow: hidden; 
+}
+.CodeMirror {
+    height: 100% !important;
+    font-size: 14px;
+}
+.CodeMirror-scroll {
+    overflow: auto !important; 
+}
 
-/* Bouton Play */
+/* BOUTON PLAY */
 .btn-play-footer {
     position: fixed; bottom: 25px; right: 25px; z-index: 100;
     width: 55px; height: 55px; border-radius: 50%;
@@ -70,7 +78,7 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 }
 .btn-play-footer:hover { background: var(--surface); color: var(--ombre); transform: scale(1.1); }
 
-/* Overlay Création */
+/* OVERLAY CREATION */
 .overlay-create {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.7); backdrop-filter: blur(3px);
@@ -93,7 +101,7 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 .btn-annuler { background: #555; color: white; }
 .btn-creer { background: var(--or); color: var(--ombre); }
 
-/* Slide Mobile */
+/* SLIDE MOBILE */
 .slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; }
 .slide-overlay.ouvert { opacity: 1; visibility: visible; }
 .slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: #2d2d2d; border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 1001; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 0.8, 0.3, 1); display: flex; flex-direction: column; }
@@ -104,13 +112,66 @@ body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: 
 
 .slide-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: auto; text-align: center; }
 
-/* Téléphone */
-.iphone-frame { width: 320px; height: 650px; background: #000; border-radius: 45px; padding: 12px; box-shadow: 0 25px 60px rgba(0,0,0,0.6); position: relative; transition: transform 0.3s ease; transform-origin: center center; flex-shrink: 0; }
-.notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 110px; height: 28px; background: #000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; }
-.iphone-screen { background: #fff; width: 100%; height: 100%; border-radius: 35px; overflow: hidden; }
+/* FAUX TELEPHONE ANDROID */
+.iphone-frame { 
+    width: 320px; 
+    height: 650px; 
+    background: #000; 
+    border-radius: 35px; 
+    padding: 0;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.6), inset 0 0 0 2px #444; 
+    position: relative; 
+    transition: transform 0.3s ease; 
+    transform-origin: center center; 
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.status-bar {
+    background: #000;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 15px;
+    font-size: 0.75rem;
+    font-family: sans-serif;
+    height: 25px;
+    flex-shrink: 0;
+}
+.status-icons { display: flex; gap: 5px; align-items: center; }
+
+.iphone-screen { 
+    background: #fff; 
+    width: 100%; 
+    flex: 1;
+    overflow: hidden; 
+}
 .iphone-screen iframe { width: 100%; height: 100%; border: none; }
 
-/* Zoom */
+.nav-bar-android {
+    background: #000;
+    height: 40px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-shrink: 0;
+    border-top: 1px solid #333;
+}
+.nav-btn {
+    width: 15px; height: 15px;
+    background: transparent;
+    border: 2px solid #666;
+    border-radius: 3px;
+}
+.nav-btn.home {
+    border-radius: 50%;
+    width: 18px; height: 18px;
+}
+
+/* ZOOM */
 .zoom-controls { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; background: rgba(30,30,30,0.9); padding: 10px 20px; border-radius: 30px; border: 1px solid var(--metal); z-index: 1002; }
 .btn-zoom { background: var(--metal-fonce); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
 .btn-zoom:hover { background: var(--surface); color: var(--ombre); }
