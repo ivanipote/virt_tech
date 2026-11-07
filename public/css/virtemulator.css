@@ -1,0 +1,142 @@
+/* --- virtemulator.css --- */
+
+body, html { 
+    margin: 0; 
+    padding: 0; 
+    height: 100%; 
+    overflow: hidden; 
+    background: #000; 
+}
+
+/* Conteneur principal sous le header */
+.emulator-wrapper {
+    position: absolute;
+    top: 70px; /* Hauteur du header */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 7px 10px 10px 10px; /* 7px de padding top comme demandé */
+    box-sizing: border-box;
+}
+
+/* La zone de l'éditeur (CodeMirror) */
+.CodeMirror {
+    flex: 1;
+    height: auto !important;
+    font-size: 14px;
+    font-family: 'Courier New', Courier, monospace;
+    border-radius: 20px 20px 0 0;
+    border: 2px solid #333; 
+    border-bottom: none; 
+}
+
+/* Scroll X et Y au glissement */
+.CodeMirror-scroll {
+    overflow: auto !important; /* Permet le scroll dans les deux sens */
+    border-radius: 20px 20px 0 0;
+    /* Pour un scroll fluide au doigt sur mobile */
+    -webkit-overflow-scrolling: touch; 
+}
+
+/* Le bouton Play (Footer) */
+.btn-play-footer {
+    position: fixed;
+    bottom: 20px; right: 20px; z-index: 100;
+    width: 55px; height: 55px; border-radius: 50%;
+    background: var(--metal-fonce); color: white;
+    display: flex; justify-content: center; align-items: center;
+    border: 2px solid var(--metal); cursor: pointer; transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+}
+.btn-play-footer:hover { 
+    background: var(--surface); 
+    color: var(--ombre); 
+    transform: scale(1.1); 
+}
+
+/* --- LE SLIDE (Aperçu mobile) --- */
+.slide-overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(3px); 
+    z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; 
+}
+.slide-overlay.ouvert { opacity: 1; visibility: visible; }
+
+.slide-panel { 
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; 
+    background: #2d2d2d; border-radius: 25px 25px 0 0; 
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 1001; 
+    transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 0.8, 0.3, 1); 
+    display: flex; flex-direction: column; 
+}
+.slide-panel.ouvert { transform: translateY(0); }
+
+.slide-header { 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 15px 20px; background: #1e1e1e; color: var(--surface); 
+    border-bottom: 2px solid var(--metal); border-radius: 25px 25px 0 0; 
+}
+.slide-header h3 { font-size: 1.1rem; margin: 0; color: white;}
+.btn-fermer { background: none; border: none; color: var(--surface); font-size: 1.5rem; cursor: pointer; }
+
+/* Conteneur du téléphone (Scrollable) */
+.slide-content { 
+    flex: 1; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 20px; 
+    overflow: auto; /* Permet de scroller si le téléphone est trop grand */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Le conteneur du téléphone avec transition pour le zoom */
+.iphone-frame { 
+    width: 320px; height: 650px; 
+    background: #000; 
+    border-radius: 45px; 
+    padding: 12px; 
+    box-shadow: 0 25px 60px rgba(0,0,0,0.6), inset 0 0 0 2px #444; 
+    position: relative; 
+    transition: transform 0.3s ease; /* Animation fluide pour le zoom */
+    transform-origin: top center; /* Le zoom part du haut */
+}
+
+.notch { 
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%); 
+    width: 110px; height: 28px; background: #000; 
+    border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10; 
+}
+.iphone-screen { 
+    background: #fff; width: 100%; height: 100%; border-radius: 35px; 
+    overflow: hidden; 
+}
+.iphone-screen iframe { width: 100%; height: 100%; border: none; }
+
+/* --- BOUTONS DE ZOOM --- */
+.zoom-controls {
+    position: absolute;
+    bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    background: rgba(30,30,30,0.9);
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: 1px solid var(--metal);
+    z-index: 1002;
+}
+.btn-zoom {
+    background: var(--metal-fonce);
+    color: white;
+    border: none;
+    width: 35px; height: 35px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex; justify-content: center; align-items: center;
+    transition: 0.2s;
+}
+.btn-zoom:hover { background: var(--surface); color: var(--ombre); }
