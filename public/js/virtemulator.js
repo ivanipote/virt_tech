@@ -8,10 +8,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // --- INITIALISATION ---
     function init() {
+        // 1. On charge les fichiers sauvegardés s'ils existent
         const savedFiles = localStorage.getItem('virtemulator_files');
         if (savedFiles) {
-            files = JSON.parse(savedFiles);
-        } else {
+            try {
+                files = JSON.parse(savedFiles);
+            } catch (e) {
+                console.error("Erreur de lecture du localStorage", e);
+                files = {};
+            }
+        }
+        
+        // 2. Si aucun fichier n'est trouvé, on crée l'index.html par défaut
+        if (!files["index.html"]) {
             files["index.html"] = `<!DOCTYPE html>
 <html>
 <head><title>Mon site</title></head>
@@ -22,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </html>`;
         }
 
+        // 3. Initialisation de CodeMirror
         editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
             mode: "htmlmixed", theme: "dracula", lineNumbers: true,
             lineWrapping: false, indentUnit: 2, tabSize: 2, viewportMargin: Infinity,
@@ -29,10 +39,11 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         document.getElementById('editorBody').appendChild(editor.getWrapperElement());
 
-        ouvrirFichier("index.html");
+        // 4. On ouvre le premier fichier (ou l'index.html)
+        ouvrirFichier(files["index.html"] ? "index.html" : Object.keys(files)[0]);
         mettreAJourOnglets();
         
-        // Mise à jour de l'heure Android
+        // 5. Horloge Android
         function updateTime() {
             const now = new Date();
             const hours = now.getHours().toString().padStart(2, '0');
@@ -42,6 +53,12 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         setInterval(updateTime, 1000);
         updateTime();
+
+        // 6. SAUVEGARDE INSTANTANÉE À CHAQUE FRAPPE
+        editor.on('change', function() {
+            files[activeFile] = editor.getValue();
+            localStorage.setItem('virtemulator_files', JSON.stringify(files));
+        });
     }
 
     // --- GESTION DES ONGLETS ---
@@ -181,12 +198,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 2000);
         };
     }
-
-    // --- SAUVEGARDE AUTOMATIQUE ---
-    setInterval(() => {
-        files[activeFile] = editor.getValue();
-        localStorage.setItem('virtemulator_files', JSON.stringify(files));
-    }, 5000);
 
     // --- LANCEMENT ---
     init();
