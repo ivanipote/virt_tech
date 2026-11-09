@@ -6,17 +6,21 @@ document.addEventListener("DOMContentLoaded", function() {
     let zoomLevel = 1;
     let debounceTimer;
     let modeNuit = false;
+    let modeleActif = 'samsung';  // 'samsung' | 'iphone'
+    let chromeMasque = false;
 
-    // Éléments du slide et du téléphone
+    // Éléments du slide
     const slideOverlay = document.getElementById('slideOverlay');
     const slidePanel = document.getElementById('slidePanel');
     const btnFermerSlide = document.getElementById('btnFermerSlide');
-    const iphoneFrame = document.getElementById('iphoneFrame');
     const btnAccueilHeader = document.getElementById('btnAccueil');
     const btnZoomIn = document.getElementById('btnZoomIn');
     const btnZoomOut = document.getElementById('btnZoomOut');
+    const btnToggleChrome = document.getElementById('btnToggleChrome');
+    const iconToggleChrome = document.getElementById('iconToggleChrome');
+    const phoneSamsung = document.getElementById('phoneSamsung');
+    const phoneIphone = document.getElementById('phoneIphone');
 
-    // Code de bienvenue (uniquement si aucun index.html sauvegardé)
     const CODE_BIENVENUE = `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -39,8 +43,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </html>`;
 
     // ==========================================
-    // UTILITAIRE : Normaliser un nom de fichier
-    // "index" -> "index.html"  |  "page1.html" -> "page1.html"
+    // UTILITAIRES
     // ==========================================
     function normaliserNom(nom) {
         if (!nom) return "";
@@ -48,23 +51,33 @@ document.addEventListener("DOMContentLoaded", function() {
         return nom.endsWith('.html') ? nom : nom + '.html';
     }
 
+    function getPrefix() {
+        return modeleActif === 'iphone' ? 'iphone' : 'samsung';
+    }
+
+    function getEl(suffixe) {
+        return document.getElementById(getPrefix() + '-' + suffixe);
+    }
+
     // ==========================================
-    // 1. INITIALISATION
+    // INITIALISATION
     // ==========================================
     function init() {
         const savedFiles = localStorage.getItem('virtemulator_files');
         if (savedFiles) {
-            try {
-                files = JSON.parse(savedFiles) || {};
-            } catch (e) { files = {}; }
+            try { files = JSON.parse(savedFiles) || {}; } catch (e) { files = {}; }
         }
-
-        // Si index.html n'existe pas, on le crée avec le code de bienvenue
         if (!files["index.html"]) {
             files["index.html"] = CODE_BIENVENUE;
         }
 
-        // INITIALISATION CODEMIRROR
+        // Restaurer le modèle choisi
+        const savedModele = localStorage.getItem('virtemulator_modele');
+        if (savedModele === 'iphone' || savedModele === 'samsung') {
+            modeleActif = savedModele;
+        }
+
+        // INIT CODEMIRROR
         editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
             mode: "htmlmixed", theme: "dracula", lineNumbers: true,
             lineWrapping: false, indentUnit: 2, tabSize: 2, viewportMargin: Infinity,
@@ -72,49 +85,82 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         document.getElementById('editorBody').appendChild(editor.getWrapperElement());
 
-        // Charger le premier fichier
         activeFile = Object.keys(files)[0] || "index.html";
         editor.setValue(files[activeFile] || CODE_BIENVENUE);
 
         mettreAJourOnglets();
         mettreAJourPreviewPC();
         mettreAJourHorloge();
+        appliquerModele();
         genererUserApps();
 
         setInterval(mettreAJourHorloge, 1000);
 
-        // ÉCOUTE DES MODIFICATIONS CODEMIRROR
+        // MODIFICATIONS CODEMIRROR
         editor.on('change', function() {
-            // SAUVEGARDER TOUJOURS (y compris index.html)
             files[activeFile] = editor.getValue();
             localStorage.setItem('virtemulator_files', JSON.stringify(files));
-
-            // Preview PC
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 mettreAJourPreviewPC();
-                // Si le slide est ouvert ET qu'on affiche une page, rafraîchir le navigateur interne
                 rafraichirNavigateurSiOuvert();
             }, 500);
         });
 
-        // Restauration du nom du téléphone
+        // Restauration nom téléphone
         const savedName = localStorage.getItem('virttech_device_name');
         if (savedName) {
-            const nameInput = document.getElementById('deviceNameInput');
-            if (nameInput) nameInput.value = savedName;
+            ['samsung', 'iphone'].forEach(prefix => {
+                const input = document.getElementById(prefix + '-deviceNameInput');
+                if (input) input.value = savedName;
+            });
         }
 
-        // Restauration du mode nuit
-        const savedTheme = localStorage.getItem('virttech_dark_mode');
-        if (savedTheme === 'true') {
-            modeNuit = false; // reset avant bascule
-            basculerTheme(); // toggle
+        // Restauration mode nuit
+        if (localStorage.getItem('virttech_dark_mode') === 'true') {
+            modeNuit = false;
+            basculerTheme();
         }
     }
 
     // ==========================================
-    // 2. PREVIEW PC
+    // MODÈLE (Samsung / iPhone)
+    // ==========================================
+    window.changerModele = function(modele) {
+        if (modele !== 'samsung' && modele !== 'iphone') return;
+        modeleActif = modele;
+        localStorage.setItem('virtemulator_modele', modele);
+        appliquerModele();
+        afficherPage('launcher');
+        genererUserApps();
+        mettreAJourHorloge();
+
+        // Reset état Chrome + réappliquer sur les 2 barres
+        chromeMasque = false;
+        appliquerMasquageChrome();
+        if (iconToggleChrome) iconToggleChrome.className = 'fa-solid fa-eye';
+        if (btnToggleChrome) {
+            btnToggleChrome.style.display = 'none';
+            btnToggleChrome.title = 'Masquer la barre';
+        }
+    };
+
+    function appliquerModele() {
+        if (modeleActif === 'iphone') {
+            phoneSamsung.style.display = 'none';
+            phoneIphone.style.display = 'flex';
+            document.getElementById('btnModelSamsung').classList.remove('active');
+            document.getElementById('btnModelIphone').classList.add('active');
+        } else {
+            phoneIphone.style.display = 'none';
+            phoneSamsung.style.display = 'flex';
+            document.getElementById('btnModelIphone').classList.remove('active');
+            document.getElementById('btnModelSamsung').classList.add('active');
+        }
+    }
+
+    // ==========================================
+    // PREVIEW PC
     // ==========================================
     function mettreAJourPreviewPC() {
         const pcIframe = document.getElementById('pcIframe');
@@ -125,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ==========================================
-    // 3. GESTION DES ONGLETS
+    // ONGLETS ÉDITEUR
     // ==========================================
     function mettreAJourOnglets() {
         const header = document.getElementById('editorHeader');
@@ -152,7 +198,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function ouvrirFichier(nomFichier) {
-        // Sauvegarder le fichier courant avant de changer
         if (activeFile && files[activeFile] !== undefined) {
             files[activeFile] = editor.getValue();
             localStorage.setItem('virtemulator_files', JSON.stringify(files));
@@ -165,26 +210,17 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function supprimerFichier(nomFichier) {
-        if (Object.keys(files).length <= 1) {
-            alert("Tu ne peux pas supprimer le dernier fichier.");
-            return;
-        }
-        if (nomFichier === "index.html") {
-            alert("Tu ne peux pas supprimer le fichier index.html.");
-            return;
-        }
+        if (Object.keys(files).length <= 1) { alert("Tu ne peux pas supprimer le dernier fichier."); return; }
+        if (nomFichier === "index.html") { alert("Tu ne peux pas supprimer le fichier index.html."); return; }
         delete files[nomFichier];
         localStorage.setItem('virtemulator_files', JSON.stringify(files));
-
-        if (activeFile === nomFichier) {
-            activeFile = Object.keys(files)[0];
-        }
+        if (activeFile === nomFichier) activeFile = Object.keys(files)[0];
         ouvrirFichier(activeFile);
-        genererUserApps();  // rafraîchir "Mes pages"
+        genererUserApps();
     }
 
     // ==========================================
-    // 4. MODAL CREATION
+    // MODAL CREATION
     // ==========================================
     const overlayCreate = document.getElementById('overlayCreate');
     const inputNomFichier = document.getElementById('inputNomFichier');
@@ -203,120 +239,127 @@ document.addEventListener("DOMContentLoaded", function() {
         let nom = inputNomFichier.value.trim();
         if (!nom) return;
         nom = normaliserNom(nom);
-        if (files[nom]) {
-            alert("Ce fichier existe déjà !");
-            return;
-        }
-
+        if (files[nom]) { alert("Ce fichier existe déjà !"); return; }
         files[nom] = `<!DOCTYPE html>\n<html>\n<head>\n<title>${nom}</title>\n</head>\n<body>\n  <h1>Fichier ${nom}</h1>\n</body>\n</html>`;
         localStorage.setItem('virtemulator_files', JSON.stringify(files));
         overlayCreate.classList.remove('ouvert');
         ouvrirFichier(nom);
-        genererUserApps();  // rafraîchir "Mes pages" du téléphone
+        genererUserApps();
     };
 
     // ==========================================
-    // 5. LE SLIDE ET LE TÉLÉPHONE
+    // SLIDE
     // ==========================================
     document.getElementById('btnPlay').onclick = function() {
         slideOverlay.classList.add('ouvert');
         slidePanel.classList.add('ouvert');
 
+        // TOUJOURS revenir à l'accueil à l'ouverture
         afficherPage('launcher');
 
-        // Zoom sauvegardé
+        // Reset Chrome bar (les 2 modèles)
+        chromeMasque = false;
+        appliquerMasquageChrome();
+        if (iconToggleChrome) iconToggleChrome.className = 'fa-solid fa-eye';
+        if (btnToggleChrome) btnToggleChrome.title = 'Masquer la barre';
+
+        // Zoom
         const savedZoom = localStorage.getItem('virtemulator_zoom');
-        if (savedZoom) { zoomLevel = parseFloat(savedZoom); }
-        iphoneFrame.style.transform = `scale(${zoomLevel})`;
+        if (savedZoom) zoomLevel = parseFloat(savedZoom);
+        appliquerZoom();
 
         mettreAJourHorloge();
-        genererUserApps();  // rafraîchir "Mes pages" à chaque ouverture
+        genererUserApps();
     };
+
+    function appliquerZoom() {
+        if (phoneSamsung) phoneSamsung.style.transform = `scale(${zoomLevel})`;
+        if (phoneIphone) phoneIphone.style.transform = `scale(${zoomLevel})`;
+    }
 
     function fermerSlide() {
         slideOverlay.classList.remove('ouvert');
         slidePanel.classList.remove('ouvert');
-        // Réinitialiser l'état de navigation du téléphone
         afficherPage('launcher');
-        fermerRecents?.();
+        chromeMasque = false;
+        appliquerMasquageChrome();
+        if (iconToggleChrome) iconToggleChrome.className = 'fa-solid fa-eye';
     }
     btnFermerSlide.onclick = fermerSlide;
     slideOverlay.onclick = fermerSlide;
 
-    // Zoom
     btnZoomIn.onclick = function() {
         if (zoomLevel < 1.5) {
             zoomLevel += 0.1;
-            iphoneFrame.style.transform = `scale(${zoomLevel})`;
+            appliquerZoom();
             localStorage.setItem('virtemulator_zoom', zoomLevel);
         }
     };
     btnZoomOut.onclick = function() {
         if (zoomLevel > 0.5) {
             zoomLevel -= 0.1;
-            iphoneFrame.style.transform = `scale(${zoomLevel})`;
+            appliquerZoom();
             localStorage.setItem('virtemulator_zoom', zoomLevel);
         }
     };
 
-    // Bouton Accueil du header
     btnAccueilHeader.onclick = function() {
         afficherPage('launcher');
     };
 
     // ==========================================
-    // 6. NAVIGATION INTERNE DU TÉLÉPHONE
+    // NAVIGATION INTERNE
     // ==========================================
     let pageActive = 'launcher';
-    let historique = ["index"];
+    let historique = ["index.html"];
     let indexHistorique = 0;
 
-    // Mapping explicite nom logique -> id HTML
-    const PAGE_MAP = {
-        'launcher': 'launcherPage',
-        'google': 'googleHomePage',
-        'browser': 'browserPage',
-        'settings': 'settingsPage',
-        'clock': 'clockPage'
-    };
-
     window.afficherPage = function(nom) {
-        if (!PAGE_MAP[nom]) {
-            console.warn("Page inconnue :", nom);
-            return;
-        }
+        const pages = ['launcher', 'googleHome', 'browser', 'settings', 'clock'];
         pageActive = nom;
 
-        Object.values(PAGE_MAP).forEach(id => {
+        pages.forEach(p => {
+            const id = getPrefix() + '-' + p + 'Page';
             const el = document.getElementById(id);
             if (!el) return;
             el.className = 'page';
-            el.classList.add(id === PAGE_MAP[nom] ? 'active' : 'behind');
+            if (p === (nom === 'google' ? 'googleHome' : nom)) {
+                el.classList.add('active');
+            } else {
+                el.classList.add('behind');
+            }
         });
+
+        // Bouton toggle Chrome visible uniquement sur browser
+        btnToggleChrome.style.display = (nom === 'browser') ? 'flex' : 'none';
+
+        // Réappliquer l'état de masquage sur les 2 barres
+        appliquerMasquageChrome();
     };
 
     // ==========================================
-    // 7. GÉNÉRATION DES APPS USER ("Mes pages")
+    // GÉNÉRATION DES APPS USER (les 2 modèles)
     // ==========================================
     function genererUserApps() {
-        const grid = document.getElementById('userAppsGrid');
-        if (!grid) return;
-        grid.innerHTML = '';
-
-        Object.keys(files).forEach(nom => {
-            const div = document.createElement('div');
-            div.className = 'app-icon';
-            div.onclick = () => ouvrirNavigateur(nom);
-            div.innerHTML = `
-                <span class="icon-box icon-web"><i class="fa-solid fa-code"></i></span>
-                <span class="app-label">${nom}</span>
-            `;
-            grid.appendChild(div);
+        ['samsung', 'iphone'].forEach(prefix => {
+            const grid = document.getElementById(prefix + '-userAppsGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            Object.keys(files).forEach(nom => {
+                const div = document.createElement('div');
+                div.className = 'app-icon';
+                div.onclick = () => ouvrirNavigateur(nom);
+                div.innerHTML = `
+                    <span class="icon-box icon-web"><i class="fa-solid fa-code"></i></span>
+                    <span class="app-label">${nom}</span>
+                `;
+                grid.appendChild(div);
+            });
         });
     }
 
     // ==========================================
-    // 8. LOGIQUE DU NAVIGATEUR
+    // NAVIGATEUR
     // ==========================================
     window.ouvrirNavigateur = function(page) {
         const nom = normaliserNom(page || 'index');
@@ -326,7 +369,6 @@ document.addEventListener("DOMContentLoaded", function() {
         chargerPage(nom, false);
     };
 
-    // "Lire ma page actuelle" : ouvre le fichier en cours d'édition
     window.ouvrirPageActuelle = function() {
         ouvrirNavigateur(activeFile);
     };
@@ -340,22 +382,28 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(ouvrirModalCreate, 300);
     };
 
+    // RECHERCHE dans la barre Google → vraie navigation entre pages user
     window.homeSearchEnter = function(e) {
         if (e.key === 'Enter') {
-            const val = document.getElementById('homeSearchInput').value.trim();
+            const input = getEl('homeSearchInput');
+            if (!input) return;
+            const val = input.value.trim();
             if (!val) return;
-            ouvrirNavigateur(val);
-            document.getElementById('homeSearchInput').value = '';
+            const nom = normaliserNom(val);
+            ouvrirNavigateur(nom);
+            input.value = '';
         }
     };
 
     function chargerPage(nom, ajouterHistorique = true) {
-        const iframe = document.getElementById('browserIframe');
-        const pageContent = document.getElementById('pageContent');
-        const page404 = document.getElementById('page404');
-        const loadingBar = document.getElementById('loadingBar');
-
+        const iframe = getEl('browserIframe');
+        const pageContent = getEl('pageContent');
+        const page404 = getEl('page404');
+        const loadingBar = getEl('loadingBar');
+        const urlInput = getEl('urlInput');
         const nomComplet = normaliserNom(nom);
+
+        if (!iframe) return;
 
         if (ajouterHistorique) {
             historique = historique.slice(0, indexHistorique + 1);
@@ -372,30 +420,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
         setTimeout(() => {
             loadingBar.classList.remove('active');
-
             if (files[nomComplet]) {
                 iframe.style.display = 'block';
                 const doc = iframe.contentDocument || iframe.contentWindow.document;
                 doc.open();
                 doc.write(files[nomComplet]);
                 doc.close();
-                const urlInput = document.getElementById('urlInput');
                 if (urlInput) urlInput.value = nomComplet.replace('.html', '');
             } else {
                 page404.style.display = 'flex';
-                const urlInput = document.getElementById('urlInput');
                 if (urlInput) urlInput.value = nomComplet + " (introuvable)";
             }
             mettreAJourBoutonsNavigation();
         }, 500);
     }
 
-    // Rafraîchir le navigateur interne si on y est et qu'on édite
     function rafraichirNavigateurSiOuvert() {
         if (pageActive === 'browser' && indexHistorique >= 0) {
             const nomActuel = historique[indexHistorique];
             if (nomActuel && files[nomActuel]) {
-                const iframe = document.getElementById('browserIframe');
+                const iframe = getEl('browserIframe');
                 if (iframe && iframe.style.display !== 'none') {
                     const doc = iframe.contentDocument || iframe.contentWindow.document;
                     doc.open();
@@ -408,7 +452,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.handleEnter = function(e) {
         if (e.key === 'Enter') {
-            let nom = document.getElementById('urlInput').value.trim();
+            const input = getEl('urlInput');
+            if (!input) return;
+            let nom = input.value.trim();
             if (!nom) return;
             nom = normaliserNom(nom);
             chargerPage(nom, true);
@@ -430,32 +476,24 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     window.rechargerPage = function() {
-        if (indexHistorique >= 0) {
-            chargerPage(historique[indexHistorique], false);
-        }
+        if (indexHistorique >= 0) chargerPage(historique[indexHistorique], false);
     };
 
     function mettreAJourBoutonsNavigation() {
-        const btnBack = document.getElementById('btnBack');
-        const btnForward = document.getElementById('btnForward');
-        if (btnBack) {
-            if (indexHistorique > 0) btnBack.classList.remove('desactive');
-            else btnBack.classList.add('desactive');
-        }
-        if (btnForward) {
-            if (indexHistorique < historique.length - 1) btnForward.classList.remove('desactive');
-            else btnForward.classList.add('desactive');
-        }
+        const btnBack = getEl('btnBack');
+        const btnForward = getEl('btnForward');
+        if (btnBack) btnBack.classList.toggle('desactive', indexHistorique <= 0);
+        if (btnForward) btnForward.classList.toggle('desactive', indexHistorique >= historique.length - 1);
     }
 
     // ==========================================
-    // 9. BARRE DE NAVIGATION SAMSUNG
+    // BARRE DE NAVIGATION SAMSUNG (si jamais réutilisée)
     // ==========================================
     window.navRetour = function() {
         if (pageActive === 'browser') {
             if (indexHistorique > 0) retourArriere();
             else afficherPage('launcher');
-        } else if (pageActive === 'google' || pageActive === 'settings' || pageActive === 'clock') {
+        } else if (['google', 'settings', 'clock'].includes(pageActive)) {
             afficherPage('launcher');
         }
     };
@@ -465,7 +503,32 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     // ==========================================
-    // 10. HORLOGE ET CHRONO
+    // TOGGLE CHROME BAR (applique aux 2 modèles)
+    // ==========================================
+    window.toggleChromeBar = function() {
+        chromeMasque = !chromeMasque;
+        appliquerMasquageChrome();
+
+        if (iconToggleChrome) {
+            iconToggleChrome.className = chromeMasque ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+        }
+        if (btnToggleChrome) {
+            btnToggleChrome.title = chromeMasque ? 'Afficher la barre' : 'Masquer la barre';
+        }
+    };
+
+    // Applique l'état de masquage sur LES DEUX barres Chrome
+    function appliquerMasquageChrome() {
+        ['samsung', 'iphone'].forEach(prefix => {
+            const bar = document.getElementById(prefix + '-chromeBar');
+            if (bar) {
+                bar.classList.toggle('hidden', chromeMasque);
+            }
+        });
+    }
+
+    // ==========================================
+    // HORLOGE
     // ==========================================
     function mettreAJourHorloge() {
         const maintenant = new Date();
@@ -473,64 +536,61 @@ document.addEventListener("DOMContentLoaded", function() {
         const minutes = String(maintenant.getMinutes()).padStart(2, '0');
         const heure = `${heures}:${minutes}`;
 
-        const ids = ['statusTime', 'googleStatusTime', 'browserStatusTime', 'settingsStatusTime', 'clockStatusTime'];
-        ids.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = heure;
+        ['samsung', 'iphone'].forEach(prefix => {
+            ['statusTime', 'googleStatusTime', 'browserStatusTime', 'settingsStatusTime', 'clockStatusTime'].forEach(suffix => {
+                const el = document.getElementById(prefix + '-' + suffix);
+                if (el) el.textContent = heure;
+            });
+            const bigTime = document.getElementById(prefix + '-bigTime');
+            if (bigTime) bigTime.textContent = heure;
+            const clockT = document.getElementById(prefix + '-clockCurrentTime');
+            if (clockT) clockT.textContent = heure;
+
+            const jours = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+            const mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+            const dateStr = `${jours[maintenant.getDay()]} ${maintenant.getDate()} ${mois[maintenant.getMonth()]}`;
+            const bigDate = document.getElementById(prefix + '-bigDate');
+            if (bigDate) bigDate.textContent = dateStr;
+            const clockD = document.getElementById(prefix + '-clockCurrentDate');
+            if (clockD) clockD.textContent = dateStr;
         });
-
-        const bigTime = document.getElementById('bigTime');
-        if (bigTime) bigTime.textContent = heure;
-        const clockCurrentTime = document.getElementById('clockCurrentTime');
-        if (clockCurrentTime) clockCurrentTime.textContent = heure;
-
-        const jours = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
-        const mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-        const dateStr = `${jours[maintenant.getDay()]} ${maintenant.getDate()} ${mois[maintenant.getMonth()]}`;
-
-        const bigDate = document.getElementById('bigDate');
-        if (bigDate) bigDate.textContent = dateStr;
-        const clockCurrentDate = document.getElementById('clockCurrentDate');
-        if (clockCurrentDate) clockCurrentDate.textContent = dateStr;
     }
 
-    // Chrono
+    // ==========================================
+    // CHRONO
+    // ==========================================
     let chronoEnCours = false;
     let chronoStartTime = 0;
     let chronoElapsed = 0;
     let chronoInterval = null;
 
     function formaterChrono(ms) {
-        const totalCentiemes = Math.floor(ms / 10);
-        const centiemes = totalCentiemes % 100;
-        const totalSecondes = Math.floor(totalCentiemes / 100);
-        const secondes = totalSecondes % 60;
-        const minutes = Math.floor(totalSecondes / 60);
-        return `${String(minutes).padStart(2, '0')}:${String(secondes).padStart(2, '0')}.${String(centiemes).padStart(2, '0')}`;
+        const tc = Math.floor(ms / 10), c = tc % 100, ts = Math.floor(tc / 100), s = ts % 60, m = Math.floor(ts / 60);
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(c).padStart(2, '0')}`;
     }
 
     window.toggleStopwatch = function() {
-        const startBtn = document.getElementById('swStartBtn');
-        const startIcon = document.getElementById('swStartIcon');
-        const resetBtn = document.getElementById('swResetBtn');
-        if (!startBtn) return;
+        const btn = getEl('swStartBtn');
+        const icon = getEl('swStartIcon');
+        const reset = getEl('swResetBtn');
+        if (!btn) return;
 
         if (!chronoEnCours) {
             chronoEnCours = true;
             chronoStartTime = Date.now() - chronoElapsed;
             chronoInterval = setInterval(() => {
                 chronoElapsed = Date.now() - chronoStartTime;
-                const disp = document.getElementById('stopwatchDisplay');
+                const disp = getEl('stopwatchDisplay');
                 if (disp) disp.textContent = formaterChrono(chronoElapsed);
             }, 10);
-            startBtn.classList.add('running');
-            if (startIcon) startIcon.className = 'fa-solid fa-pause';
-            if (resetBtn) resetBtn.classList.remove('disabled');
+            btn.classList.add('running');
+            if (icon) icon.className = 'fa-solid fa-pause';
+            if (reset) reset.classList.remove('disabled');
         } else {
             chronoEnCours = false;
             clearInterval(chronoInterval);
-            startBtn.classList.remove('running');
-            if (startIcon) startIcon.className = 'fa-solid fa-play';
+            btn.classList.remove('running');
+            if (icon) icon.className = 'fa-solid fa-play';
         }
     };
 
@@ -538,53 +598,47 @@ document.addEventListener("DOMContentLoaded", function() {
         chronoEnCours = false;
         clearInterval(chronoInterval);
         chronoElapsed = 0;
-        const disp = document.getElementById('stopwatchDisplay');
+        const disp = getEl('stopwatchDisplay');
         if (disp) disp.textContent = '00:00.00';
-        const startBtn = document.getElementById('swStartBtn');
+        const startBtn = getEl('swStartBtn');
         if (startBtn) startBtn.classList.remove('running');
-        const startIcon = document.getElementById('swStartIcon');
+        const startIcon = getEl('swStartIcon');
         if (startIcon) startIcon.className = 'fa-solid fa-play';
-        const resetBtn = document.getElementById('swResetBtn');
+        const resetBtn = getEl('swResetBtn');
         if (resetBtn) resetBtn.classList.add('disabled');
     };
 
     // ==========================================
-    // 11. PARAMÈTRES (Mode nuit)
+    // PARAMÈTRES
     // ==========================================
     window.basculerTheme = function() {
         modeNuit = !modeNuit;
-        const phone = document.getElementById('iphoneFrame');
-        const toggle = document.getElementById('themeToggle');
-        const value = document.getElementById('themeValue');
-        const icon = document.getElementById('themeIcon');
+        phoneSamsung.classList.toggle('dark-mode', modeNuit);
+        phoneIphone.classList.toggle('dark-mode', modeNuit);
 
-        if (modeNuit) {
-            phone.classList.add('dark-mode');
-            toggle?.classList.add('active');
-            if (value) value.textContent = 'Activé';
-            if (icon) icon.className = 'fa-solid fa-sun';
-            localStorage.setItem('virttech_dark_mode', 'true');
-        } else {
-            phone.classList.remove('dark-mode');
-            toggle?.classList.remove('active');
-            if (value) value.textContent = 'Désactivé';
-            if (icon) icon.className = 'fa-solid fa-moon';
-            localStorage.setItem('virttech_dark_mode', 'false');
-        }
+        ['samsung', 'iphone'].forEach(prefix => {
+            const toggle = document.getElementById(prefix + '-themeToggle');
+            const value = document.getElementById(prefix + '-themeValue');
+            const icon = document.getElementById(prefix + '-themeIcon');
+            if (toggle) toggle.classList.toggle('active', modeNuit);
+            if (value) value.textContent = modeNuit ? 'Activé' : 'Désactivé';
+            if (icon) icon.className = modeNuit ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        });
+
+        localStorage.setItem('virttech_dark_mode', modeNuit ? 'true' : 'false');
     };
 
     window.changerNom = function(val) {
         localStorage.setItem('virttech_device_name', val);
-    };
-
-    // Recents placeholder (si jamais tu ajoutes un bouton)
-    window.fermerRecents = function() {
-        const overlay = document.getElementById('recentsOverlay');
-        if (overlay) overlay.classList.remove('active');
+        // Synchroniser les 2 champs
+        ['samsung', 'iphone'].forEach(prefix => {
+            const input = document.getElementById(prefix + '-deviceNameInput');
+            if (input && input.value !== val) input.value = val;
+        });
     };
 
     // ==========================================
-    // 12. BARRE D'OUTILS (Injection & Projets)
+    // BARRE D'OUTILS ÉDITEUR
     // ==========================================
     document.querySelectorAll('.btn-symbol[data-insert]').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -617,18 +671,16 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // ==========================================
-    // 13. BOUTONS SAVE & EXPORT
+    // SAVE & EXPORT
     // ==========================================
     const btnSave = document.getElementById('btnSaveCode');
     const btnExport = document.getElementById('btnExportCode');
 
     if (btnSave) {
         btnSave.onclick = function() {
-            // Sauvegarder TOUJOURS, y compris index.html
             files[activeFile] = editor.getValue();
             localStorage.setItem('virtemulator_files', JSON.stringify(files));
             genererUserApps();
-
             btnSave.innerHTML = "✅ Sauvegardé";
             setTimeout(() => {
                 btnSave.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> Save`;
@@ -650,9 +702,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 2000);
         };
     }
+    // Brancher les boutons qui n'ont pas d'onclick dans le HTML
+if (btnToggleChrome) {
+    btnToggleChrome.onclick = function() { toggleChromeBar(); };
+}
 
     // ==========================================
-    // 14. LANCEMENT
+    // LANCEMENT
     // ==========================================
     init();
 });

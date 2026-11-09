@@ -1,10 +1,29 @@
 /* --- virtemulator.css --- */
+
+/* =========================================
+   VARIABLES VIRTTECH (charte officielle)
+   ========================================= */
+:root {
+    --ombre: #0B2545;
+    --metal-fonce: #13315C;
+    --metal: #323F48;
+    --metal-moyen: #606A73;
+    --surface: #f2f2f2;
+    --blanc: #ffffff;
+    --or: #D4AF37;
+    --or-clair: #F6D58E;
+}
+
 body, html { 
     margin: 0; 
     padding: 0; 
     height: 100%; 
     overflow: hidden; 
     background: var(--fond); 
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* =========================================
@@ -122,22 +141,63 @@ body, html {
 }
 .slide-panel.ouvert { transform: translateY(0); }
 
+/* =========================================
+   HEADER DU SLIDE
+   ========================================= */
 .slide-header {
     display: flex; justify-content: space-between; align-items: center;
     padding: 10px 15px; background: #1e1e1e; color: #fff;
     border-bottom: 1px solid #444; border-radius: 25px 25px 0 0;
-    min-height: 40px; flex-shrink: 0;
+    min-height: 40px; flex-shrink: 0; gap: 10px;
 }
-.slide-header h3 { font-size: 1rem; margin: 0; color: white; }
 
-.btn-zoom-header, .btn-accueil-header, .btn-fermer {
-    background: var(--metal-fonce); color: white; border: 1px solid var(--metal);
-    width: 30px; height: 30px; border-radius: 50%; font-size: 1.1rem;
+.model-switcher {
+    display: flex;
+    background: #111;
+    border-radius: 20px;
+    padding: 3px;
+    border: 1px solid #444;
+    gap: 2px;
+}
+.model-btn {
+    background: transparent;
+    color: #888;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 17px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.model-btn i { font-size: 0.85rem; }
+.model-btn:hover { color: #fff; }
+.model-btn.active {
+    background: linear-gradient(135deg, var(--metal-fonce), var(--ombre));
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(11,37,69,0.4);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-zoom-header, .btn-accueil-header, .btn-fermer, .btn-toggle-chrome {
+    background: var(--metal-fonce);
+    color: white; border: 1px solid var(--metal);
+    width: 30px; height: 30px; border-radius: 50%; font-size: 1rem;
     cursor: pointer; display: flex; justify-content: center; align-items: center;
-    transition: 0.2s;
+    transition: 0.2s; flex-shrink: 0;
 }
 .btn-accueil-header { background: #333; border-color: #555; }
-.btn-zoom-header:hover, .btn-accueil-header:hover, .btn-fermer:hover { background: #555; }
+.btn-toggle-chrome { background: var(--metal-fonce); border-color: var(--metal); font-size: 0.85rem; }
+.btn-zoom-header:hover, .btn-accueil-header:hover, .btn-fermer:hover, .btn-toggle-chrome:hover { background: #555; }
 
 .slide-content {
     flex: 1; display: flex; justify-content: center; align-items: center;
@@ -145,7 +205,7 @@ body, html {
 }
 
 /* =========================================
-   LE TÉLÉPHONE (Samsung)
+   COQUE SAMSUNG
    ========================================= */
 .phone-samsung {
     width: 300px; height: 620px; background: #000; border-radius: 35px;
@@ -155,21 +215,45 @@ body, html {
     transition: transform 0.3s ease, background 0.3s;
     transform-origin: center center;
     flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent; /* Supprime le truc bleu au clic sur mobile */
-    user-select: none; /* Empêche la sélection de texte */
+    user-select: none;
 }
 
-/* On supprime le "truc bleu" de Chrome partout */
-* {
-    -webkit-tap-highlight-color: transparent;
-}
-
-.punch-hole {
+.phone-samsung .punch-hole {
     position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
     width: 12px; height: 12px; background: #000; border-radius: 50%;
     z-index: 100; box-shadow: inset 0 0 2px #000, 0 0 2px #333;
 }
 
+/* =========================================
+   COQUE iPHONE
+   ========================================= */
+.phone-iphone {
+    width: 300px; height: 620px; background: #000; border-radius: 44px;
+    border: 4px solid #1a1a1a; position: relative; overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+    display: flex; flex-direction: column;
+    transition: transform 0.3s ease, background 0.3s;
+    transform-origin: center center;
+    flex-shrink: 0;
+    font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+    user-select: none;
+}
+
+.phone-iphone .dynamic-island {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    width: 90px; height: 26px; background: #000; border-radius: 20px;
+    z-index: 100; box-shadow: inset 0 0 2px #000;
+    display: flex; justify-content: flex-end; align-items: center;
+    padding-right: 10px;
+}
+.phone-iphone .dynamic-island::after {
+    content: ''; width: 8px; height: 8px; background: #1a1a1a;
+    border-radius: 50%; border: 1px solid #2a2a2a;
+}
+
+/* =========================================
+   PAGES COMMUNES
+   ========================================= */
 .pages-wrapper { position: absolute; inset: 0; overflow: hidden; }
 
 .page {
@@ -180,142 +264,421 @@ body, html {
 .page.active { transform: translateX(0); opacity: 1; pointer-events: auto; z-index: 5; }
 .page.behind { transform: translateX(-25%); opacity: 0; pointer-events: none; z-index: 1; }
 
-/* LAUNCHER */
-#launcherPage { background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; }
 .status-bar { height: 32px; display: flex; justify-content: space-between; align-items: center; padding: 6px 18px 0; font-size: 0.7rem; font-weight: 600; flex-shrink: 0; }
 .status-icons { display: flex; gap: 6px; align-items: center; }
 .status-icons i { font-size: 0.65rem; }
+
+/* iPhone : status bar adaptée Dynamic Island */
+.phone-iphone .status-bar {
+    height: 54px;
+    padding: 0 28px;
+    font-size: 0.78rem;
+    padding-top: 8px;
+}
+.phone-iphone .status-icons i { font-size: 0.7rem; }
+
+/* =========================================
+   LAUNCHER
+   ========================================= */
+#samsung-launcherPage, #iphone-launcherPage {
+    background: linear-gradient(160deg, var(--metal-fonce) 0%, var(--ombre) 100%);
+    color: var(--blanc);
+}
+.phone-samsung.dark-mode #samsung-launcherPage,
+.phone-iphone.dark-mode #iphone-launcherPage {
+    background: linear-gradient(160deg, #050a14 0%, #000 100%);
+}
 
 .weather-widget { text-align: center; margin-top: 16px; padding: 0 20px; }
 .weather-time { font-size: 2.6rem; font-weight: 300; letter-spacing: -1px; line-height: 1; font-variant-numeric: tabular-nums; }
 .weather-date { font-size: 0.7rem; opacity: 0.8; margin-top: 4px; text-transform: capitalize; }
 .weather-info { margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.75rem; opacity: 0.9; }
-.weather-info i { color: #ffd93d; font-size: 0.9rem; }
+.weather-info i { color: var(--or); font-size: 0.9rem; }
+
+.phone-iphone .weather-widget { margin-top: 10px; }
+.phone-iphone .weather-time { font-size: 2.8rem; }
+.phone-iphone .weather-date { font-size: 0.72rem; opacity: 0.85; margin-top: 6px; }
+.phone-iphone .weather-info { margin-top: 14px; font-size: 0.76rem; }
 
 .user-apps { padding: 20px 18px 0; margin-top: auto; }
-.user-apps-title { color: rgba(255,255,255,0.6); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-left: 4px; }
+.user-apps-title { color: rgba(255,255,255,0.5); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-left: 4px; }
 .user-apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 12px; }
 
 .app-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-.app-icon .icon-box { width: 48px; height: 48px; border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; color: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.3); transition: transform 0.15s; }
+.app-icon .icon-box {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1.4rem; color: var(--blanc);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    transition: transform 0.15s;
+}
+.phone-iphone .app-icon .icon-box {
+    width: 50px; height: 50px; border-radius: 22%;
+}
 .app-icon:hover .icon-box { transform: scale(1.1); }
-.app-icon .app-label { font-size: 0.55rem; color: #fff; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.5); max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-icon .app-label {
+    font-size: 0.55rem; color: var(--blanc); text-align: center;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 
-.icon-settings { background: #6e7c87; }
-.icon-clock { background: #1c1c1e; }
-.icon-chrome { background: #fff; color: #4285F4 !important; }
-.icon-google { background: #fff; color: #4285F4 !important; }
-.icon-web { background: linear-gradient(135deg, #4285F4, #34A853); }
+.icon-settings { background: linear-gradient(135deg, var(--metal), var(--metal-moyen)); }
+.icon-clock { background: linear-gradient(135deg, #1c1c1e, #3a3a3c); }
+.icon-chrome { background: var(--blanc); color: #4285F4 !important; }
+.icon-google { background: var(--blanc); color: #4285F4 !important; }
+.icon-web { background: linear-gradient(135deg, var(--metal-fonce), var(--ombre)); }
 
-.search-widget { margin: 16px auto 12px; width: 86%; background: rgba(255,255,255,0.95); border-radius: 24px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; }
-.search-widget .google-g { font-weight: bold; font-size: 1.1rem; background: linear-gradient(135deg, #4285F4, #EA4335, #FBBC05, #34A853); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.search-widget {
+    margin: 16px auto 12px; width: 86%;
+    background: rgba(255,255,255,0.95); border-radius: 24px;
+    padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer;
+}
+.search-widget .google-g {
+    font-weight: bold; font-size: 1.1rem;
+    background: linear-gradient(135deg, #4285F4, #EA4335, #FBBC05, #34A853);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
 .search-widget span.placeholder { flex: 1; font-size: 0.75rem; color: #5f6368; }
 .search-widget i { color: #9aa0a6; font-size: 0.85rem; }
 
-.dock { margin: 0 14px 8px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 22px; padding: 10px 8px; display: flex; justify-content: space-around; align-items: center; }
+.dock {
+    margin: 0 14px 8px; background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px); border-radius: 22px;
+    padding: 10px 8px; display: flex; justify-content: space-around; align-items: center;
+}
+.phone-iphone .dock {
+    margin: 0 12px 8px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+}
 .dock .app-icon .icon-box { width: 44px; height: 44px; border-radius: 12px; font-size: 1.2rem; }
+.phone-iphone .dock .app-icon .icon-box { width: 46px; height: 46px; border-radius: 22%; }
 .dock .app-label { display: none; }
 
-/* PAGE GOOGLE */
-#googleHomePage { background: #fff; color: #202124; }
+/* =========================================
+   PAGE GOOGLE
+   ========================================= */
+#samsung-googleHomePage, #iphone-googleHomePage {
+    background: var(--blanc); color: #202124;
+    transition: background 0.3s, color 0.3s;
+}
+#iphone-googleHomePage .status-bar { color: #202124; }
+
+.phone-samsung.dark-mode #samsung-googleHomePage,
+.phone-iphone.dark-mode #iphone-googleHomePage {
+    background: #202124; color: #e8eaed;
+}
+.phone-iphone.dark-mode #iphone-googleHomePage .status-bar { color: #e8eaed; }
+
 .home-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
 .google-block { margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.google-logo { width: 130px; height: auto; }
-.search-bar { width: 86%; display: flex; align-items: center; gap: 8px; border: 1px solid #dfe1e5; border-radius: 24px; padding: 10px 14px; background: #fff; box-shadow: 0 1px 6px rgba(32,33,36,0.08); }
+.google-logo { width: 130px; height: auto; user-select: none; }
+
+.search-bar {
+    width: 86%; display: flex; align-items: center; gap: 8px;
+    border: 1px solid #dfe1e5; border-radius: 24px; padding: 10px 14px;
+    background: var(--blanc); box-shadow: 0 1px 6px rgba(32,33,36,0.08);
+    cursor: text; transition: box-shadow 0.25s;
+}
+.search-bar:hover, .search-bar:focus-within { box-shadow: 0 1px 8px rgba(32,33,36,0.28); }
 .search-bar i { color: #9aa0a6; font-size: 0.9rem; }
-.search-bar input { flex: 1; border: none; outline: none; font-size: 0.85rem; color: #202124; background: transparent; }
+.search-bar input {
+    flex: 1; border: none; outline: none; font-size: 0.85rem;
+    color: #202124; background: transparent;
+}
+.phone-samsung.dark-mode #samsung-googleHomePage .search-bar,
+.phone-iphone.dark-mode #iphone-googleHomePage .search-bar {
+    background: #303134; border-color: #5f6368;
+}
+.phone-samsung.dark-mode #samsung-googleHomePage .search-bar input,
+.phone-iphone.dark-mode #iphone-googleHomePage .search-bar input {
+    color: #e8eaed;
+}
 
 .shortcuts { display: flex; justify-content: space-around; width: 92%; margin: 22px auto 0; }
-.shortcut { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 60px; cursor: pointer; background: none; border: none; font-family: Arial, sans-serif; }
-.shortcut-icon { width: 46px; height: 46px; border-radius: 50%; background: #f1f3f4; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; color: #5f6368; }
+.shortcut {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; width: 60px;
+    cursor: pointer; background: none; border: none; font-family: inherit;
+}
+.shortcut-icon {
+    width: 46px; height: 46px; border-radius: 50%; background: #f1f3f4;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1.1rem; color: #5f6368;
+}
 .shortcut-label { font-size: 0.55rem; color: #5f6368; text-align: center; line-height: 1.2; }
 
+.phone-samsung.dark-mode #samsung-googleHomePage .shortcut-icon,
+.phone-iphone.dark-mode #iphone-googleHomePage .shortcut-icon {
+    background: #303134; color: #9aa0a6;
+}
+.phone-samsung.dark-mode #samsung-googleHomePage .shortcut-label,
+.phone-iphone.dark-mode #iphone-googleHomePage .shortcut-label {
+    color: #9aa0a6;
+}
+
 .news-section { margin-top: 25px; margin-bottom: 20px; }
-.news-section-title { width: 90%; margin: 0 auto 10px; font-size: 0.7rem; font-weight: bold; color: #5f6368; text-transform: uppercase; }
-.news-card { width: 90%; margin: 0 auto 12px; background: #fff; border: 1px solid #e8eaed; border-radius: 14px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(32,33,36,0.08); cursor: pointer; }
+.news-section-title {
+    width: 90%; margin: 0 auto 10px; font-size: 0.7rem; font-weight: bold;
+    color: #5f6368; text-transform: uppercase;
+}
+.news-card {
+    width: 90%; margin: 0 auto 12px; background: var(--blanc);
+    border: 1px solid #e8eaed; border-radius: 14px; padding: 12px 14px;
+    box-shadow: 0 1px 4px rgba(32,33,36,0.08); cursor: pointer;
+}
 .news-header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #5f6368; font-size: 0.6rem; }
 .news-header i { color: #4285F4; font-size: 0.65rem; }
 .news-title { font-size: 0.85rem; font-weight: bold; color: #202124; margin-bottom: 4px; line-height: 1.3; }
 .news-excerpt { font-size: 0.68rem; color: #5f6368; line-height: 1.35; }
 
-/* NAVIGATEUR */
-#browserPage { background: #202124; color: #fff; }
-.chrome-bar { background: #202124; padding: 10px 6px; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #333; flex-shrink: 0; }
-.chrome-btn { color: #9aa0a6; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; }
+.phone-samsung.dark-mode #samsung-googleHomePage .news-card,
+.phone-iphone.dark-mode #iphone-googleHomePage .news-card {
+    background: #303134; border-color: #5f6368;
+}
+.phone-samsung.dark-mode #samsung-googleHomePage .news-title,
+.phone-iphone.dark-mode #iphone-googleHomePage .news-title {
+    color: #e8eaed;
+}
+.phone-samsung.dark-mode #samsung-googleHomePage .news-excerpt,
+.phone-iphone.dark-mode #iphone-googleHomePage .news-excerpt {
+    color: #9aa0a6;
+}
+
+/* =========================================
+   NAVIGATEUR
+   ========================================= */
+#samsung-browserPage, #iphone-browserPage { background: #202124; color: var(--blanc); }
+#iphone-browserPage .status-bar { color: var(--blanc); }
+
+.chrome-bar {
+    background: #202124; padding: 10px 6px;
+    display: flex; align-items: center; gap: 4px;
+    border-bottom: 1px solid #333; flex-shrink: 0;
+    transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.25s ease;
+    max-height: 60px;
+    overflow: hidden;
+}
+.chrome-bar.hidden {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    border-bottom: none;
+}
+
+.chrome-btn {
+    color: #9aa0a6; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    flex-shrink: 0; transition: background 0.2s;
+}
 .chrome-btn:hover { background: #35363a; }
 .chrome-btn i { font-size: 0.8rem; }
 .chrome-btn.desactive { opacity: 0.35; pointer-events: none; }
 
-.chrome-address-bar { flex: 1; background: #35363a; border-radius: 20px; padding: 6px 10px; display: flex; align-items: center; gap: 6px; color: #e8eaed; font-size: 0.8rem; min-width: 0; }
+.chrome-address-bar {
+    flex: 1; background: #35363a; border-radius: 20px; padding: 6px 10px;
+    display: flex; align-items: center; gap: 6px;
+    color: #e8eaed; font-size: 0.8rem; min-width: 0;
+}
 .chrome-address-bar i { color: #9aa0a6; font-size: 0.65rem; flex-shrink: 0; }
-.chrome-address-bar input { background: transparent; border: none; color: #fff; outline: none; width: 100%; font-size: 0.72rem; font-family: inherit; min-width: 0; }
+.chrome-address-bar input {
+    background: transparent; border: none; color: var(--blanc);
+    outline: none; width: 100%; font-size: 0.72rem;
+    font-family: inherit; min-width: 0;
+}
 
-.site-content { flex: 1; background: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-.loading-bar-container { height: 3px; background: #e0e0e0; width: 100%; position: absolute; top: 0; left: 0; z-index: 20; display: none; }
+.site-content {
+    flex: 1; background: var(--blanc); position: relative;
+    overflow: hidden; display: flex; flex-direction: column;
+}
+.loading-bar-container {
+    height: 3px; background: #e0e0e0; width: 100%;
+    position: absolute; top: 0; left: 0; z-index: 20; display: none;
+}
 .loading-bar-container.active { display: block; }
-.loading-bar { height: 100%; background: #4285f4; width: 0%; animation: charger 1s infinite ease-in-out; }
+.loading-bar {
+    height: 100%; background: #4285f4; width: 0%;
+    animation: charger 1s infinite ease-in-out;
+}
 @keyframes charger { 0% { width: 0%; } 50% { width: 80%; } 100% { width: 100%; } }
 
-#browserIframe { width: 100%; height: 100%; border: none; display: none; background: #fff; }
-.fake-website { padding: 40px 20px; text-align: center; color: #333; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
-.fake-website h1 { font-size: 1.5rem; color: #0B2545; margin-bottom: 10px; }
+#samsung-browserIframe, #iphone-browserIframe {
+    width: 100%; height: 100%; border: none; display: none; background: var(--blanc);
+}
+.fake-website {
+    padding: 40px 20px; text-align: center; color: #333;
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: center; height: 100%;
+}
+.fake-website h1 { font-size: 1.5rem; color: var(--ombre); margin-bottom: 10px; }
 .fake-website p { font-size: 0.9rem; color: #666; line-height: 1.5; }
-.error-404 { display: none; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center; background: #f9f9f9; }
-.error-404 h1 { font-size: 4rem; color: #0B2545; margin: 0; }
+.error-404 {
+    display: none; flex-direction: column; justify-content: center;
+    align-items: center; height: 100%; text-align: center; background: #f9f9f9;
+}
+.error-404 h1 { font-size: 4rem; color: var(--ombre); margin: 0; }
 .error-404 p { color: #666; }
 
-/* PARAMETRES (Couleurs VirtTech par défaut) */
-#settingsPage { background: #f2f2f2; color: #202124; }
-.settings-header { padding: 16px 22px 8px; font-size: 1.6rem; font-weight: bold; letter-spacing: -0.5px; }
-.settings-content { flex: 1; overflow-y: auto; padding: 8px 16px 20px; display: flex; flex-direction: column; gap: 14px; }
-.settings-card { background: #fff; border-radius: 18px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.card-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: #8e8e93; margin-bottom: 12px; padding-left: 2px; }
-.setting-row { display: flex; align-items: center; gap: 12px; }
-.setting-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 1rem; color: #fff; flex-shrink: 0; }
+/* =========================================
+   PARAMÈTRES
+   ========================================= */
+#samsung-settingsPage, #iphone-settingsPage {
+    background: var(--surface); color: #202124;
+    transition: background 0.3s, color 0.3s;
+}
+#iphone-settingsPage .status-bar { color: #202124; }
 
-/* Les couleurs des icônes de paramètres (VirtTech) */
-.setting-icon.theme { background: linear-gradient(135deg, #0B2545, #13315C); }
-.setting-icon.device { background: linear-gradient(135deg, #323F48, #606A73); }
-.setting-icon.brand { background: linear-gradient(135deg, #D4AF37, #F6D58E); }
+.phone-samsung.dark-mode #samsung-settingsPage,
+.phone-iphone.dark-mode #iphone-settingsPage {
+    background: #111; color: #e8eaed;
+}
+.phone-iphone.dark-mode #iphone-settingsPage .status-bar { color: #e8eaed; }
+
+.settings-header {
+    padding: 16px 22px 8px; font-size: 1.6rem;
+    font-weight: bold; letter-spacing: -0.5px;
+}
+.phone-iphone .settings-header { padding: 8px 22px 8px; }
+
+.settings-content {
+    flex: 1; overflow-y: auto; padding: 8px 16px 20px;
+    display: flex; flex-direction: column; gap: 14px;
+}
+.settings-card {
+    background: var(--blanc); border-radius: 18px; padding: 16px 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: background 0.3s;
+}
+.phone-samsung.dark-mode #samsung-settingsPage .settings-card,
+.phone-iphone.dark-mode #iphone-settingsPage .settings-card {
+    background: #1c1c1e;
+}
+
+.card-title {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;
+    color: #8e8e93; margin-bottom: 12px; padding-left: 2px;
+}
+.setting-row { display: flex; align-items: center; gap: 12px; }
+.setting-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1rem; color: var(--blanc); flex-shrink: 0;
+}
+.setting-icon.theme { background: linear-gradient(135deg, var(--ombre), var(--metal-fonce)); }
+.setting-icon.device { background: linear-gradient(135deg, var(--metal), var(--metal-moyen)); }
+.setting-icon.brand { background: linear-gradient(135deg, var(--or), var(--or-clair)); }
 
 .setting-info { flex: 1; min-width: 0; }
 .setting-label { font-size: 0.85rem; font-weight: 500; }
 .setting-value { font-size: 0.68rem; color: #8e8e93; margin-top: 2px; }
 
-.toggle { width: 44px; height: 26px; background: #ccc; border-radius: 13px; position: relative; cursor: pointer; transition: background 0.25s; flex-shrink: 0; }
-.toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.25s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-.toggle.active { background: #0B2545; }
+.toggle {
+    width: 44px; height: 26px; background: #ccc; border-radius: 13px;
+    position: relative; cursor: pointer; transition: background 0.25s; flex-shrink: 0;
+}
+.toggle::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; background: var(--blanc);
+    border-radius: 50%; transition: transform 0.25s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.toggle.active { background: var(--ombre); }
 .toggle.active::after { transform: translateX(18px); }
 
-.device-name-input { flex: 1; background: #f2f2f2; border: 1px solid #e0e0e0; border-radius: 10px; padding: 8px 12px; font-size: 0.78rem; color: #202124; outline: none; font-family: inherit; }
-.device-name-input:focus { border-color: #0B2545; }
+.phone-iphone .toggle { width: 51px; height: 31px; border-radius: 16px; }
+.phone-iphone .toggle::after { width: 25px; height: 25px; }
+.phone-iphone .toggle.active { background: #34C759; }
+.phone-iphone .toggle.active::after { transform: translateX(20px); }
 
-.brand-block { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 0 4px; }
-.brand-logo { font-size: 1.6rem; font-weight: bold; letter-spacing: -0.5px; background: linear-gradient(135deg, #0B2545, #D4AF37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+.device-name-input {
+    flex: 1; background: var(--surface); border: 1px solid #e0e0e0;
+    border-radius: 10px; padding: 8px 12px; font-size: 0.78rem;
+    color: #202124; outline: none; font-family: inherit;
+    transition: background 0.3s, border-color 0.3s;
+}
+.device-name-input:focus { border-color: var(--ombre); }
+.phone-samsung.dark-mode #samsung-settingsPage .device-name-input,
+.phone-iphone.dark-mode #iphone-settingsPage .device-name-input {
+    background: #2c2c2e; border-color: #3a3a3c; color: #e8eaed;
+}
+
+.brand-block {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; padding: 8px 0 4px;
+}
+.brand-logo {
+    font-size: 1.6rem; font-weight: bold; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--ombre), var(--or));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+}
 .brand-subtitle { font-size: 0.7rem; color: #8e8e93; }
-.brand-version { font-size: 0.6rem; color: #8e8e93; margin-top: 8px; padding: 4px 12px; background: rgba(0,0,0,0.05); border-radius: 12px; }
+.brand-version {
+    font-size: 0.6rem; color: #8e8e93; margin-top: 8px;
+    padding: 4px 12px; background: rgba(0,0,0,0.05); border-radius: 12px;
+}
+.phone-samsung.dark-mode #samsung-settingsPage .brand-version,
+.phone-iphone.dark-mode #iphone-settingsPage .brand-version {
+    background: rgba(255,255,255,0.08);
+}
 
-/* HORLOGE */
-#clockPage { background: #000; color: #fff; }
+/* =========================================
+   HORLOGE
+   ========================================= */
+#samsung-clockPage, #iphone-clockPage {
+    background: linear-gradient(160deg, var(--metal-fonce) 0%, var(--ombre) 100%);
+    color: var(--blanc);
+    transition: background 0.3s;
+}
+.phone-samsung.dark-mode #samsung-clockPage,
+.phone-iphone.dark-mode #iphone-clockPage {
+    background: #000;
+}
+
 .clock-header { padding: 16px 22px 4px; font-size: 1.4rem; font-weight: bold; opacity: 0.9; }
+.phone-iphone .clock-header { padding: 8px 22px 4px; }
 .clock-content { flex: 1; display: flex; flex-direction: column; padding: 8px 18px 20px; overflow-y: auto; }
 .current-time-block { text-align: center; margin: 10px 0 24px; }
-.current-time { font-size: 3.4rem; font-weight: 200; letter-spacing: -2px; line-height: 1; font-variant-numeric: tabular-nums; }
+.current-time {
+    font-size: 3.4rem; font-weight: 200; letter-spacing: -2px;
+    line-height: 1; font-variant-numeric: tabular-nums;
+}
+.phone-iphone .current-time { font-size: 3.6rem; }
 .current-date { font-size: 0.7rem; opacity: 0.65; margin-top: 8px; text-transform: capitalize; }
+.phone-iphone .current-date { font-size: 0.72rem; }
 
-.stopwatch-card { background: rgba(255,255,255,0.08); border-radius: 20px; padding: 20px 18px; display: flex; flex-direction: column; align-items: center; gap: 18px; backdrop-filter: blur(10px); }
+.stopwatch-card {
+    background: rgba(255,255,255,0.08); border-radius: 20px;
+    padding: 20px 18px; display: flex; flex-direction: column;
+    align-items: center; gap: 18px; backdrop-filter: blur(10px);
+}
 .stopwatch-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.5; }
-.stopwatch-time { font-size: 2.6rem; font-weight: 300; letter-spacing: -1px; font-variant-numeric: tabular-nums; line-height: 1; }
+.stopwatch-time {
+    font-size: 2.6rem; font-weight: 300; letter-spacing: -1px;
+    font-variant-numeric: tabular-nums; line-height: 1;
+}
+.phone-iphone .stopwatch-time { font-size: 2.8rem; }
 .stopwatch-controls { display: flex; gap: 14px; }
-.sw-btn { width: 54px; height: 54px; border-radius: 50%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; color: #fff; transition: transform 0.12s, background 0.2s, opacity 0.2s; }
+.sw-btn {
+    width: 54px; height: 54px; border-radius: 50%; border: none;
+    cursor: pointer; display: flex; justify-content: center; align-items: center;
+    font-size: 1.1rem; color: var(--blanc);
+    transition: transform 0.12s, background 0.2s, opacity 0.2s;
+}
+.phone-iphone .sw-btn { width: 58px; height: 58px; font-size: 1.15rem; }
 .sw-btn:active { transform: scale(0.92); }
 .sw-btn-start { background: #34A853; }
+.phone-iphone .sw-btn-start { background: #34C759; }
 .sw-btn-start.running { background: #EA4335; }
+.phone-iphone .sw-btn-start.running { background: #FF3B30; }
 .sw-btn-reset { background: rgba(255,255,255,0.15); }
 .sw-btn-reset.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
 
 /* =========================================
-   OVERLAY CREATION (Modal VirtEmulator)
+   OVERLAY CREATION (Modal)
    ========================================= */
 .overlay-create {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -350,48 +713,3 @@ body, html {
     .emulator-container { width: 70%; height: 100%; border-radius: 20px; }
     .scroll-btn { display: block; }
 }
-/* PARAMETRES (Couleurs VirtTech) */
-#settingsPage { background: #f2f2f2; color: #202124; transition: background 0.3s, color 0.3s; }
-.settings-header { padding: 16px 22px 8px; font-size: 1.6rem; font-weight: bold; letter-spacing: -0.5px; }
-.settings-content { flex: 1; overflow-y: auto; padding: 8px 16px 20px; display: flex; flex-direction: column; gap: 14px; }
-.settings-card { background: #fff; border-radius: 18px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.card-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: #8e8e93; margin-bottom: 12px; padding-left: 2px; }
-.setting-row { display: flex; align-items: center; gap: 12px; }
-.setting-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 1rem; color: #fff; flex-shrink: 0; }
-.setting-icon.theme { background: linear-gradient(135deg, #0B2545, #13315C); }
-.setting-icon.device { background: linear-gradient(135deg, #323F48, #606A73); }
-.setting-icon.brand { background: linear-gradient(135deg, #D4AF37, #F6D58E); }
-.setting-info { flex: 1; min-width: 0; }
-.setting-label { font-size: 0.85rem; font-weight: 500; }
-.setting-value { font-size: 0.68rem; color: #8e8e93; margin-top: 2px; }
-
-.toggle { width: 44px; height: 26px; background: #ccc; border-radius: 13px; position: relative; cursor: pointer; transition: background 0.25s; flex-shrink: 0; }
-.toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.25s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-.toggle.active { background: #0B2545; }
-.toggle.active::after { transform: translateX(18px); }
-
-.device-name-input { flex: 1; background: #f2f2f2; border: 1px solid #e0e0e0; border-radius: 10px; padding: 8px 12px; font-size: 0.78rem; color: #202124; outline: none; font-family: inherit; }
-.device-name-input:focus { border-color: #0B2545; }
-
-.brand-block { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 0 4px; }
-.brand-logo { font-size: 1.6rem; font-weight: bold; letter-spacing: -0.5px; background: linear-gradient(135deg, #0B2545, #D4AF37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
-.brand-subtitle { font-size: 0.7rem; color: #8e8e93; }
-.brand-version { font-size: 0.6rem; color: #8e8e93; margin-top: 8px; padding: 4px 12px; background: rgba(0,0,0,0.05); border-radius: 12px; }
-
-/* === MODE NUIT GLOBAL === */
-.phone-samsung.dark-mode #settingsPage { background: #111; color: #e8eaed; }
-.phone-samsung.dark-mode #settingsPage .settings-card { background: #1c1c1e; }
-.phone-samsung.dark-mode #settingsPage .card-title { color: #8e8e93; }
-.phone-samsung.dark-mode #settingsPage .device-name-input { background: #2c2c2e; border-color: #3a3a3c; color: #e8eaed; }
-.phone-samsung.dark-mode #settingsPage .brand-version { background: rgba(255,255,255,0.08); }
-
-.phone-samsung.dark-mode #googleHomePage { background: #202124; color: #e8eaed; }
-.phone-samsung.dark-mode #googleHomePage .search-bar { background: #303134; border-color: #5f6368; }
-.phone-samsung.dark-mode #googleHomePage .search-bar input { color: #e8eaed; }
-.phone-samsung.dark-mode #googleHomePage .news-card { background: #303134; border-color: #5f6368; }
-.phone-samsung.dark-mode #googleHomePage .news-title { color: #e8eaed; }
-.phone-samsung.dark-mode #googleHomePage .news-excerpt { color: #9aa0a6; }
-.phone-samsung.dark-mode #googleHomePage .shortcut-icon { background: #303134; color: #9aa0a6; }
-.phone-samsung.dark-mode #googleHomePage .shortcut-label { color: #9aa0a6; }
-
-.phone-samsung.dark-mode #launcherPage { background: linear-gradient(160deg, #000 0%, #0a0a0a 50%, #111 100%); }
