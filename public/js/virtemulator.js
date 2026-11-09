@@ -6,11 +6,14 @@ document.addEventListener("DOMContentLoaded", function() {
     let zoomLevel = 1;
     let debounceTimer;
     
-    // Éléments du DOM de l'éditeur
-    const iphoneFrame = document.querySelector('.phone-samsung');
-    const phoneOverlay = document.getElementById('phoneOverlay');
-    const homePage = document.getElementById('homePage');
-    const browserPage = document.getElementById('browserPage');
+    // Éléments du slide et du téléphone
+    const slideOverlay = document.getElementById('slideOverlay');
+    const slidePanel = document.getElementById('slidePanel');
+    const btnFermerSlide = document.getElementById('btnFermerSlide');
+    const iphoneFrame = document.getElementById('iphoneFrame');
+    const btnAccueilHeader = document.getElementById('btnAccueil');
+    const btnZoomIn = document.getElementById('btnZoomIn');
+    const btnZoomOut = document.getElementById('btnZoomOut');
 
     // Code de bienvenue
     const CODE_BIENVENUE = `<!DOCTYPE html>
@@ -38,7 +41,6 @@ document.addEventListener("DOMContentLoaded", function() {
     // 1. INITIALISATION
     // ==========================================
     function init() {
-        // Chargement des fichiers sauvegardés
         const savedFiles = localStorage.getItem('virtemulator_files');
         if (savedFiles) {
             try { 
@@ -48,7 +50,6 @@ document.addEventListener("DOMContentLoaded", function() {
             } catch (e) { files = {}; }
         }
 
-        // Initialisation de CodeMirror
         editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
             mode: "htmlmixed", theme: "dracula", lineNumbers: true,
             lineWrapping: false, indentUnit: 2, tabSize: 2, viewportMargin: Infinity,
@@ -56,28 +57,16 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         document.getElementById('editorBody').appendChild(editor.getWrapperElement());
 
-        // On met le code de bienvenue
         files["index.html"] = CODE_BIENVENUE;
         editor.setValue(CODE_BIENVENUE);
 
         mettreAJourOnglets();
         mettreAJourPreviewPC();
+        mettreAJourHorloge();
+        genererUserApps();
         
-        // Horloge Android
-        function updateTime() {
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const timeString = `${hours}:${minutes}`;
-            const timeElement = document.querySelector('#heure-status');
-            const timeElement2 = document.querySelector('#heure-status-2');
-            if (timeElement) timeElement.textContent = timeString;
-            if (timeElement2) timeElement2.textContent = timeString;
-        }
-        setInterval(updateTime, 1000);
-        updateTime();
+        setInterval(mettreAJourHorloge, 1000);
 
-        // Mise à jour temps réel (on ne sauvegarde pas index.html)
         editor.on('change', function() {
             if (activeFile !== "index.html") {
                 files[activeFile] = editor.getValue();
@@ -171,92 +160,129 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     // ==========================================
-    // 5. LOGIQUE DU TÉLÉPHONE (Play)
+    // 5. LE SLIDE ET LE TÉLÉPHONE
     // ==========================================
     document.getElementById('btnPlay').onclick = function() {
-        // On affiche l'overlay du téléphone
-        phoneOverlay.classList.add('ouvert');
+        slideOverlay.classList.add('ouvert');
+        slidePanel.classList.add('ouvert');
         
-        // On force l'accueil à être visible et le navigateur caché
-        homePage.classList.remove('slide-out-left');
-        browserPage.style.transition = 'none';
-        browserPage.style.transform = 'translateX(100%)';
+        // On s'assure que le Launcher est visible
+        afficherPage('launcher');
         
-        // On met à jour l'horloge
-        const now = new Date();
-        const h = now.getHours().toString().padStart(2, '0');
-        const m = now.getMinutes().toString().padStart(2, '0');
-        document.getElementById('heure-status').textContent = `${h}:${m}`;
-        document.getElementById('heure-status-2').textContent = `${h}:${m}`;
+        // On applique le zoom sauvegardé
+        const savedZoom = localStorage.getItem('virtemulator_zoom');
+        if (savedZoom) { zoomLevel = parseFloat(savedZoom); }
+        iphoneFrame.style.transform = `scale(${zoomLevel})`;
+        
+        mettreAJourHorloge();
+    };
+
+    function fermerSlide() {
+        slideOverlay.classList.remove('ouvert');
+        slidePanel.classList.remove('ouvert');
+    }
+    btnFermerSlide.onclick = fermerSlide;
+    slideOverlay.onclick = fermerSlide;
+
+    // Zoom
+    btnZoomIn.onclick = function() {
+        if (zoomLevel < 1.5) { 
+            zoomLevel += 0.1; 
+            iphoneFrame.style.transform = `scale(${zoomLevel})`;
+            localStorage.setItem('virtemulator_zoom', zoomLevel);
+        }
+    };
+    btnZoomOut.onclick = function() {
+        if (zoomLevel > 0.5) { 
+            zoomLevel -= 0.1; 
+            iphoneFrame.style.transform = `scale(${zoomLevel})`;
+            localStorage.setItem('virtemulator_zoom', zoomLevel);
+        }
+    };
+
+    // Bouton Accueil du header
+    btnAccueilHeader.onclick = function() {
+        afficherPage('launcher');
     };
 
     // ==========================================
-    // 6. NAVIGATION DU TÉLÉPHONE
+    // 6. NAVIGATION INTERNE DU TÉLÉPHONE
     // ==========================================
-    let historique = [];
-    let indexHistorique = -1;
+    let pageActive = 'launcher';
+    let modeNuit = false;
+    let historique = ["index"];
+    let indexHistorique = 0;
 
-    // Fonction pour ouvrir une page depuis l'accueil
-    window.ouvrirNavigateur = function(nomFichier) {
-        nomFichier = nomFichier.replace('.html', '');
+    window.afficherPage = function(nom) {
+        pageActive = nom;
+        const pages = ['launcherPage', 'googleHomePage', 'browserPage', 'settingsPage', 'clockPage'];
         
-        // On glisse l'accueil vers la gauche
-        homePage.classList.add('slide-out-left');
-        
-        // On fait glisser le navigateur
-        browserPage.style.transition = 'none';
-        browserPage.style.transform = 'translateX(100%)';
-        void browserPage.offsetWidth;
-        browserPage.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
-        browserPage.style.transform = 'translateX(0)';
-        
-        // On charge la page
-        chargerPage(nomFichier, true);
+        pages.forEach(p => {
+            const el = document.getElementById(p);
+            el.className = 'page';
+            if (p === nom + 'Page') {
+                el.classList.add('active');
+            } else {
+                el.classList.add('behind');
+            }
+        });
     };
 
-    // Retour à l'accueil du navigateur
-    window.retourAccueil = function() {
-        browserPage.style.transform = 'translateX(100%)';
-        homePage.classList.remove('slide-out-left');
+    function genererUserApps() {
+        const grid = document.getElementById('userAppsGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        Object.keys(files).forEach(nom => {
+            const div = document.createElement('div');
+            div.className = 'app-icon';
+            div.onclick = () => ouvrirNavigateur(nom.replace('.html', ''));
+            div.innerHTML = `
+                <span class="icon-box icon-web"><i class="fa-solid fa-code"></i></span>
+                <span class="app-label">${nom}</span>
+            `;
+            grid.appendChild(div);
+        });
+    }
+
+    // ==========================================
+    // 7. LOGIQUE DU NAVIGATEUR
+    // ==========================================
+    window.ouvrirNavigateur = function(page) {
+        historique = [page || 'index'];
+        indexHistorique = 0;
+        afficherPage('browser');
+        chargerPage(page || 'index', false);
     };
 
-    // Fermer l'émulateur (retour à l'éditeur)
-    window.fermerEmulateur = function() {
-        phoneOverlay.classList.remove('ouvert');
-    };
-
-    // Ouvrir le modal nouveau fichier depuis le téléphone
-    window.ouvrirModalNouveauFichier = function() {
-        phoneOverlay.classList.remove('ouvert');
-        setTimeout(ouvrirModalCreate, 300); // On attend que l'overlay se ferme
-    };
-
-    // Ouvrir la page actuellement dans l'éditeur
     window.ouvrirPageActuelle = function() {
         let nom = activeFile.replace('.html', '');
-        window.ouvrirNavigateur(nom);
+        ouvrirNavigateur(nom);
     };
 
-    // Fonction de recherche depuis l'accueil du téléphone
+    window.fermerEmulateur = function() {
+        fermerSlide();
+    };
+
+    window.ouvrirModalNouveauFichier = function() {
+        fermerSlide();
+        setTimeout(ouvrirModalCreate, 300);
+    };
+
     window.homeSearchEnter = function(e) {
         if (e.key === 'Enter') {
             const val = document.getElementById('homeSearchInput').value.trim();
             if (!val) return;
-            window.ouvrirNavigateur(val);
+            ouvrirNavigateur(val.replace('.html', ''));
             document.getElementById('homeSearchInput').value = '';
         }
     };
 
-    // ==========================================
-    // 7. LOGIQUE DU NAVIGATEUR (Chargement)
-    // ==========================================
     function chargerPage(nom, ajouterHistorique = true) {
         const iframe = document.getElementById('browserIframe');
         const pageContent = document.getElementById('pageContent');
         const page404 = document.getElementById('page404');
         const loadingBar = document.getElementById('loadingBar');
 
-        // Gestion de l'historique
         if (ajouterHistorique) {
             historique = historique.slice(0, indexHistorique + 1);
             if (historique[historique.length - 1] !== nom) {
@@ -265,17 +291,14 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        // Affichage du chargement
         pageContent.style.display = 'none';
         page404.style.display = 'none';
         iframe.style.display = 'none';
         loadingBar.classList.add('active');
 
-        // On cherche le fichier
         setTimeout(() => {
             loadingBar.classList.remove('active');
 
-            // On regarde dans nos fichiers
             let nomFichierComplet = nom + ".html";
             if (files[nomFichierComplet]) {
                 iframe.style.display = 'block';
@@ -285,7 +308,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 doc.close();
                 document.getElementById('urlInput').value = nom;
             } else {
-                // 404
                 page404.style.display = 'flex';
                 document.getElementById('urlInput').value = nom + " (introuvable)";
             }
@@ -336,9 +358,110 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ==========================================
-    // 8. BARRE D'OUTILS (Balises & Projets)
+    // 8. HORLOGE ET CHRONO
     // ==========================================
-    // (Le code de la toolbar reste inchangé, il est déjà bon)
+    function mettreAJourHorloge() {
+        const maintenant = new Date();
+        const heures = String(maintenant.getHours()).padStart(2, '0');
+        const minutes = String(maintenant.getMinutes()).padStart(2, '0');
+        const heure = `${heures}:${minutes}`;
+
+        const ids = ['statusTime', 'googleStatusTime', 'browserStatusTime', 'settingsStatusTime', 'clockStatusTime'];
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = heure;
+        });
+
+        const bigTime = document.getElementById('bigTime');
+        if (bigTime) bigTime.textContent = heure;
+        const clockCurrentTime = document.getElementById('clockCurrentTime');
+        if (clockCurrentTime) clockCurrentTime.textContent = heure;
+
+        const jours = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+        const mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+        const dateStr = `${jours[maintenant.getDay()]} ${maintenant.getDate()} ${mois[maintenant.getMonth()]}`;
+
+        const bigDate = document.getElementById('bigDate');
+        if (bigDate) bigDate.textContent = dateStr;
+        const clockCurrentDate = document.getElementById('clockCurrentDate');
+        if (clockCurrentDate) clockCurrentDate.textContent = dateStr;
+    }
+
+    // Chrono
+    let chronoEnCours = false;
+    let chronoStartTime = 0;
+    let chronoElapsed = 0;
+    let chronoInterval = null;
+
+    function formaterChrono(ms) {
+        const totalCentiemes = Math.floor(ms / 10);
+        const centiemes = totalCentiemes % 100;
+        const totalSecondes = Math.floor(totalCentiemes / 100);
+        const secondes = totalSecondes % 60;
+        const minutes = Math.floor(totalSecondes / 60);
+        return `${String(minutes).padStart(2, '0')}:${String(secondes).padStart(2, '0')}.${String(centiemes).padStart(2, '0')}`;
+    }
+
+    window.toggleStopwatch = function() {
+        const startBtn = document.getElementById('swStartBtn');
+        const startIcon = document.getElementById('swStartIcon');
+        const resetBtn = document.getElementById('swResetBtn');
+
+        if (!chronoEnCours) {
+            chronoEnCours = true;
+            chronoStartTime = Date.now() - chronoElapsed;
+            chronoInterval = setInterval(() => {
+                chronoElapsed = Date.now() - chronoStartTime;
+                document.getElementById('stopwatchDisplay').textContent = formaterChrono(chronoElapsed);
+            }, 10);
+            startBtn.classList.add('running');
+            startIcon.className = 'fa-solid fa-pause';
+            resetBtn.classList.remove('disabled');
+        } else {
+            chronoEnCours = false;
+            clearInterval(chronoInterval);
+            startBtn.classList.remove('running');
+            startIcon.className = 'fa-solid fa-play';
+        }
+    };
+
+    window.resetStopwatch = function() {
+        chronoEnCours = false;
+        clearInterval(chronoInterval);
+        chronoElapsed = 0;
+        document.getElementById('stopwatchDisplay').textContent = '00:00.00';
+        document.getElementById('swStartBtn').classList.remove('running');
+        document.getElementById('swStartIcon').className = 'fa-solid fa-play';
+        document.getElementById('swResetBtn').classList.add('disabled');
+    };
+
+    // ==========================================
+    // 9. PARAMÈTRES (Mode nuit)
+    // ==========================================
+    window.basculerTheme = function() {
+        modeNuit = !modeNuit;
+        const toggle = document.getElementById('themeToggle');
+        const value = document.getElementById('themeValue');
+        const icon = document.getElementById('themeIcon');
+
+        if (modeNuit) {
+            toggle.classList.add('active');
+            value.textContent = 'Activé';
+            icon.className = 'fa-solid fa-sun';
+        } else {
+            toggle.classList.remove('active');
+            value.textContent = 'Désactivé';
+            icon.className = 'fa-solid fa-moon';
+        }
+    };
+
+    window.changerNom = function(val) {
+        localStorage.setItem('virttech_device_name', val);
+    };
+
+    // ==========================================
+    // 10. BARRE D'OUTILS (Injection & Projets)
+    // ==========================================
     document.querySelectorAll('.btn-symbol[data-insert]').forEach(btn => {
         btn.addEventListener('click', function() {
             let textToInsert = this.getAttribute('data-insert');
@@ -354,12 +477,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Injection des projets (Le dictionnaire existe déjà)
     const projets = {
         'calc': `<!DOCTYPE html><html><head><style>body{display:flex;justify-content:center;align-items:center;height:100vh;background:#f0f0f0;margin:0;font-family:sans-serif}.calc{background:#333;padding:20px;border-radius:10px;width:250px}.ecran{background:#fff;padding:15px;text-align:right;font-size:1.5rem;border-radius:5px;margin-bottom:10px}.touches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}button{padding:15px;font-size:1.1rem;border:none;border-radius:5px;background:#555;color:white;cursor:pointer}button:hover{background:#777}.op{background:#D4AF37;color:#000}</style></head><body><div class="calc"><div class="ecran" id="ecran">0</div><div class="touches"><button onclick="clearE()">C</button><button onclick="append('/')">/</button><button onclick="append('*')">*</button><button class="op" onclick="append('-')">-</button><button onclick="append('7')">7</button><button onclick="append('8')">8</button><button onclick="append('9')">9</button><button class="op" onclick="append('+')">+</button><button onclick="append('4')">4</button><button onclick="append('5')">5</button><button onclick="append('6')">6</button><button class="op" onclick="calculer()">=</button><button onclick="append('1')">1</button><button onclick="append('2')">2</button><button onclick="append('3')">3</button><button onclick="append('0')">0</button></div></div><script>let ecran=document.getElementById('ecran');function append(val){if(ecran.innerText==='0')ecran.innerText=val;else ecran.innerText+=val}function clearE(){ecran.innerText='0'}function calculer(){try{ecran.innerText=eval(ecran.innerText)}catch(e){ecran.innerText='Erreur'}}<\/script></body></html>`,
-        'login': `<!DOCTYPE html><html><head><style>body{display:flex;justify-content:center;align-items:center;height:100vh;background:#0B2545;margin:0;font-family:sans-serif;color:white}.box{background:rgba(255,255,255,0.1);padding:30px;border-radius:15px;width:300px;text-align:center}input{width:100%;padding:12px;margin:10px 0;border:none;border-radius:8px;box-sizing:border-box}button{width:100%;padding:12px;background:#D4AF37;color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:10px}</style></head><body><div class="box"><h2>Connexion</h2><input type="text" placeholder="Nom"><input type="password" placeholder="Mot de passe"><button>Se connecter</button></div></body></html>`,
-        'btn': `<!DOCTYPE html><html><head><style>body{display:flex;justify-content:center;align-items:center;height:100vh;background:#f4f4f4;margin:0}.btn{padding:15px 40px;font-size:1.2rem;background:#0B2545;color:white;border:none;border-radius:50px;cursor:pointer;transition:all 0.3s ease;box-shadow:0 5px 15px rgba(0,0,0,0.2)}.btn:hover{background:#D4AF37;color:#000;transform:translateY(-5px) scale(1.1)}</style></head><body><button class="btn">Survole-moi !</button></body></html>`,
-        'text': `<!DOCTYPE html><html><head><style>body{display:flex;justify-content:center;align-items:center;height:100vh;background:#222;margin:0;font-family:sans-serif}h1{font-size:4rem;color:transparent;-webkit-text-stroke:2px #D4AF37;text-transform:uppercase;letter-spacing:5px}</style></head><body><h1>VirtTech</h1></body></html>`
+        'login': `<!DOCTYPE html><html><head><style>body{display:flex;justify-content:center;align-items:center;height:100vh;background:#0B2545;margin:0;font-family:sans-serif;color:white}.box{background:rgba(255,255,255,0.1);padding:30px;border-radius:15px;width:300px;text-align:center}input{width:100%;padding:12px;margin:10px 0;border:none;border-radius:8px;box-sizing:border-box}button{width:100%;padding:12px;background:#D4AF37;color:#000;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:10px}</style></head><body><div class="box"><h2>Connexion</h2><input type="text" placeholder="Nom"><input type="password" placeholder="Mot de passe"><button>Se connecter</button></div></body></html>`
     };
 
     document.querySelectorAll('[data-project]').forEach(btn => {
@@ -373,7 +493,37 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // ==========================================
-    // 9. LANCEMENT
+    // 11. BOUTONS SAVE & EXPORT
+    // ==========================================
+    const btnSave = document.getElementById('btnSaveCode');
+    const btnExport = document.getElementById('btnExportCode');
+
+    if (btnSave) {
+        btnSave.onclick = function() {
+            if(activeFile !== "index.html") {
+                files[activeFile] = editor.getValue();
+                localStorage.setItem('virtemulator_files', JSON.stringify(files));
+            }
+            btnSave.innerHTML = "✅ Sauvegardé";
+            setTimeout(() => { btnSave.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> Save`; }, 2000);
+        };
+    }
+    if (btnExport) {
+        btnExport.onclick = function() {
+            const code = editor.getValue();
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = activeFile;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            btnExport.innerHTML = "✅ Exporté";
+            setTimeout(() => { btnExport.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Exporter`; }, 2000);
+        };
+    }
+
+    // ==========================================
+    // 12. LANCEMENT
     // ==========================================
     init();
 });

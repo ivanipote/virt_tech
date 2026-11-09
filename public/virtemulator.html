@@ -80,7 +80,6 @@
                     <button class="btn-symbol" data-insert="<img src='' alt=''>">&lt;img&gt;</button>
                     <button class="btn-symbol" data-insert="<button>\n  Cliquez\n</button>">&lt;button&gt;</button>
                     <button class="btn-symbol" data-insert="<ul>\n  <li></li>\n</ul>">&lt;ul&gt;</button>
-                    <button class="btn-symbol" data-insert="<br>">&lt;br&gt;</button>
                 </div>
                 
                 <!-- CSS -->
@@ -90,8 +89,6 @@
                     <button class="btn-symbol" data-insert="margin: ;">margin:</button>
                     <button class="btn-symbol" data-insert="padding: ;">padding:</button>
                     <button class="btn-symbol" data-insert="display: ;">display:</button>
-                    <button class="btn-symbol" data-insert="font-size: ;">font-size:</button>
-                    <button class="btn-symbol" data-insert="border: ;">border:</button>
                     <button class="btn-symbol" data-insert="{ }">{ }</button>
                 </div>
                 
@@ -109,8 +106,6 @@
                 <div class="group-symbols" id="grp-projets">
                     <button class="btn-symbol btn-project" data-project="calc">Calculatrice</button>
                     <button class="btn-symbol btn-project" data-project="login">Page Login</button>
-                    <button class="btn-symbol btn-project" data-project="btn">Bouton Animé</button>
-                    <button class="btn-symbol btn-project" data-project="text">Texte Stylé</button>
                 </div>
             </div>
 
@@ -145,120 +140,259 @@
 </button>
 
 <!-- ========================================= -->
-<!-- OVERLAY DU TÉLÉPHONE (S'ouvre au clic sur Play) -->
+<!-- SLIDE DU TÉLÉPHONE -->
 <!-- ========================================= -->
-<div class="phone-overlay" id="phoneOverlay">
-    <div class="phone-samsung">
-        <div class="punch-hole"></div>
+<div class="slide-overlay" id="slideOverlay"></div>
+<div class="slide-panel" id="slidePanel">
+    
+    <!-- Header du slide -->
+    <div class="slide-header">
+        <h3>Aperçu Mobile</h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <!-- Bouton Accueil (Ajouté) -->
+            <button class="btn-accueil-header" id="btnAccueil" title="Retour à l'accueil du téléphone">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            </button>
+            <!-- Boutons de zoom -->
+            <button class="btn-zoom-header" id="btnZoomOut" title="Zoom arrière">-</button>
+            <button class="btn-zoom-header" id="btnZoomIn" title="Zoom avant">+</button>
+            <button class="btn-fermer" id="btnFermerSlide">✕</button>
+        </div>
+    </div>
 
-        <div class="pages-wrapper">
-            <!-- PAGE ACCUEIL DU NAVIGATEUR -->
-            <div id="homePage" class="page">
-                <div class="status-bar">
-                    <span id="heure-status">9:41</span>
-                    <span class="status-icons">
-                        <i class="fa-solid fa-signal"></i>
-                        <i class="fa-solid fa-wifi"></i>
-                        <i class="fa-solid fa-battery-full"></i>
-                    </span>
-                </div>
+    <!-- Contenu du slide (le téléphone) -->
+    <div class="slide-content">
+        
+        <!-- Le téléphone -->
+        <div class="phone-samsung" id="iphoneFrame">
+            <div class="punch-hole"></div>
 
-                <div class="home-scroll">
-                    <div class="google-block">
-                        <img class="google-logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google">
-                        <div class="search-bar">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="homeSearchInput" placeholder="Rechercher un fichier..." onkeypress="homeSearchEnter(event)">
-                            <i class="fa-solid fa-microphone"></i>
+            <div class="pages-wrapper">
+                <!-- LAUNCHER -->
+                <div id="launcherPage" class="page active">
+                    <div class="status-bar">
+                        <span id="statusTime">--:--</span>
+                        <span class="status-icons">
+                            <i class="fa-solid fa-signal"></i>
+                            <i class="fa-solid fa-wifi"></i>
+                            <i class="fa-solid fa-battery-full"></i>
+                        </span>
+                    </div>
+
+                    <div class="weather-widget">
+                        <div class="weather-time" id="bigTime">--:--</div>
+                        <div class="weather-date" id="bigDate">Chargement...</div>
+                        <div class="weather-info">
+                            <i class="fa-solid fa-sun"></i>
+                            <span>24°C · Abidjan</span>
                         </div>
                     </div>
 
-                    <div class="shortcuts">
-                        <button class="shortcut" onclick="ouvrirNavigateur('index')">
-                            <span class="shortcut-icon"><i class="fa-solid fa-house"></i></span>
-                            <span class="shortcut-label">Accueil<br>VirtEmulator</span>
-                        </button>
-                        <button class="shortcut" onclick="ouvrirPageActuelle()">
-                            <span class="shortcut-icon"><i class="fa-solid fa-book-open"></i></span>
-                            <span class="shortcut-label">Lire ma<br>page</span>
-                        </button>
-                        <button class="shortcut" onclick="ouvrirModalNouveauFichier()">
-                            <span class="shortcut-icon"><i class="fa-solid fa-file-circle-plus"></i></span>
-                            <span class="shortcut-label">Nouveau<br>fichier</span>
-                        </button>
-                        <button class="shortcut" onclick="fermerEmulateur()">
-                            <span class="shortcut-icon"><i class="fa-solid fa-xmark"></i></span>
-                            <span class="shortcut-label">Fermer<br>l'émulateur</span>
-                        </button>
+                    <div class="user-apps">
+                        <div class="user-apps-title">Mes pages</div>
+                        <div class="user-apps-grid" id="userAppsGrid"></div>
                     </div>
 
-                    <!-- ACTUALITÉS -->
-                    <div class="news-section">
-                        <div class="news-section-title">Actualités VirtTech</div>
-                        
-                        <div class="news-card" onclick="ouvrirNavigateur('index')">
-                            <div class="news-header"><i class="fa-solid fa-rocket"></i><span>VirtEmulator</span></div>
-                            <div class="news-title">Bienvenue sur VirtEmulator</div>
-                            <div class="news-excerpt">Ton éditeur de code mobile est prêt ! Clique pour voir ta page d'accueil.</div>
-                        </div>
+                    <div class="search-widget" onclick="afficherPage('google')">
+                        <span class="google-g">G</span>
+                        <span class="placeholder">Rechercher sur Google</span>
+                        <i class="fa-solid fa-microphone"></i>
+                    </div>
 
-                        <div class="news-card" onclick="ouvrirNavigateur('page1')">
-                            <div class="news-header"><i class="fa-solid fa-trophy"></i><span>Virt_Dev</span></div>
-                            <div class="news-title">Découvre la page 1</div>
-                            <div class="news-excerpt">Un exemple de page que tu peux créer.</div>
+                    <div class="dock">
+                        <div class="app-icon" onclick="afficherPage('google')">
+                            <span class="icon-box icon-google"><i class="fa-brands fa-google"></i></span>
+                        </div>
+                        <div class="app-icon" onclick="ouvrirNavigateur('index')">
+                            <span class="icon-box icon-chrome"><i class="fa-brands fa-chrome"></i></span>
+                        </div>
+                        <div class="app-icon" onclick="afficherPage('settings')">
+                            <span class="icon-box icon-settings"><i class="fa-solid fa-gear"></i></span>
+                        </div>
+                        <div class="app-icon" onclick="afficherPage('clock')">
+                            <span class="icon-box icon-clock"><i class="fa-solid fa-clock"></i></span>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- PAGE NAVIGATEUR -->
-            <div id="browserPage" class="page">
-                <div class="status-bar">
-                    <span id="heure-status-2">9:41</span>
-                    <span class="status-icons">
-                        <i class="fa-solid fa-signal"></i>
-                        <i class="fa-solid fa-wifi"></i>
-                        <i class="fa-solid fa-battery-full"></i>
-                    </span>
+                <!-- GOOGLE HOME -->
+                <div id="googleHomePage" class="page">
+                    <div class="status-bar">
+                        <span id="googleStatusTime">--:--</span>
+                        <span class="status-icons">
+                            <i class="fa-solid fa-signal"></i>
+                            <i class="fa-solid fa-battery-full"></i>
+                        </span>
+                    </div>
+
+                    <div class="home-scroll">
+                        <div class="google-block">
+                            <img class="google-logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google">
+                            <div class="search-bar">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="homeSearchInput" placeholder="Rechercher un fichier..." onkeypress="homeSearchEnter(event)">
+                                <i class="fa-solid fa-microphone"></i>
+                            </div>
+                        </div>
+
+                        <div class="shortcuts">
+                            <button class="shortcut" onclick="ouvrirNavigateur('index')">
+                                <span class="shortcut-icon"><i class="fa-solid fa-house"></i></span>
+                                <span class="shortcut-label">Accueil<br>VirtEmulator</span>
+                            </button>
+                            <button class="shortcut" onclick="ouvrirPageActuelle()">
+                                <span class="shortcut-icon"><i class="fa-solid fa-book-open"></i></span>
+                                <span class="shortcut-label">Lire ma<br>page</span>
+                            </button>
+                            <button class="shortcut" onclick="ouvrirModalNouveauFichier()">
+                                <span class="shortcut-icon"><i class="fa-solid fa-file-circle-plus"></i></span>
+                                <span class="shortcut-label">Nouveau<br>fichier</span>
+                            </button>
+                            <button class="shortcut" onclick="fermerEmulateur()">
+                                <span class="shortcut-icon"><i class="fa-solid fa-xmark"></i></span>
+                                <span class="shortcut-label">Fermer<br>l'émulateur</span>
+                            </button>
+                        </div>
+
+                        <div class="news-section">
+                            <div class="news-section-title">Actualités VirtTech</div>
+                            <div class="news-card" onclick="ouvrirNavigateur('index')">
+                                <div class="news-header"><i class="fa-solid fa-rocket"></i><span>VirtEmulator</span></div>
+                                <div class="news-title">Bienvenue sur VirtEmulator</div>
+                                <div class="news-excerpt">Ton éditeur de code mobile est prêt ! Clique pour voir ta page d'accueil.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="chrome-bar">
-                    <div class="chrome-btn" onclick="retourAccueil()" title="Accueil">
-                        <i class="fa-solid fa-house"></i>
+                <!-- NAVIGATEUR -->
+                <div id="browserPage" class="page">
+                    <div class="status-bar">
+                        <span id="browserStatusTime">--:--</span>
+                        <span class="status-icons">
+                            <i class="fa-solid fa-signal"></i>
+                            <i class="fa-solid fa-battery-full"></i>
+                        </span>
                     </div>
-                    <div class="chrome-btn" id="btnBack" onclick="retourArriere()" title="Retour">
-                        <i class="fa-solid fa-chevron-left"></i>
+
+                    <div class="chrome-bar">
+                        <div class="chrome-btn" onclick="afficherPage('launcher')" title="Accueil">
+                            <i class="fa-solid fa-house"></i>
+                        </div>
+                        <div class="chrome-btn" id="btnBack" onclick="retourArriere()" title="Retour">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </div>
+                        <div class="chrome-btn" id="btnForward" onclick="allerAvant()" title="Avancer">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                        <div class="chrome-address-bar">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="text" id="urlInput" value="index" onkeypress="handleEnter(event)" spellcheck="false">
+                        </div>
+                        <div class="chrome-btn" onclick="rechargerPage()" title="Recharger">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </div>
                     </div>
-                    <div class="chrome-btn" id="btnForward" onclick="allerAvant()" title="Avancer">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </div>
-                    <div class="chrome-address-bar">
-                        <i class="fa-solid fa-lock"></i>
-                        <input type="text" id="urlInput" value="index" onkeypress="handleEnter(event)" spellcheck="false">
-                    </div>
-                    <div class="chrome-btn" onclick="rechargerPage()" title="Recharger">
-                        <i class="fa-solid fa-rotate-right"></i>
+
+                    <div class="site-content">
+                        <div class="loading-bar-container" id="loadingBar"><div class="loading-bar"></div></div>
+                        <iframe id="browserIframe" sandbox="allow-scripts allow-same-origin"></iframe>
+                        <div class="fake-website" id="pageContent" style="display:none;">
+                            <h1>Mini Navigateur</h1>
+                            <p>Tape un nom de fichier et appuie sur Entrée.</p>
+                        </div>
+                        <div class="error-404" id="page404" style="display:none;">
+                            <h1>404</h1>
+                            <p>Fichier introuvable dans ce projet.</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="site-content">
-                    <div class="loading-bar-container" id="loadingBar"><div class="loading-bar"></div></div>
-                    <iframe id="browserIframe" sandbox="allow-scripts allow-same-origin"></iframe>
-                    <div class="fake-website" id="pageContent" style="display:none;">
-                        <h1>Mini Navigateur</h1>
-                        <p>Tape un nom de fichier (ex: <strong>index</strong>, <strong>page1</strong>) et appuie sur Entrée.</p>
+                <!-- PARAMETRES -->
+                <div id="settingsPage" class="page">
+                    <div class="status-bar">
+                        <span id="settingsStatusTime">--:--</span>
+                        <span class="status-icons">
+                            <i class="fa-solid fa-signal"></i>
+                            <i class="fa-solid fa-battery-full"></i>
+                        </span>
                     </div>
-                    <div class="error-404" id="page404" style="display:none;">
-                        <h1>404</h1>
-                        <p>Fichier introuvable dans ce projet.</p>
+
+                    <div class="settings-header">Paramètres</div>
+
+                    <div class="settings-content">
+                        <div class="settings-card">
+                            <div class="card-title">Apparence</div>
+                            <div class="setting-row">
+                                <div class="setting-icon theme"><i class="fa-solid fa-moon" id="themeIcon"></i></div>
+                                <div class="setting-info">
+                                    <div class="setting-label">Mode nuit</div>
+                                    <div class="setting-value" id="themeValue">Désactivé</div>
+                                </div>
+                                <div class="toggle" id="themeToggle" onclick="basculerTheme()"></div>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <div class="card-title">À propos du téléphone</div>
+                            <div class="setting-row">
+                                <div class="setting-icon device"><i class="fa-solid fa-mobile-screen"></i></div>
+                                <div class="device-name-input">
+                                    <input type="text" id="deviceNameInput" value="Mon Samsung" placeholder="Nom du téléphone" oninput="changerNom(this.value)" style="width:100%; background:transparent; border:none; outline:none; color:inherit; font-family:inherit; font-size:0.78rem;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <div class="card-title">Marque</div>
+                            <div class="brand-block">
+                                <div class="brand-logo">Virt tech</div>
+                                <div class="brand-subtitle">Éditeur web & émulateur mobile</div>
+                                <div class="brand-version">Version 1.0.0</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- HORLOGE -->
+                <div id="clockPage" class="page">
+                    <div class="status-bar">
+                        <span id="clockStatusTime">--:--</span>
+                        <span class="status-icons">
+                            <i class="fa-solid fa-signal"></i>
+                            <i class="fa-solid fa-battery-full"></i>
+                        </span>
+                    </div>
+
+                    <div class="clock-header">Horloge</div>
+
+                    <div class="clock-content">
+                        <div class="current-time-block">
+                            <div class="current-time" id="clockCurrentTime">--:--</div>
+                            <div class="current-date" id="clockCurrentDate">Chargement...</div>
+                        </div>
+
+                        <div class="stopwatch-card">
+                            <div class="stopwatch-label">Chrono</div>
+                            <div class="stopwatch-time" id="stopwatchDisplay">00:00.00</div>
+                            <div class="stopwatch-controls">
+                                <button class="sw-btn sw-btn-start" id="swStartBtn" onclick="toggleStopwatch()">
+                                    <i class="fa-solid fa-play" id="swStartIcon"></i>
+                                </button>
+                                <button class="sw-btn sw-btn-reset disabled" id="swResetBtn" onclick="resetStopwatch()">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
 
-<!-- OVERLAY CREATION DE FICHIER (Pour VirtEmulator) -->
+<!-- OVERLAY CREATION DE FICHIER -->
 <div class="overlay-create" id="overlayCreate">
     <div class="modal-create">
         <h3>Nouveau fichier</h3>
