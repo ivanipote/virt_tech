@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Démo Toolbars VirtEmulator</title>
+<style>
+    body { background: #282a36; color: #fff; font-family: sans-serif; padding: 20px; margin: 0; }
+    h2 { font-size: 1rem; color: #888; margin-top: 40px; border-bottom: 1px solid #444; padding-bottom: 5px; }
+    .editor-mockup { background: #1e1e1e; border-radius: 10px; margin-bottom: 20px; overflow: hidden; border: 1px solid #444; }
+    .text-area-mockup { height: 100px; padding: 15px; font-family: monospace; color: #d4d4d4; background: #1e1e1e; }
+    
+    /* Styles communs pour les boutons */
+    .btn-symbol { background: #333; color: #fff; border: 1px solid #555; border-radius: 5px; padding: 8px 12px; font-family: monospace; font-size: 1rem; cursor: pointer; }
+    .btn-symbol:active { background: #555; }
+    .btn-lang { background: transparent; color: #888; border: none; padding: 5px 10px; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
+    .btn-lang.active { color: #D4AF37; border-bottom: 2px solid #D4AF37; }
+
+    /* --- MODELE 1 : Barre simple horizontale --- */
+    .toolbar-1 { display: flex; gap: 5px; padding: 10px; background: #2d2d2d; overflow-x: auto; }
+    .toolbar-1 .btn-symbol { flex-shrink: 0; }
+
+    /* --- MODELE 2 : Avec onglets de langage --- */
+    .toolbar-2-wrapper { background: #2d2d2d; }
+    .toolbar-2-tabs { display: flex; padding: 5px 10px 0; gap: 10px; border-bottom: 1px solid #444; }
+    .toolbar-2-content { display: flex; gap: 5px; padding: 10px; overflow-x: auto; }
+    .toolbar-2-content .btn-symbol { flex-shrink: 0; }
+
+    /* --- MODELE 3 : Barre avec bouton "Plus" --- */
+    .toolbar-3 { display: flex; gap: 5px; padding: 10px; background: #2d2d2d; overflow-x: auto; align-items: center; }
+    .toolbar-3 .btn-symbol { flex-shrink: 0; }
+    .toolbar-3 .btn-more { background: #D4AF37; color: #000; font-weight: bold; }
+
+    /* --- MODELE 4 : Style "Clavier" compact --- */
+    .toolbar-4 { display: flex; gap: 3px; padding: 8px; background: #2d2d2d; overflow-x: auto; }
+    .toolbar-4 .btn-symbol { padding: 6px 10px; font-size: 0.9rem; border-radius: 8px; }
+
+    /* Cache les éléments des langues non sélectionnées */
+    .lang-group { display: none; }
+    .lang-group.active { display: flex; gap: 5px; }
+</style>
+</head>
+<body>
+
+    <h2>Modèle 1 : Barre simple (Tout mélangé)</h2>
+    <div class="editor-mockup">
+        <div class="toolbar-1">
+            <button class="btn-symbol">&lt;div&gt;</button>
+            <button class="btn-symbol">&lt;p&gt;</button>
+            <button class="btn-symbol">&lt;h1&gt;</button>
+            <button class="btn-symbol">&lt;img&gt;</button>
+            <button class="btn-symbol">&lt;a&gt;</button>
+            <button class="btn-symbol">/</button>
+            <button class="btn-symbol">=</button>
+            <button class="btn-symbol">"</button>
+            <button class="btn-symbol">;</button>
+            <button class="btn-symbol">{</button>
+            <button class="btn-symbol">}</button>
+        </div>
+        <div class="text-area-mockup">Le code s'écrit ici...</div>
+    </div>
+
+    <h2>Modèle 2 : Avec onglets (HTML / CSS / JS)</h2>
+    <div class="editor-mockup">
+        <div class="toolbar-2-wrapper">
+            <div class="toolbar-2-tabs">
+                <button class="btn-lang active" onclick="switchLang('m2', 'html', this)">HTML</button>
+                <button class="btn-lang" onclick="switchLang('m2', 'css', this)">CSS</button>
+                <button class="btn-lang" onclick="switchLang('m2', 'js', this)">JS</button>
+            </div>
+            <div class="toolbar-2-content">
+                <!-- Groupe HTML -->
+                <div class="lang-group active" id="m2-html">
+                    <button class="btn-symbol">&lt;div&gt;</button>
+                    <button class="btn-symbol">&lt;p&gt;</button>
+                    <button class="btn-symbol">&lt;h1&gt;</button>
+                    <button class="btn-symbol">&lt;span&gt;</button>
+                    <button class="btn-symbol">&lt;a&gt;</button>
+                    <button class="btn-symbol">&lt;img&gt;</button>
+                    <button class="btn-symbol">&lt;button&gt;</button>
+                    <button class="btn-symbol">/</button>
+                </div>
+                <!-- Groupe CSS -->
+                <div class="lang-group" id="m2-css">
+                    <button class="btn-symbol">color:</button>
+                    <button class="btn-symbol">background:</button>
+                    <button class="btn-symbol">margin:</button>
+                    <button class="btn-symbol">padding:</button>
+                    <button class="btn-symbol">display:</button>
+                    <button class="btn-symbol">border:</button>
+                    <button class="btn-symbol">{ }</button>
+                    <button class="btn-symbol">;</button>
+                </div>
+                <!-- Groupe JS -->
+                <div class="lang-group" id="m2-js">
+                    <button class="btn-symbol">console.log()</button>
+                    <button class="btn-symbol">function()</button>
+                    <button class="btn-symbol">if()</button>
+                    <button class="btn-symbol">for()</button>
+                    <button class="btn-symbol">let</button>
+                    <button class="btn-symbol">const</button>
+                    <button class="btn-symbol">=</button>
+                    <button class="btn-symbol">;</button>
+                </div>
+            </div>
+        </div>
+        <div class="text-area-mockup">Le code s'écrit ici...</div>
+    </div>
+
+    <h2>Modèle 3 : Barre avec bouton "Plus"</h2>
+    <div class="editor-mockup">
+        <div class="toolbar-3">
+            <button class="btn-symbol btn-more">+</button>
+            <button class="btn-symbol">&lt;div&gt;</button>
+            <button class="btn-symbol">&lt;p&gt;</button>
+            <button class="btn-symbol">&lt;h1&gt;</button>
+            <button class="btn-symbol">/</button>
+            <button class="btn-symbol">=</button>
+            <button class="btn-symbol">"</button>
+            <button class="btn-symbol">;</button>
+        </div>
+        <div class="text-area-mockup">Le code s'écrit ici...</div>
+    </div>
+
+    <h2>Modèle 4 : Style "Clavier" compact (Boutons ronds)</h2>
+    <div class="editor-mockup">
+        <div class="toolbar-4">
+            <button class="btn-symbol">&lt;</button>
+            <button class="btn-symbol">&gt;</button>
+            <button class="btn-symbol">/</button>
+            <button class="btn-symbol">=</button>
+            <button class="btn-symbol">"</button>
+            <button class="btn-symbol">'</button>
+            <button class="btn-symbol">;</button>
+            <button class="btn-symbol">{</button>
+            <button class="btn-symbol">}</button>
+            <button class="btn-symbol">(</button>
+            <button class="btn-symbol">)</button>
+            <button class="btn-symbol">:</button>
+        </div>
+        <div class="text-area-mockup">Le code s'écrit ici...</div>
+    </div>
+
+    <script>
+        // Logique pour changer d'onglet de langage dans le Modèle 2
+        function switchLang(modelId, lang, btn) {
+            // Retire la classe active de tous les boutons de cet onglet
+            const tabs = btn.parentElement.querySelectorAll('.btn-lang');
+            tabs.forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Cache tous les groupes de ce modèle
+            const groups = document.querySelectorAll(`#${modelId}-html, #${modelId}-css, #${modelId}-js`);
+            groups.forEach(g => g.classList.remove('active'));
+
+            // Affiche le groupe sélectionné
+            document.getElementById(`${modelId}-${lang}`).classList.add('active');
+        }
+    </script>
+</body>
+</html>
