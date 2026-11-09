@@ -25,23 +25,8 @@
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="VirtTech" />
 
-<!-- Données structurées (Schema.org) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "VirtEmulator",
-  "alternateName": ["Virt Emulator", "Emulateur VirtTech", "Emulateur Virt Tech", "Éditeur de code VirtTech", "Codeur en ligne VirtTech"],
-  "url": "https://virttech.site/virtemulator",
-  "description": "Un éditeur de code en ligne pour tester du HTML, CSS et JavaScript directement dans le navigateur.",
-  "applicationCategory": "DeveloperApplication",
-  "operatingSystem": "All",
-  "primaryImageOfPage": {
-    "@type": "ImageObject",
-    "url": "https://virttech.site/virtemulator-logo.png?v=2"
-  }
-}
-</script>
+<!-- FontAwesome pour les icônes du téléphone -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <!-- CSS -->
 <link rel="stylesheet" href="/css/style.css">
@@ -53,7 +38,6 @@
 </head>
 <body>
 
-    
 <!-- CONTENEUR PRINCIPAL -->
 <div class="main-layout">
     
@@ -70,7 +54,7 @@
     <!-- ÉDITEUR -->
     <div class="emulator-container">
         
-        <!-- LA BARRE D'OUTILS -->
+        <!-- BARRE D'OUTILS -->
         <div class="toolbar">
             <div class="lang-switcher" id="btnSwitch">
                 <span id="currentLang">HTML</span>
@@ -83,120 +67,42 @@
                 </div>
             </div>
 
-            <!-- Flèche gauche -->
             <button class="scroll-btn" id="btnScrollLeft">◀</button>
             
             <div class="symbols-container" id="symbolsContainer">
-                <!-- HTML (40 balises) -->
+                <!-- HTML -->
                 <div class="group-symbols active" id="grp-html">
                     <button class="btn-symbol" data-insert="<!DOCTYPE html>\n<html>\n<head>\n  <title>Mon site</title>\n</head>\n<body>\n  \n</body>\n</html>">Structure</button>
                     <button class="btn-symbol" data-insert="<div>\n  \n</div>">&lt;div&gt;</button>
                     <button class="btn-symbol" data-insert="<p>\n  \n</p>">&lt;p&gt;</button>
                     <button class="btn-symbol" data-insert="<h1>\n  \n</h1>">&lt;h1&gt;</button>
-                    <button class="btn-symbol" data-insert="<h2>\n  \n</h2>">&lt;h2&gt;</button>
-                    <button class="btn-symbol" data-insert="<span>\n  \n</span>">&lt;span&gt;</button>
                     <button class="btn-symbol" data-insert="<a href=''>Lien</a>">&lt;a&gt;</button>
                     <button class="btn-symbol" data-insert="<img src='' alt=''>">&lt;img&gt;</button>
                     <button class="btn-symbol" data-insert="<button>\n  Cliquez\n</button>">&lt;button&gt;</button>
                     <button class="btn-symbol" data-insert="<ul>\n  <li></li>\n</ul>">&lt;ul&gt;</button>
-                    <button class="btn-symbol" data-insert="<ol>\n  <li></li>\n</ol>">&lt;ol&gt;</button>
-                    <button class="btn-symbol" data-insert="<table>\n  <tr><td></td></tr>\n</table>">&lt;table&gt;</button>
-                    <button class="btn-symbol" data-insert="<form>\n  \n</form>">&lt;form&gt;</button>
-                    <button class="btn-symbol" data-insert="<input type='text' placeholder=''>">&lt;input&gt;</button>
-                    <button class="btn-symbol" data-insert="<label>\n  \n</label>">&lt;label&gt;</button>
                     <button class="btn-symbol" data-insert="<br>">&lt;br&gt;</button>
-                    <button class="btn-symbol" data-insert="<hr>">&lt;hr&gt;</button>
-                    <button class="btn-symbol" data-insert="<header>\n  \n</header>">&lt;header&gt;</button>
-                    <button class="btn-symbol" data-insert="<footer>\n  \n</footer>">&lt;footer&gt;</button>
-                    <button class="btn-symbol" data-insert="<section>\n  \n</section>">&lt;section&gt;</button>
-                    <button class="btn-symbol" data-insert="<nav>\n  \n</nav>">&lt;nav&gt;</button>
-                    <button class="btn-symbol" data-insert="<main>\n  \n</main>">&lt;main&gt;</button>
-                    <button class="btn-symbol" data-insert="<aside>\n  \n</aside>">&lt;aside&gt;</button>
-                    <button class="btn-symbol" data-insert="<article>\n  \n</article>">&lt;article&gt;</button>
-                    <button class="btn-symbol" data-insert="<strong>\n  \n</strong>">&lt;strong&gt;</button>
-                    <button class="btn-symbol" data-insert="<em>\n  \n</em>">&lt;em&gt;</button>
-                    <button class="btn-symbol" data-insert="<video controls>\n  \n</video>">&lt;video&gt;</button>
-                    <button class="btn-symbol" data-insert="<audio controls>\n  \n</audio>">&lt;audio&gt;</button>
-                    <button class="btn-symbol" data-insert="<iframe src=''></iframe>">&lt;iframe&gt;</button>
-                    <button class="btn-symbol" data-insert="<select>\n  <option></option>\n</select>">&lt;select&gt;</button>
-                    <button class="btn-symbol" data-insert="<textarea>\n  \n</textarea>">&lt;textarea&gt;</button>
-                    <button class="btn-symbol" data-insert="<canvas></canvas>">&lt;canvas&gt;</button>
-                    <button class="btn-symbol" data-insert="<svg></svg>">&lt;svg&gt;</button>
-                    <button class="btn-symbol" data-insert="<blockquote>\n  \n</blockquote>">&lt;blockquote&gt;</button>
-                    <button class="btn-symbol" data-insert="<code>\n  \n</code>">&lt;code&gt;</button>
-                    <button class="btn-symbol" data-insert="<pre>\n  \n</pre>">&lt;pre&gt;</button>
-                    <button class="btn-symbol" data-insert="<meta name='' content=''>">&lt;meta&gt;</button>
-                    <button class="btn-symbol" data-insert="<link rel='stylesheet' href=''>">&lt;link&gt;</button>
-                    <button class="btn-symbol" data-insert="<script>\n  \n</script>">&lt;script&gt;</button>
-                    <button class="btn-symbol" data-insert="<!-- Commentaire -->">&lt;!-- --&gt;</button>
                 </div>
                 
-                <!-- CSS (40 propriétés) -->
+                <!-- CSS -->
                 <div class="group-symbols" id="grp-css">
-                    <button class="btn-symbol" data-insert="color: ;">color</button>
-                    <button class="btn-symbol" data-insert="background-color: ;">background</button>
-                    <button class="btn-symbol" data-insert="font-size: ;">font-size</button>
-                    <button class="btn-symbol" data-insert="font-family: ;">font-family</button>
-                    <button class="btn-symbol" data-insert="font-weight: ;">font-weight</button>
-                    <button class="btn-symbol" data-insert="text-align: ;">text-align</button>
-                    <button class="btn-symbol" data-insert="text-decoration: ;">text-decoration</button>
-                    <button class="btn-symbol" data-insert="margin: ;">margin</button>
-                    <button class="btn-symbol" data-insert="padding: ;">padding</button>
-                    <button class="btn-symbol" data-insert="width: ;">width</button>
-                    <button class="btn-symbol" data-insert="height: ;">height</button>
-                    <button class="btn-symbol" data-insert="border: ;">border</button>
-                    <button class="btn-symbol" data-insert="border-radius: ;">border-radius</button>
-                    <button class="btn-symbol" data-insert="box-shadow: ;">box-shadow</button>
-                    <button class="btn-symbol" data-insert="display: ;">display</button>
-                    <button class="btn-symbol" data-insert="flex-direction: ;">flex-direction</button>
-                    <button class="btn-symbol" data-insert="justify-content: ;">justify-content</button>
-                    <button class="btn-symbol" data-insert="align-items: ;">align-items</button>
-                    <button class="btn-symbol" data-insert="position: ;">position</button>
-                    <button class="btn-symbol" data-insert="top: ;">top</button>
-                    <button class="btn-symbol" data-insert="left: ;">left</button>
-                    <button class="btn-symbol" data-insert="right: ;">right</button>
-                    <button class="btn-symbol" data-insert="bottom: ;">bottom</button>
-                    <button class="btn-symbol" data-insert="z-index: ;">z-index</button>
-                    <button class="btn-symbol" data-insert="opacity: ;">opacity</button>
-                    <button class="btn-symbol" data-insert="transition: ;">transition</button>
-                    <button class="btn-symbol" data-insert="transform: ;">transform</button>
-                    <button class="btn-symbol" data-insert="cursor: ;">cursor</button>
-                    <button class="btn-symbol" data-insert="overflow: ;">overflow</button>
-                    <button class="btn-symbol" data-insert="line-height: ;">line-height</button>
-                    <button class="btn-symbol" data-insert="letter-spacing: ;">letter-spacing</button>
-                    <button class="btn-symbol" data-insert="text-transform: ;">text-transform</button>
-                    <button class="btn-symbol" data-insert="list-style: ;">list-style</button>
-                    <button class="btn-symbol" data-insert="background: ;">background</button>
-                    <button class="btn-symbol" data-insert="border-color: ;">border-color</button>
-                    <button class="btn-symbol" data-insert="outline: ;">outline</button>
-                    <button class="btn-symbol" data-insert="visibility: ;">visibility</button>
-                    <button class="btn-symbol" data-insert="float: ;">float</button>
-                    <button class="btn-symbol" data-insert="clear: ;">clear</button>
-                    <button class="btn-symbol" data-insert="filter: ;">filter</button>
+                    <button class="btn-symbol" data-insert="color: ;">color:</button>
+                    <button class="btn-symbol" data-insert="background-color: ;">background:</button>
+                    <button class="btn-symbol" data-insert="margin: ;">margin:</button>
+                    <button class="btn-symbol" data-insert="padding: ;">padding:</button>
+                    <button class="btn-symbol" data-insert="display: ;">display:</button>
+                    <button class="btn-symbol" data-insert="font-size: ;">font-size:</button>
+                    <button class="btn-symbol" data-insert="border: ;">border:</button>
+                    <button class="btn-symbol" data-insert="{ }">{ }</button>
                 </div>
                 
-                <!-- JS (20 fonctions) -->
+                <!-- JS -->
                 <div class="group-symbols" id="grp-js">
                     <button class="btn-symbol" data-insert="console.log();">console.log</button>
-                    <button class="btn-symbol" data-insert="alert();">alert</button>
-                    <button class="btn-symbol" data-insert="prompt();">prompt</button>
+                    <button class="btn-symbol" data-insert="function nom() {\n  \n}">function</button>
+                    <button class="btn-symbol" data-insert="if () {\n  \n}">if</button>
+                    <button class="btn-symbol" data-insert="for () {\n  \n}">for</button>
                     <button class="btn-symbol" data-insert="let ">let</button>
                     <button class="btn-symbol" data-insert="const ">const</button>
-                    <button class="btn-symbol" data-insert="function nom() {\n  \n}">function</button>
-                    <button class="btn-symbol" data-insert="document.getElementById('');">getElementById</button>
-                    <button class="btn-symbol" data-insert="document.querySelector('');">querySelector</button>
-                    <button class="btn-symbol" data-insert=".innerText = '';">innerText</button>
-                    <button class="btn-symbol" data-insert=".innerHTML = '';">innerHTML</button>
-                    <button class="btn-symbol" data-insert=".style. = '';">.style</button>
-                    <button class="btn-symbol" data-insert=".classList.add('');">classList.add</button>
-                    <button class="btn-symbol" data-insert=".classList.remove('');">classList.remove</button>
-                    <button class="btn-symbol" data-insert=".addEventListener('click', function() {\n  \n});">addEventListener</button>
-                    <button class="btn-symbol" data-insert="if () {\n  \n}">if</button>
-                    <button class="btn-symbol" data-insert="else {\n  \n}">else</button>
-                    <button class="btn-symbol" data-insert="for () {\n  \n}">for</button>
-                    <button class="btn-symbol" data-insert="setTimeout(function() {\n  \n}, 1000);">setTimeout</button>
-                    <button class="btn-symbol" data-insert="return ;">return</button>
-                    <button class="btn-symbol" data-insert="= ">=</button>
                 </div>
 
                 <!-- PROJETS -->
@@ -205,20 +111,13 @@
                     <button class="btn-symbol btn-project" data-project="login">Page Login</button>
                     <button class="btn-symbol btn-project" data-project="btn">Bouton Animé</button>
                     <button class="btn-symbol btn-project" data-project="text">Texte Stylé</button>
-                    <button class="btn-symbol btn-project" data-project="carte">Carte Profil</button>
-                    <button class="btn-symbol btn-project" data-project="anim">Animation CSS</button>
-                    <button class="btn-symbol btn-project" data-project="menu">Menu Burger</button>
-                    <button class="btn-symbol btn-project" data-project="form">Formulaire</button>
-                    <button class="btn-symbol btn-project" data-project="galerie">Galerie</button>
-                    <button class="btn-symbol btn-project" data-project="chrono">Chronomètre</button>
                 </div>
             </div>
 
-            <!-- Flèche droite -->
             <button class="scroll-btn" id="btnScrollRight">▶</button>
         </div>
 
-        <!-- HEADER AVEC ONGLETS -->
+        <!-- HEADER ONGLETS -->
         <div class="editor-header-wrapper">
             <div class="editor-tabs" id="editorHeader"></div>
             <div class="editor-actions">
@@ -241,11 +140,125 @@
 </div>
 
 <!-- BOUTON PLAY (Mobile) -->
-<button class="btn-play-footer" id="btnPlay" title="Voir le rendu">
+<button class="btn-play-footer" id="btnPlay" title="Lancer le navigateur">
     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 </button>
 
-<!-- OVERLAY CREATION DE FICHIER -->
+<!-- ========================================= -->
+<!-- OVERLAY DU TÉLÉPHONE (S'ouvre au clic sur Play) -->
+<!-- ========================================= -->
+<div class="phone-overlay" id="phoneOverlay">
+    <div class="phone-samsung">
+        <div class="punch-hole"></div>
+
+        <div class="pages-wrapper">
+            <!-- PAGE ACCUEIL DU NAVIGATEUR -->
+            <div id="homePage" class="page">
+                <div class="status-bar">
+                    <span id="heure-status">9:41</span>
+                    <span class="status-icons">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                    </span>
+                </div>
+
+                <div class="home-scroll">
+                    <div class="google-block">
+                        <img class="google-logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google">
+                        <div class="search-bar">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="homeSearchInput" placeholder="Rechercher un fichier..." onkeypress="homeSearchEnter(event)">
+                            <i class="fa-solid fa-microphone"></i>
+                        </div>
+                    </div>
+
+                    <div class="shortcuts">
+                        <button class="shortcut" onclick="ouvrirNavigateur('index')">
+                            <span class="shortcut-icon"><i class="fa-solid fa-house"></i></span>
+                            <span class="shortcut-label">Accueil<br>VirtEmulator</span>
+                        </button>
+                        <button class="shortcut" onclick="ouvrirPageActuelle()">
+                            <span class="shortcut-icon"><i class="fa-solid fa-book-open"></i></span>
+                            <span class="shortcut-label">Lire ma<br>page</span>
+                        </button>
+                        <button class="shortcut" onclick="ouvrirModalNouveauFichier()">
+                            <span class="shortcut-icon"><i class="fa-solid fa-file-circle-plus"></i></span>
+                            <span class="shortcut-label">Nouveau<br>fichier</span>
+                        </button>
+                        <button class="shortcut" onclick="fermerEmulateur()">
+                            <span class="shortcut-icon"><i class="fa-solid fa-xmark"></i></span>
+                            <span class="shortcut-label">Fermer<br>l'émulateur</span>
+                        </button>
+                    </div>
+
+                    <!-- ACTUALITÉS -->
+                    <div class="news-section">
+                        <div class="news-section-title">Actualités VirtTech</div>
+                        
+                        <div class="news-card" onclick="ouvrirNavigateur('index')">
+                            <div class="news-header"><i class="fa-solid fa-rocket"></i><span>VirtEmulator</span></div>
+                            <div class="news-title">Bienvenue sur VirtEmulator</div>
+                            <div class="news-excerpt">Ton éditeur de code mobile est prêt ! Clique pour voir ta page d'accueil.</div>
+                        </div>
+
+                        <div class="news-card" onclick="ouvrirNavigateur('page1')">
+                            <div class="news-header"><i class="fa-solid fa-trophy"></i><span>Virt_Dev</span></div>
+                            <div class="news-title">Découvre la page 1</div>
+                            <div class="news-excerpt">Un exemple de page que tu peux créer.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE NAVIGATEUR -->
+            <div id="browserPage" class="page">
+                <div class="status-bar">
+                    <span id="heure-status-2">9:41</span>
+                    <span class="status-icons">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                    </span>
+                </div>
+
+                <div class="chrome-bar">
+                    <div class="chrome-btn" onclick="retourAccueil()" title="Accueil">
+                        <i class="fa-solid fa-house"></i>
+                    </div>
+                    <div class="chrome-btn" id="btnBack" onclick="retourArriere()" title="Retour">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div>
+                    <div class="chrome-btn" id="btnForward" onclick="allerAvant()" title="Avancer">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                    <div class="chrome-address-bar">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="text" id="urlInput" value="index" onkeypress="handleEnter(event)" spellcheck="false">
+                    </div>
+                    <div class="chrome-btn" onclick="rechargerPage()" title="Recharger">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </div>
+                </div>
+
+                <div class="site-content">
+                    <div class="loading-bar-container" id="loadingBar"><div class="loading-bar"></div></div>
+                    <iframe id="browserIframe" sandbox="allow-scripts allow-same-origin"></iframe>
+                    <div class="fake-website" id="pageContent" style="display:none;">
+                        <h1>Mini Navigateur</h1>
+                        <p>Tape un nom de fichier (ex: <strong>index</strong>, <strong>page1</strong>) et appuie sur Entrée.</p>
+                    </div>
+                    <div class="error-404" id="page404" style="display:none;">
+                        <h1>404</h1>
+                        <p>Fichier introuvable dans ce projet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OVERLAY CREATION DE FICHIER (Pour VirtEmulator) -->
 <div class="overlay-create" id="overlayCreate">
     <div class="modal-create">
         <h3>Nouveau fichier</h3>
@@ -253,39 +266,6 @@
         <div class="btns">
             <button class="btn-annuler" id="btnAnnulerCreate">Annuler</button>
             <button class="btn-creer" id="btnValiderCreate">Créer</button>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE MOBILE -->
-<div class="slide-overlay" id="slideOverlay"></div>
-<div class="slide-panel" id="slidePanel">
-    <div class="slide-header">
-        <h3 id="slideTitle">Aperçu</h3>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <button class="btn-zoom-header" id="btnZoomOut" title="Zoom arrière">-</button>
-            <button class="btn-zoom-header" id="btnZoomIn" title="Zoom avant">+</button>
-            <button class="btn-fermer" id="btnFermerSlide">✕</button>
-        </div>
-    </div>
-    <div class="slide-content">
-        <div class="iphone-frame">
-            <div class="status-bar">
-                <span class="status-time">12:30</span>
-                <span class="status-icons">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M2 22h20V2z"/></svg>
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
-                </span>
-            </div>
-            <div class="iphone-screen">
-                <iframe id="mobileIframe" title="Aperçu mobile"></iframe>
-            </div>
-            <div class="nav-bar-android">
-                <div class="nav-btn"></div>
-                <div class="nav-btn home"></div>
-                <div class="nav-btn"></div>
-            </div>
         </div>
     </div>
 </div>

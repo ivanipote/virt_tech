@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samsung - Écran d'accueil V3 fonctionnel</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        background: #111;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    .phone-samsung {
+        width: 300px;
+        height: 620px;
+        background: #000;
+        border-radius: 35px;
+        border: 4px solid #333;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    }
+
+    .punch-hole {
+        position: absolute;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 12px;
+        height: 12px;
+        background: #000;
+        border-radius: 50%;
+        z-index: 100;
+        box-shadow: inset 0 0 2px #000, 0 0 2px #333;
+    }
+
+    .pages-wrapper {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+    }
+
+    .page {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.35s ease;
+        will-change: transform, opacity;
+    }
+
+    /* ===== LAUNCHER ===== */
+    #launcherPage {
+        background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        z-index: 2;
+        transform: translateX(0);
+        opacity: 1;
+    }
+    #launcherPage.slide-out-left {
+        transform: translateX(-30%);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .status-bar {
+        height: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 18px 0;
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+    .status-icons { display: flex; gap: 6px; align-items: center; }
+    .status-icons i { font-size: 0.65rem; }
+
+    .weather-widget {
+        text-align: center;
+        color: #fff;
+        margin-top: 16px;
+        padding: 0 20px;
+    }
+    .weather-time { font-size: 2.6rem; font-weight: 300; letter-spacing: -1px; line-height: 1; }
+    .weather-date { font-size: 0.7rem; opacity: 0.8; margin-top: 4px; }
+    .weather-info {
+        margin-top: 12px;
+        display: flex; justify-content: center; align-items: center;
+        gap: 8px; font-size: 0.75rem; opacity: 0.9;
+    }
+    .weather-info i { color: #ffd93d; font-size: 0.9rem; }
+
+    .user-apps { padding: 20px 18px 0; margin-top: auto; }
+    .user-apps-title {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+        padding-left: 4px;
+    }
+    .user-apps-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px 12px;
+    }
+
+    .app-icon {
+        display: flex; flex-direction: column; align-items: center;
+        gap: 6px; cursor: pointer;
+    }
+    .app-icon .icon-box {
+        width: 48px; height: 48px;
+        border-radius: 14px;
+        display: flex; justify-content: center; align-items: center;
+        font-size: 1.4rem;
+        color: #fff;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+        transition: transform 0.15s;
+    }
+    .app-icon:hover .icon-box { transform: scale(1.1); }
+    .app-icon .app-label {
+        font-size: 0.55rem;
+        color: #fff;
+        text-align: center;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        max-width: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .icon-settings { background: #6e7c87; }
+    .icon-clock { background: #1c1c1e; }
+    .icon-chrome { background: #fff; color: #4285F4 !important; }
+    .icon-google { background: #fff; color: #4285F4 !important; }
+    .icon-web { background: linear-gradient(135deg, #4285F4, #34A853); }
+
+    .search-widget {
+        margin: 16px auto 12px;
+        width: 86%;
+        background: rgba(255,255,255,0.95);
+        border-radius: 24px;
+        padding: 10px 16px;
+        display: flex; align-items: center; gap: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        cursor: pointer;
+    }
+    .search-widget .google-g {
+        font-weight: bold; font-size: 1.1rem;
+        background: linear-gradient(135deg, #4285F4, #EA4335, #FBBC05, #34A853);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .search-widget span.placeholder { flex: 1; font-size: 0.75rem; color: #5f6368; }
+    .search-widget i { color: #9aa0a6; font-size: 0.85rem; }
+
+    .dock {
+        margin: 0 14px 8px;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 22px;
+        padding: 10px 8px;
+        display: flex; justify-content: space-around; align-items: center;
+    }
+    .dock .app-icon .icon-box { width: 44px; height: 44px; border-radius: 12px; font-size: 1.2rem; }
+    .dock .app-label { display: none; }
+
+    .nav-bar {
+        height: 38px;
+        display: flex; justify-content: space-around; align-items: center;
+        padding: 0 30px;
+        margin-bottom: 6px;
+        flex-shrink: 0;
+    }
+    .nav-btn-samsung {
+        width: 28px; height: 28px;
+        display: flex; justify-content: center; align-items: center;
+        color: rgba(255,255,255,0.85);
+        font-size: 0.95rem;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: background 0.2s;
+    }
+    .nav-btn-samsung:hover { background: rgba(255,255,255,0.15); }
+    .nav-btn-samsung.recents {
+        width: 18px; height: 18px;
+        border: 2px solid rgba(255,255,255,0.85);
+        border-radius: 3px;
+    }
+
+    /* ===== PAGE GOOGLE ===== */
+    #googleHomePage {
+        background: #fff;
+        z-index: 1;
+        transform: translateX(100%);
+    }
+    #googleHomePage.slide-in { transform: translateX(0); z-index: 3; }
+
+    #googleHomePage .status-bar { color: #202124; background: #fff; }
+
+    .home-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+    .google-block {
+        margin-top: 10px;
+        display: flex; flex-direction: column; align-items: center;
+        gap: 16px;
+    }
+    .google-logo { width: 130px; height: auto; user-select: none; }
+
+    .search-bar {
+        width: 86%;
+        display: flex; align-items: center; gap: 8px;
+        border: 1px solid #dfe1e5;
+        border-radius: 24px;
+        padding: 10px 14px;
+        background: #fff;
+        box-shadow: 0 1px 6px rgba(32,33,36,0.08);
+        transition: box-shadow 0.25s ease;
+        cursor: text;
+    }
+    .search-bar:hover, .search-bar:focus-within { box-shadow: 0 1px 8px rgba(32,33,36,0.28); }
+    .search-bar i { color: #9aa0a6; font-size: 0.9rem; }
+    .search-bar input {
+        flex: 1; border: none; outline: none;
+        font-size: 0.85rem; color: #202124; background: transparent;
+    }
+
+    .shortcuts {
+        display: flex; justify-content: space-around;
+        width: 92%; margin: 22px auto 0;
+    }
+    .shortcut {
+        display: flex; flex-direction: column; align-items: center;
+        gap: 6px; width: 60px;
+        cursor: pointer; background: none; border: none;
+        font-family: Arial, sans-serif;
+    }
+    .shortcut-icon {
+        width: 46px; height: 46px;
+        border-radius: 50%;
+        background: #f1f3f4;
+        display: flex; justify-content: center; align-items: center;
+        font-size: 1.1rem; color: #5f6368;
+        transition: background 0.2s, color 0.2s, transform 0.15s;
+    }
+    .shortcut:hover .shortcut-icon {
+        background: #e8eaed; color: #202124; transform: scale(1.08);
+    }
+    .shortcut-label {
+        font-size: 0.55rem; color: #5f6368;
+        text-align: center; line-height: 1.2;
+    }
+
+    .news-card {
+        width: 90%; margin: 22px auto 20px;
+        background: #fff;
+        border: 1px solid #e8eaed;
+        border-radius: 14px;
+        padding: 12px 14px;
+        box-shadow: 0 1px 4px rgba(32,33,36,0.08);
+        cursor: pointer;
+    }
+    .news-header {
+        display: flex; align-items: center; gap: 6px;
+        margin-bottom: 8px; color: #5f6368; font-size: 0.6rem;
+    }
+    .news-header i { color: #4285F4; font-size: 0.65rem; }
+    .news-title { font-size: 0.85rem; font-weight: bold; color: #202124; margin-bottom: 6px; }
+    .news-excerpt { font-size: 0.68rem; color: #5f6368; line-height: 1.35; margin-bottom: 10px; }
+    .news-footer { display: flex; justify-content: space-between; font-size: 0.55rem; color: #9aa0a6; }
+    .news-footer .actions { display: flex; gap: 10px; }
+
+    /* ===== NAVIGATEUR ===== */
+    #browserPage {
+        background: #202124;
+        z-index: 1;
+        transform: translateX(100%);
+    }
+    #browserPage.slide-in { transform: translateX(0); z-index: 4; }
+
+    #browserPage .status-bar { color: #fff; background: #111; }
+
+    .chrome-bar {
+        background: #202124;
+        padding: 10px 8px;
+        display: flex; align-items: center; gap: 6px;
+        border-bottom: 1px solid #333;
+        flex-shrink: 0;
+    }
+    .chrome-btn {
+        color: #9aa0a6; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        width: 26px; height: 26px;
+        border-radius: 50%;
+        transition: background 0.2s;
+        flex-shrink: 0;
+    }
+    .chrome-btn:hover { background: #35363a; }
+    .chrome-btn i { font-size: 0.85rem; }
+    .chrome-btn.desactive { opacity: 0.35; pointer-events: none; }
+
+    .chrome-address-bar {
+        flex: 1;
+        background: #35363a;
+        border-radius: 20px;
+        padding: 7px 12px;
+        display: flex; align-items: center; gap: 8px;
+        color: #e8eaed; font-size: 0.8rem;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .chrome-address-bar i { color: #9aa0a6; font-size: 0.7rem; flex-shrink: 0; }
+    .chrome-address-bar input {
+        background: transparent; border: none;
+        color: #fff; outline: none;
+        width: 100%; font-size: 0.78rem; font-family: inherit;
+    }
+
+    .site-content {
+        flex: 1; background: #fff;
+        position: relative; overflow: hidden;
+        display: flex; flex-direction: column;
+    }
+    .loading-bar-container {
+        height: 3px; background: #e0e0e0; width: 100%;
+        position: absolute; top: 0; left: 0;
+        z-index: 20; display: none;
+    }
+    .loading-bar-container.active { display: block; }
+    .loading-bar {
+        height: 100%; background: #4285f4; width: 0%;
+        animation: charger 1s infinite ease-in-out;
+    }
+    @keyframes charger {
+        0% { width: 0%; } 50% { width: 80%; } 100% { width: 100%; }
+    }
+    #browserIframe {
+        width: 100%; height: 100%; border: none;
+        display: none; background: #fff;
+    }
+    .fake-website {
+        padding: 40px 20px; text-align: center; color: #333;
+        display: flex; flex-direction: column;
+        justify-content: center; align-items: center; height: 100%;
+    }
+    .fake-website h1 { font-size: 1.5rem; color: #0B2545; margin-bottom: 10px; }
+    .fake-website p { font-size: 0.9rem; color: #666; line-height: 1.5; }
+    .error-404 {
+        display: none; flex-direction: column;
+        justify-content: center; align-items: center;
+        height: 100%; text-align: center; background: #f9f9f9;
+    }
+    .error-404 h1 { font-size: 4rem; color: #0B2545; margin: 0; }
+    .error-404 p { color: #666; }
+
+    /* ===== OVERLAY RÉCENTS ===== */
+    .recents-overlay {
+        position: absolute; inset: 0;
+        background: rgba(0,0,0,0.85);
+        z-index: 50; display: none;
+        flex-direction: column; justify-content: center; align-items: center;
+        color: #fff; gap: 16px;
+    }
+    .recents-overlay.active { display: flex; }
+    .recents-overlay h3 { font-size: 0.9rem; font-weight: 500; opacity: 0.9; }
+    .recents-empty { font-size: 0.7rem; opacity: 0.6; }
+    .recents-close {
+        margin-top: 20px; padding: 8px 20px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 20px; font-size: 0.7rem; cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+    <div class="phone-samsung">
+        <div class="punch-hole"></div>
+
+        <div class="pages-wrapper">
+
+            <!-- ===== LAUNCHER ===== -->
+            <div id="launcherPage" class="page">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span class="status-icons">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                    </span>
+                </div>
+
+                <div class="weather-widget">
+                    <div class="weather-time">9:41</div>
+                    <div class="weather-date">Lundi 9 novembre</div>
+                    <div class="weather-info">
+                        <i class="fa-solid fa-sun"></i>
+                        <span>24°C · Abidjan</span>
+                    </div>
+                </div>
+
+                <div class="user-apps">
+                    <div class="user-apps-title">Mes pages</div>
+                    <div class="user-apps-grid" id="userAppsGrid"></div>
+                </div>
+
+                <div class="search-widget" onclick="ouvrirGoogleHome()">
+                    <span class="google-g">G</span>
+                    <span class="placeholder">Rechercher sur Google</span>
+                    <i class="fa-solid fa-microphone"></i>
+                </div>
+
+                <div class="dock">
+                    <div class="app-icon" onclick="ouvrirGoogleHome()">
+                        <span class="icon-box icon-google"><i class="fa-brands fa-google"></i></span>
+                    </div>
+                    <div class="app-icon" onclick="ouvrirNavigateur('index')">
+                        <span class="icon-box icon-chrome"><i class="fa-brands fa-chrome"></i></span>
+                    </div>
+                    <div class="app-icon" onclick="alert('Paramètres — à définir')">
+                        <span class="icon-box icon-settings"><i class="fa-solid fa-gear"></i></span>
+                    </div>
+                    <div class="app-icon" onclick="alert('Horloge — à définir')">
+                        <span class="icon-box icon-clock"><i class="fa-solid fa-clock"></i></span>
+                    </div>
+                </div>
+
+                <div class="nav-bar">
+                    <div class="nav-btn-samsung" onclick="navRetour()" title="Retour">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div>
+                    <div class="nav-btn-samsung" onclick="navAccueil()" title="Accueil">
+                        <i class="fa-regular fa-circle"></i>
+                    </div>
+                    <div class="nav-btn-samsung recents" onclick="navRecents()" title="Récents"></div>
+                </div>
+            </div>
+
+            <!-- ===== PAGE GOOGLE ===== -->
+            <div id="googleHomePage" class="page">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span class="status-icons">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                    </span>
+                </div>
+
+                <div class="home-scroll">
+                    <div class="google-block">
+                        <img class="google-logo"
+                             src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+                             alt="Google">
+                        <div class="search-bar">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="homeSearchInput" placeholder="Rechercher sur Google"
+                                   onkeypress="homeSearchEnter(event)">
+                            <i class="fa-solid fa-microphone"></i>
+                        </div>
+                    </div>
+
+                    <div class="shortcuts">
+                        <button class="shortcut" onclick="ouvrirNavigateur('index')">
+                            <span class="shortcut-icon"><i class="fa-solid fa-house"></i></span>
+                            <span class="shortcut-label">Accueil<br>Virt tech</span>
+                        </button>
+                        <button class="shortcut" onclick="ouvrirNavigateur('page1')">
+                            <span class="shortcut-icon"><i class="fa-solid fa-book-open"></i></span>
+                            <span class="shortcut-label">Lire ma<br>page</span>
+                        </button>
+                        <button class="shortcut" onclick="ouvrirNavigateur('index')">
+                            <span class="shortcut-icon"><i class="fa-solid fa-file-circle-plus"></i></span>
+                            <span class="shortcut-label">Nouveau<br>fichier</span>
+                        </button>
+                        <button class="shortcut" onclick="fermerEmulateur()">
+                            <span class="shortcut-icon"><i class="fa-solid fa-xmark"></i></span>
+                            <span class="shortcut-label">Fermer<br>l'émulateur</span>
+                        </button>
+                    </div>
+
+                    <div class="news-card">
+                        <div class="news-header">
+                            <i class="fa-solid fa-newspaper"></i>
+                            <span>Actualité · Virt tech</span>
+                        </div>
+                        <div class="news-title">Bienvenue dans votre émulateur Virt tech</div>
+                        <div class="news-excerpt">
+                            Découvrez les nouvelles fonctionnalités de votre éditeur : création de fichiers,
+                            lecture de pages et navigation rapide depuis l'accueil.
+                        </div>
+                        <div class="news-footer">
+                            <span>Il y a 5 min</span>
+                            <span class="actions">
+                                <i class="fa-regular fa-bookmark"></i>
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== NAVIGATEUR ===== -->
+            <div id="browserPage" class="page">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span class="status-icons">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                    </span>
+                </div>
+
+                <div class="chrome-bar">
+                    <div class="chrome-btn" onclick="retourLauncher()" title="Accueil">
+                        <i class="fa-solid fa-house"></i>
+                    </div>
+                    <div class="chrome-btn" id="btnBack" onclick="retourArriere()" title="Retour">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div>
+                    <div class="chrome-btn" id="btnForward" onclick="allerAvant()" title="Avancer">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                    <div class="chrome-address-bar">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="text" id="urlInput" value="index"
+                               onkeypress="handleEnter(event)" spellcheck="false">
+                    </div>
+                    <div class="chrome-btn" onclick="rechargerPage()" title="Recharger">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </div>
+                </div>
+
+                <div class="site-content">
+                    <div class="loading-bar-container" id="loadingBar"><div class="loading-bar"></div></div>
+                    <iframe id="browserIframe" sandbox="allow-scripts allow-same-origin"></iframe>
+                    <div class="fake-website" id="pageContent">
+                        <h1>Mini Navigateur</h1>
+                        <p>Tape un nom de fichier (ex: <strong>index</strong>, <strong>page1</strong>) et appuie sur Entrée.</p>
+                    </div>
+                    <div class="error-404" id="page404">
+                        <h1>404</h1>
+                        <p>Fichier introuvable dans ce projet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== RÉCENTS ===== -->
+            <div class="recents-overlay" id="recentsOverlay">
+                <h3>Applications récentes</h3>
+                <div class="recents-empty">Aucune application récente</div>
+                <div class="recents-close" onclick="fermerRecents()">Fermer</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ===== FICHIERS SIMULÉS =====
+        const fichiersSimules = {
+            "index": `<!DOCTYPE html><html><body style="font-family:sans-serif;text-align:center;padding-top:50px;"><h1 style="color:#0B2545;">Bienvenue sur la page d'accueil</h1><p>Ceci est le fichier index.html</p></body></html>`,
+            "page1": `<!DOCTYPE html><html><body style="font-family:sans-serif;text-align:center;padding-top:50px;background:#f0f0f0;"><h1 style="color:#D4AF37;">Page 1</h1><p>Ceci est le fichier page1.html</p></body></html>`
+        };
+
+        let historique = ["index"];
+        let indexHistorique = 0;
+
+        // État : 'launcher' | 'google' | 'browser'
+        let pageActive = 'launcher';
+
+        const launcherPage = document.getElementById('launcherPage');
+        const googleHomePage = document.getElementById('googleHomePage');
+        const browserPage = document.getElementById('browserPage');
+
+        // ===== GÉNÉRATION DES APPS USER =====
+        function genererUserApps() {
+            const grid = document.getElementById('userAppsGrid');
+            grid.innerHTML = '';
+            Object.keys(fichiersSimules).forEach(nom => {
+                const div = document.createElement('div');
+                div.className = 'app-icon';
+                div.onclick = () => ouvrirNavigateur(nom);
+                div.innerHTML = `
+                    <span class="icon-box icon-web"><i class="fa-solid fa-code"></i></span>
+                    <span class="app-label">${nom}.html</span>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        // ===== RESET VISUEL DE TOUTES LES PAGES =====
+        function resetPages() {
+            // Launcher : visible au centre
+            launcherPage.classList.remove('slide-out-left');
+            launcherPage.style.transform = 'translateX(0)';
+            launcherPage.style.opacity = '1';
+            launcherPage.style.pointerEvents = 'auto';
+
+            // Google : hors écran à droite
+            googleHomePage.style.transition = 'none';
+            googleHomePage.style.transform = 'translateX(100%)';
+
+            // Navigateur : hors écran à droite
+            browserPage.style.transition = 'none';
+            browserPage.style.transform = 'translateX(100%)';
+
+            // Forcer reflow
+            void googleHomePage.offsetWidth;
+            void browserPage.offsetWidth;
+
+            // Réactiver transitions
+            googleHomePage.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+            browserPage.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+
+        // ===== AFFICHER LE LAUNCHER =====
+        function afficherLauncher() {
+            pageActive = 'launcher';
+            resetPages();
+        }
+
+        // ===== OUVRIR LA PAGE GOOGLE =====
+        function ouvrirGoogleHome() {
+            pageActive = 'google';
+            // Launcher recule
+            launcherPage.classList.add('slide-out-left');
+            launcherPage.style.pointerEvents = 'none';
+            // Google glisse depuis la droite
+            googleHomePage.style.transition = 'none';
+            googleHomePage.style.transform = 'translateX(100%)';
+            void googleHomePage.offsetWidth;
+            googleHomePage.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+            googleHomePage.style.transform = 'translateX(0)';
+        }
+
+        // ===== OUVRIR LE NAVIGATEUR (repart proprement sur index) =====
+        function ouvrirNavigateur(page) {
+            pageActive = 'browser';
+
+            // Reset historique à chaque ouverture de Chrome (session propre)
+            historique = [page || 'index'];
+            indexHistorique = 0;
+
+            // Launcher recule
+            launcherPage.classList.add('slide-out-left');
+            launcherPage.style.pointerEvents = 'none';
+
+            // Si on venait de la page Google, on la cache d'abord
+            googleHomePage.style.transform = 'translateX(100%)';
+
+            // Navigateur glisse depuis la droite
+            browserPage.style.transition = 'none';
+            browserPage.style.transform = 'translateX(100%)';
+            void browserPage.offsetWidth;
+            browserPage.style.transition = 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+            browserPage.style.transform = 'translateX(0)';
+
+            chargerPage(page || 'index', false);
+        }
+
+        // ===== RETOUR AU LAUNCHER DEPUIS LE NAVIGATEUR (bouton maison Chrome) =====
+        function retourLauncher() {
+            pageActive = 'launcher';
+            browserPage.style.transform = 'translateX(100%)';
+            googleHomePage.style.transform = 'translateX(100%)';
+            launcherPage.classList.remove('slide-out-left');
+            launcherPage.style.pointerEvents = 'auto';
+        }
+
+        function fermerEmulateur() {
+            document.querySelector('.phone-samsung').style.background = '#000';
+            launcherPage.classList.add('slide-out-left');
+            googleHomePage.style.transform = 'translateX(100%)';
+            browserPage.style.transform = 'translateX(100%)';
+        }
+
+        // ===== RECHERCHE GOOGLE =====
+        function homeSearchEnter(e) {
+            if (e.key === 'Enter') {
+                const val = document.getElementById('homeSearchInput').value.trim();
+                if (!val) return;
+                ouvrirNavigateur(val.replace('.html', ''));
+                document.getElementById('homeSearchInput').value = '';
+            }
+        }
+
+        // ===== LOGIQUE NAVIGATEUR =====
+        function handleEnter(e) {
+            if (e.key === 'Enter') {
+                let nom = document.getElementById('urlInput').value.trim();
+                if (!nom) return;
+                nom = nom.replace('.html', '').replace(' (introuvable)', '');
+                chargerPage(nom, true);
+            }
+        }
+
+        function chargerPage(nom, ajouterHistorique = true) {
+            const iframe = document.getElementById('browserIframe');
+            const pageContent = document.getElementById('pageContent');
+            const page404 = document.getElementById('page404');
+            const loadingBar = document.getElementById('loadingBar');
+
+            if (ajouterHistorique) {
+                historique = historique.slice(0, indexHistorique + 1);
+                if (historique[historique.length - 1] !== nom) {
+                    historique.push(nom);
+                    indexHistorique = historique.length - 1;
+                }
+            }
+
+            pageContent.style.display = 'none';
+            page404.style.display = 'none';
+            iframe.style.display = 'none';
+            loadingBar.classList.add('active');
+
+            setTimeout(() => {
+                loadingBar.classList.remove('active');
+
+                if (fichiersSimules[nom]) {
+                    iframe.style.display = 'block';
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    doc.open();
+                    doc.write(fichiersSimules[nom]);
+                    doc.close();
+                    document.getElementById('urlInput').value = nom;
+                } else {
+                    page404.style.display = 'flex';
+                    document.getElementById('urlInput').value = nom + " (introuvable)";
+                }
+                mettreAJourBoutons();
+            }, 500);
+        }
+
+        function retourArriere() {
+            if (indexHistorique > 0) {
+                indexHistorique--;
+                chargerPage(historique[indexHistorique], false);
+            }
+        }
+
+        function allerAvant() {
+            if (indexHistorique < historique.length - 1) {
+                indexHistorique++;
+                chargerPage(historique[indexHistorique], false);
+            }
+        }
+
+        function rechargerPage() {
+            chargerPage(historique[indexHistorique], false);
+        }
+
+        function mettreAJourBoutons() {
+            const btnBack = document.getElementById('btnBack');
+            const btnForward = document.getElementById('btnForward');
+            if (indexHistorique > 0) btnBack.classList.remove('desactive');
+            else btnBack.classList.add('desactive');
+            if (indexHistorique < historique.length - 1) btnForward.classList.remove('desactive');
+            else btnForward.classList.add('desactive');
+        }
+
+        // ===== BARRE DE NAVIGATION SAMSUNG =====
+        function navRetour() {
+            if (pageActive === 'browser') {
+                if (indexHistorique > 0) {
+                    retourArriere();
+                } else {
+                    retourLauncher();
+                }
+            } else if (pageActive === 'google') {
+                afficherLauncher();
+            }
+            // Si déjà sur launcher, rien
+        }
+
+        function navAccueil() {
+            afficherLauncher();
+        }
+
+        function navRecents() {
+            document.getElementById('recentsOverlay').classList.add('active');
+        }
+
+        function fermerRecents() {
+            document.getElementById('recentsOverlay').classList.remove('active');
+        }
+
+        // ===== INIT =====
+        window.onload = () => {
+            genererUserApps();
+            afficherLauncher();
+        };
+    </script>
+
+</body>
+</html>

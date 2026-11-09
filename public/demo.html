@@ -3,247 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Historique - VirtTech</title>
-<link rel="stylesheet" href="/css/style.css">
+<title>Démo - Samsung Chrome Interactif</title>
 <style>
-    /* Styles de base pour la démo */
-    body { background: var(--fond); padding: 20px; font-family: sans-serif; }
-    .btn-demo { padding: 10px 20px; background: var(--metal-fonce); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    
-    /* --- LE SLIDE --- */
-    .slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,31,39,0.8); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
-    .slide-overlay.ouvert { opacity: 1; visibility: visible; }
-    
-    .slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: var(--fond); border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 1001; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 0.8, 0.3, 1); display: flex; flex-direction: column; }
-    .slide-panel.ouvert { transform: translateY(0); }
-    
-    .slide-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--metal-fonce); color: var(--blanc); border-bottom: 2px solid var(--metal); border-radius: 25px 25px 0 0; }
-    .slide-header h3 { margin: 0; font-size: 1.2rem; }
-    .btn-fermer { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-    
-    .slide-contenu { padding: 20px; overflow-y: auto; flex: 1; }
-    .slide-contenu h4 { color: var(--ombre); margin-top: 25px; margin-bottom: 10px; border-bottom: 2px solid var(--metal); padding-bottom: 5px; display: inline-block;}
-    .slide-contenu p { color: var(--metal-fonce); margin-bottom: 15px; line-height: 1.6;}
-    .slide-contenu ul { margin-left: 20px; margin-bottom: 15px; color: var(--metal-fonce); }
-    .slide-contenu li { margin-bottom: 5px; }
+    body { background: #111; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; }
 
-    /* --- BLOC DE CODE INTERACTIF --- */
-    .code-block {
-        background: #1e1e1e;
-        border-radius: 10px;
-        margin: 15px 0;
-        border: 1px solid #444;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    /* LE TÉLÉPHONE SAMSUNG */
+    .phone-samsung { 
+        width: 300px; height: 620px; background: #000; border-radius: 35px; 
+        border: 4px solid #333; position: relative; overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        display: flex; flex-direction: column;
     }
-    .code-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #2d2d2d;
-        padding: 8px 15px;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-        border-bottom: 1px solid #444;
+
+    .punch-hole {
+        position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+        width: 12px; height: 12px; background: #000; border-radius: 50%; z-index: 100;
+        box-shadow: inset 0 0 2px #000, 0 0 2px #333;
     }
-    .code-lang { color: #888; font-size: 0.8rem; font-family: monospace; }
-    .btn-copier {
-        background: transparent;
-        color: var(--surface);
-        border: 1px solid #555;
-        padding: 3px 8px;
-        border-radius: 5px;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: 0.2s;
+
+    /* BARRE D'ÉTAT */
+    .status-bar { 
+        height: 35px; display: flex; justify-content: space-between; align-items: center; 
+        padding: 0 20px; color: #fff; font-size: 0.75rem; font-weight: 600; 
+        background: #111; z-index: 10; padding-top: 5px;
     }
-    .btn-copier:hover { background: #444; color: white; }
+    .status-icons { display: flex; gap: 6px; align-items: center; }
+    .status-icons svg { width: 14px; height: 14px; fill: #fff; }
+
+    /* BARRE CHROME */
+    .chrome-bar {
+        background: #202124; padding: 10px 12px; display: flex; align-items: center; gap: 10px;
+        z-index: 10; border-bottom: 1px solid #333;
+    }
     
-    .code-content {
-        padding: 15px;
-        overflow-x: auto;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 0.9rem;
-        color: #d4d4d4;
-        white-space: pre;
+    .chrome-tabs { display: flex; gap: 15px; color: #9aa0a6; cursor: pointer; }
+    .chrome-tabs svg { width: 20px; height: 20px; fill: currentColor; transition: 0.2s; }
+    .chrome-tabs svg:active { fill: #fff; transform: scale(0.9); }
+    
+    /* BARRE D'ADRESSE ÉDITABLE */
+    .chrome-address-bar {
+        flex: 1; background: #35363a; border-radius: 20px; padding: 8px 15px;
+        display: flex; align-items: center; gap: 10px; color: #e8eaed; font-size: 0.8rem;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); cursor: text;
     }
-    /* Couleurs syntaxiques basiques */
-    .hl-tag { color: #569cd6; }
-    .hl-attr { color: #9cdcfe; }
-    .hl-str { color: #ce9178; }
-    .hl-comment { color: #6a9955; }
-    .hl-folder { color: #d4af37; font-weight: bold; } /* Pour les dossiers dans l'arborescence */
+    .chrome-address-bar:focus-within { background: #444; }
+    .chrome-address-bar input {
+        background: transparent; border: none; color: #fff; outline: none; width: 100%;
+        font-size: 0.8rem; font-family: inherit;
+    }
+    .chrome-address-bar svg { width: 14px; height: 14px; fill: #9aa0a6; flex-shrink: 0; }
+
+    /* ZONE DU SITE WEB */
+    .site-content { flex: 1; background: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+
+    /* BARRE DE CHARGEMENT */
+    .loading-bar-container { height: 3px; background: #e0e0e0; width: 100%; position: absolute; top: 0; left: 0; z-index: 20; display: none; }
+    .loading-bar-container.active { display: block; }
+    .loading-bar { height: 100%; background: #4285f4; width: 0%; animation: charger 1s infinite ease-in-out; }
+    @keyframes charger { 0% { width: 0%; } 50% { width: 80%; } 100% { width: 100%; } }
+
+    /* L'IFRAME QUI CHARGE LE VRAI SITE */
+    #browserIframe {
+        width: 100%; height: 100%; border: none; display: none; background: #fff;
+    }
+
+    /* PAGE D'ACCUEIL PAR DÉFAUT */
+    .fake-website { padding: 40px 20px; text-align: center; color: #333; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
+    .fake-website h1 { font-size: 1.5rem; color: #0B2545; margin-bottom: 10px; }
+    .fake-website p { font-size: 0.9rem; color: #666; line-height: 1.5; }
+    .fake-website .note { margin-top: 20px; font-size: 0.7rem; color: #999; background: #f0f0f0; padding: 5px 10px; border-radius: 10px; }
+
+    /* BOUTON DE TEST */
+    .test-btn { background: #0B2545; color: white; padding: 10px 20px; border-radius: 5px; margin-top: 20px; font-size: 0.9rem; border: none; cursor: pointer; font-weight: bold; }
+    .test-btn:active { background: #D4AF37; color: #000; }
 </style>
 </head>
 <body>
 
-<h1>Démo Historique</h1>
-<p>Clique pour voir le détail de la formation du 7 Novembre.</p>
-<button class="btn-demo" id="btnOuvrir">Lire l'activité</button>
+    <div class="phone-samsung">
+        <div class="punch-hole"></div>
 
-<!-- LE SLIDE -->
-<div class="slide-overlay" id="slideOverlay"></div>
-<div class="slide-panel" id="slidePanel">
-    <div class="slide-header">
-        <h3>Formation : Arborescence et Liaison (7 Nov 2026)</h3>
-        <button class="btn-fermer" id="btnFermer">✕</button>
+        <!-- Barre d'état -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <span class="status-icons">
+                <svg viewBox="0 0 24 24"><path d="M12 21L15.6 16.2C14.6 15.5 13.3 15 12 15C10.7 15 9.4 15.5 8.4 16.2L12 21ZM12 3C7.95 3 4.21 4.34 1.2 6.6L3 9C5.5 7.12 8.62 6 12 6C15.38 6 18.5 7.12 21 9L22.8 6.6C19.79 4.34 16.05 3 12 3ZM12 9C9.17 9 6.57 10 4.53 11.7L6.33 14.1C7.89 12.8 9.9 12 12 12C14.1 12 16.11 12.8 17.67 14.1L19.47 11.7C17.43 10 14.83 9 12 9Z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </span>
+        </div>
+
+        <!-- Barre Chrome -->
+        <div class="chrome-bar">
+            <div class="chrome-tabs" onclick="simulerAction('Retour')">
+                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </div>
+            <div class="chrome-address-bar">
+                <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                <input type="text" id="urlInput" value="virttech.site" onkeypress="handleEnter(event)" spellcheck="false">
+            </div>
+            <div class="chrome-tabs" onclick="simulerAction('Menu')">
+                <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            </div>
+        </div>
+
+        <!-- Contenu du site -->
+        <div class="site-content">
+            <div class="loading-bar-container" id="loadingBar"><div class="loading-bar"></div></div>
+            
+            <!-- L'iframe qui affichera le vrai site -->
+            <iframe id="browserIframe" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+
+            <!-- Page d'accueil -->
+            <div class="fake-website" id="pageContent">
+                <h1>Bienvenue</h1>
+                <p>Tape une URL ci-dessus et appuie sur Entrée pour naviguer.</p>
+                <button class="test-btn" onclick="document.getElementById('urlInput').value='wikipedia.org'; handleEnter({key:'Enter'})">Tester avec Wikipédia</button>
+                <div class="note">⚠️ Certains sites (Google, YouTube) refusent l'affichage intégré pour des raisons de sécurité.</div>
+            </div>
+        </div>
     </div>
-    <div class="slide-contenu">
-        
-        <h4>📁 C'est quoi un dossier ?</h4>
-        <p>Un dossier, c'est comme une <strong>boîte</strong>, un <strong>sac</strong>, ou un <strong>lieu</strong> où l'on range tout ce dont on a besoin pour atteindre un objectif. En informatique, c'est l'espace où l'on stocke les fichiers d'un projet.</p>
 
-        <h4>🌳 C'est quoi l'arborescence ?</h4>
-        <p>L'arborescence, c'est la <strong>structure</strong> que tu vois dans ton dossier de travail. En un mot, ce sont tous les fichiers et dossiers qui constituent ton projet, organisés de manière logique.</p>
+    <script>
+        // Fonction pour les boutons retour/menu
+        function simulerAction(action) {
+            alert("Action simulée : " + action);
+        }
 
-        <h4>🎯 Comment choisir une bonne arborescence ?</h4>
-        <p>Tout dépend du projet. Si ton projet est uniquement du <strong>front-end</strong> (pas de backend/serveur), tu as la liberté de structurer tes fichiers comme tu veux. Voici des exemples concrets :</p>
+        // Fonction pour charger une URL
+        function handleEnter(e) {
+            if (e.key === 'Enter') {
+                let url = document.getElementById('urlInput').value.trim();
+                
+                if (!url) return;
 
-        <h4>📂 Exemple 1 : Projet Minimal (Tout à la racine)</h4>
-        <p>C'est le plus simple pour débuter. Idéal pour un site vitrine statique.</p>
-        
-        <!-- ARBORESCENCE 1 -->
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">STRUCTURE</span>
-                <button class="btn-copier" data-code="Mon-Ecole/
-├── index.html
-├── contact.html
-├── style.css
-├── script.js
-└── images/
-    ├── logo.png
-    └── banniere.jpg">📋 Copier</button>
-            </div>
-            <div class="code-content">
-<span class="hl-folder">Mon-Ecole/</span>
-├── index.html
-├── contact.html
-├── style.css
-├── script.js
-└── <span class="hl-folder">images/</span>
-    ├── logo.png
-    └── banniere.jpg</div>
-        </div>
+                // On ajoute https:// si besoin
+                if (!url.startsWith('http')) {
+                    url = 'https://' + url;
+                }
 
-        <h4>📂 Exemple 2 : Projet Structuré (Avec sous-dossiers)</h4>
-        <p>Quand le projet grandit, on sépare le CSS, le JS et les médias dans des dossiers dédiés.</p>
-        
-        <!-- ARBORESCENCE 2 -->
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">STRUCTURE</span>
-                <button class="btn-copier" data-code="Mon-Portfolio/
-├── index.html
-├── a-propos.html
-├── css/
-│   ├── style.css
-│   └── responsive.css
-├── js/
-│   └── script.js
-└── assets/
-    ├── images/
-    │   └── profil.jpg
-    └── videos/
-        └── presentation.mp4">📋 Copier</button>
-            </div>
-            <div class="code-content">
-<span class="hl-folder">Mon-Portfolio/</span>
-├── index.html
-├── a-propos.html
-├── <span class="hl-folder">css/</span>
-│   ├── style.css
-│   └── responsive.css
-├── <span class="hl-folder">js/</span>
-│   └── script.js
-└── <span class="hl-folder">assets/</span>
-    ├── <span class="hl-folder">images/</span>
-    │   └── profil.jpg
-    └── <span class="hl-folder">videos/</span>
-        └── presentation.mp4</div>
-        </div>
+                const iframe = document.getElementById('browserIframe');
+                const pageContent = document.getElementById('pageContent');
+                const loadingBar = document.getElementById('loadingBar');
 
-        <h4>🔗 Lier les fichiers entre eux</h4>
-        <p>Une fois l'arborescence créée, il faut dire au fichier HTML où trouver le CSS et le JS.</p>
-        
-        <p><strong>1. Lier le CSS</strong> (dans la balise <code>&lt;head&gt;</code>) :</p>
-        <!-- BLOC DE CODE CSS -->
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">HTML</span>
-                <button class="btn-copier" data-code="<link rel='stylesheet' href='style.css'>">📋 Copier</button>
-            </div>
-            <div class="code-content"><span class="hl-tag">&lt;link</span> <span class="hl-attr">rel</span>=<span class="hl-str">"stylesheet"</span> <span class="hl-attr">href</span>=<span class="hl-str">"style.css"</span><span class="hl-tag">&gt;</span></div>
-        </div>
-        <p><em>Si le CSS est dans un dossier (ex: <code>css/style.css</code>), on précise le chemin :</em></p>
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">HTML</span>
-                <button class="btn-copier" data-code="<link rel='stylesheet' href='css/style.css'>">📋 Copier</button>
-            </div>
-            <div class="code-content"><span class="hl-tag">&lt;link</span> <span class="hl-attr">rel</span>=<span class="hl-str">"stylesheet"</span> <span class="hl-attr">href</span>=<span class="hl-str">"css/style.css"</span><span class="hl-tag">&gt;</span></div>
-        </div>
+                // On cache la page d'accueil, on montre l'iframe
+                pageContent.style.display = 'none';
+                iframe.style.display = 'block';
+                loadingBar.classList.add('active');
 
-        <p><strong>2. Lier le JS</strong> (juste avant la fermeture de <code>&lt;/body&gt;</code>) :</p>
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">HTML</span>
-                <button class="btn-copier" data-code="<script src='script.js'></script>">📋 Copier</button>
-            </div>
-            <div class="code-content"><span class="hl-tag">&lt;script</span> <span class="hl-attr">src</span>=<span class="hl-str">"script.js"</span><span class="hl-tag">&gt;&lt;/script&gt;</span></div>
-        </div>
+                // On utilise un proxy CORS gratuit pour contourner les blocages
+                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+                
+                iframe.src = proxyUrl;
 
-        <h4>💡 Le secret des chemins</h4>
-        <p>La règle d'or : <strong>mettre le nom du sous-dossier, un slash, jusqu'à atteindre le fichier cible.</strong></p>
-        <p>Exemple : si ton image est dans <code>assets/images/logo.png</code>, tu écriras dans ton HTML :</p>
-        <div class="code-block">
-            <div class="code-header">
-                <span class="code-lang">HTML</span>
-                <button class="btn-copier" data-code="<img src='assets/images/logo.png' alt='Logo'>">📋 Copier</button>
-            </div>
-            <div class="code-content"><span class="hl-tag">&lt;img</span> <span class="hl-attr">src</span>=<span class="hl-str">"assets/images/logo.png"</span> <span class="hl-attr">alt</span>=<span class="hl-str">"Logo"</span><span class="hl-tag">&gt;</span></div>
-        </div>
+                // Quand le chargement est terminé
+                iframe.onload = function() {
+                    loadingBar.classList.remove('active');
+                };
 
-    </div>
-</div>
-
-<script>
-    // --- LOGIQUE DU SLIDE ---
-    const btnOuvrir = document.getElementById('btnOuvrir');
-    const overlay = document.getElementById('slideOverlay');
-    const panel = document.getElementById('slidePanel');
-    const btnFermer = document.getElementById('btnFermer');
-
-    function ouvrirSlide() {
-        overlay.classList.add('ouvert');
-        panel.classList.add('ouvert');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function fermerSlide() {
-        overlay.classList.remove('ouvert');
-        panel.classList.remove('ouvert');
-        document.body.style.overflow = '';
-    }
-
-    btnOuvrir.addEventListener('click', ouvrirSlide);
-    btnFermer.addEventListener('click', fermerSlide);
-    overlay.addEventListener('click', fermerSlide);
-
-    // --- LOGIQUE DU BOUTON COPIER ---
-    document.querySelectorAll('.btn-copier').forEach(btn => {
-        btn.addEventListener('click', async function() {
-            const codeACopier = this.getAttribute('data-code');
-            try {
-                await navigator.clipboard.writeText(codeACopier);
-                const originalText = this.innerHTML;
-                this.innerHTML = "✅ Copié !";
-                setTimeout(() => { this.innerHTML = originalText; }, 2000);
-            } catch (err) {
-                alert("Erreur lors de la copie.");
+                // En cas d'erreur
+                iframe.onerror = function() {
+                    loadingBar.classList.remove('active');
+                    alert("Impossible de charger cette page. Le site refuse peut-être l'affichage.");
+                };
             }
-        });
-    });
-</script>
+        }
+    </script>
 
 </body>
 </html>

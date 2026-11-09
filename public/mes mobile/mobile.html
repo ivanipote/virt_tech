@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Démo - Téléphones Modernes</title>
+<style>
+    body { background: #111; display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 40px 20px; font-family: sans-serif; }
+    
+    .phone-container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+    .phone-label { color: #ccc; font-size: 0.85rem; font-weight: bold; }
+
+    /* Structure commune */
+    .phone {
+        width: 260px; height: 540px; background: #000; position: relative;
+        display: flex; flex-direction: column; overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    }
+    .screen { background: #fff; width: 100%; flex: 1; position: relative; z-index: 1; display: flex; justify-content: center; align-items: center; flex-direction: column;}
+    
+    /* Contenu factice pour la démo */
+    .fake-content { text-align: center; color: #333; padding: 20px; }
+    .fake-content h2 { margin: 0 0 10px 0; font-size: 1.2rem; }
+    .fake-content p { font-size: 0.8rem; color: #777; }
+
+    /* =========================================
+       MODELE 1 : L'iPhone (Dynamic Island)
+       ========================================= */
+    .phone-iphone { border-radius: 40px; border: 4px solid #333; }
+    .phone-iphone .dynamic-island {
+        position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+        width: 90px; height: 25px; background: #000; border-radius: 20px; z-index: 10;
+        display: flex; justify-content: flex-end; align-items: center; padding-right: 10px;
+    }
+    .phone-iphone .dynamic-island::after {
+        content: ''; width: 8px; height: 8px; background: #1a1a1a; border-radius: 50%; border: 1px solid #333;
+    }
+    .phone-iphone .status-bar { position: absolute; top: 0; left: 0; width: 100%; height: 45px; display: flex; justify-content: space-between; padding: 15px 20px 0; box-sizing: border-box; color: #000; font-size: 0.7rem; font-weight: bold; z-index: 5; }
+    .phone-iphone .status-bar span:last-child { margin-right: 10px; }
+
+    /* =========================================
+       MODELE 2 : Le Samsung (Bords fins, trou)
+       ========================================= */
+    .phone-samsung { border-radius: 25px; border: 2px solid #444; }
+    .phone-samsung .punch-hole {
+        position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+        width: 12px; height: 12px; background: #000; border-radius: 50%; z-index: 10;
+        box-shadow: inset 0 0 2px #333;
+    }
+    .phone-samsung .status-bar { position: absolute; top: 0; left: 0; width: 100%; height: 40px; display: flex; justify-content: space-between; padding: 12px 15px 0; box-sizing: border-box; color: #000; font-size: 0.7rem; font-weight: bold; z-index: 5; }
+
+    /* =========================================
+       MODELE 3 : Le Google Pixel (Bords carrés)
+       ========================================= */
+    .phone-pixel { border-radius: 15px; border: 3px solid #555; }
+    .phone-pixel .punch-hole-left {
+        position: absolute; top: 15px; left: 20px;
+        width: 10px; height: 10px; background: #000; border-radius: 50%; z-index: 10;
+    }
+    .phone-pixel .status-bar { position: absolute; top: 0; left: 0; width: 100%; height: 40px; display: flex; justify-content: space-between; padding: 12px 15px 0 40px; box-sizing: border-box; color: #000; font-size: 0.7rem; font-weight: bold; z-index: 5; }
+
+    /* =========================================
+       MODELE 4 : Le Xiaomi (Bords très arrondis)
+       ========================================= */
+    .phone-xiaomi { border-radius: 45px; border: 2px solid #222; }
+    .phone-xiaomi .notch-waterdrop {
+        position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+        width: 20px; height: 25px; background: #000; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 10;
+    }
+    .phone-xiaomi .status-bar { position: absolute; top: 0; left: 0; width: 100%; height: 40px; display: flex; justify-content: space-between; padding: 12px 20px 0; box-sizing: border-box; color: #000; font-size: 0.7rem; font-weight: bold; z-index: 5; }
+
+    /* =========================================
+       MODELE 5 : Le OnePlus (Style barre)
+       ========================================= */
+    .phone-oneplus { border-radius: 30px; border: 2px solid #333; }
+    .phone-oneplus .punch-hole-center {
+        position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+        width: 14px; height: 14px; background: #000; border-radius: 50%; z-index: 10;
+    }
+    .phone-oneplus .status-bar { position: absolute; top: 0; left: 0; width: 100%; height: 40px; display: flex; justify-content: space-between; padding: 12px 15px 0; box-sizing: border-box; color: #000; font-size: 0.7rem; font-weight: bold; z-index: 5; }
+
+</style>
+</head>
+<body>
+
+    <!-- MODELE 1 -->
+    <div class="phone-container">
+        <div class="phone phone-iphone">
+            <div class="dynamic-island"></div>
+            <div class="status-bar"><span>9:41</span><span>🔋 100%</span></div>
+            <div class="screen">
+                <div class="fake-content">
+                    <h2>iPhone 15 Pro</h2>
+                    <p>Dynamic Island</p>
+                </div>
+            </div>
+        </div>
+        <span class="phone-label">Modèle 1 : iPhone</span>
+    </div>
+
+    <!-- MODELE 2 -->
+    <div class="phone-container">
+        <div class="phone phone-samsung">
+            <div class="punch-hole"></div>
+            <div class="status-bar"><span>9:41</span><span>🔋 100%</span></div>
+            <div class="screen">
+                <div class="fake-content">
+                    <h2>Samsung S24</h2>
+                    <p>Punch Hole</p>
+                </div>
+            </div>
+        </div>
+        <span class="phone-label">Modèle 2 : Samsung</span>
+    </div>
+
+    <!-- MODELE 3 -->
+    <div class="phone-container">
+        <div class="phone phone-pixel">
+            <div class="punch-hole-left"></div>
+            <div class="status-bar"><span>9:41</span><span>🔋 100%</span></div>
+            <div class="screen">
+                <div class="fake-content">
+                    <h2>Google Pixel</h2>
+                    <p>Bords Carrés</p>
+                </div>
+            </div>
+        </div>
+        <span class="phone-label">Modèle 3 : Pixel</span>
+    </div>
+
+    <!-- MODELE 4 -->
+    <div class="phone-container">
+        <div class="phone phone-xiaomi">
+            <div class="notch-waterdrop"></div>
+            <div class="status-bar"><span>9:41</span><span>🔋 100%</span></div>
+            <div class="screen">
+                <div class="fake-content">
+                    <h2>Xiaomi 14</h2>
+                    <p>Waterdrop Notch</p>
+                </div>
+            </div>
+        </div>
+        <span class="phone-label">Modèle 4 : Xiaomi</span>
+    </div>
+
+    <!-- MODELE 5 -->
+    <div class="phone-container">
+        <div class="phone phone-oneplus">
+            <div class="punch-hole-center"></div>
+            <div class="status-bar"><span>9:41</span><span>🔋 100%</span></div>
+            <div class="screen">
+                <div class="fake-content">
+                    <h2>OnePlus 12</h2>
+                    <p>Centre Hole</p>
+                </div>
+            </div>
+        </div>
+        <span class="phone-label">Modèle 5 : OnePlus</span>
+    </div>
+
+</body>
+</html>

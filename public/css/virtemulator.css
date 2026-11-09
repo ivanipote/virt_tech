@@ -4,40 +4,34 @@ body, html {
     padding: 0; 
     height: 100%; 
     overflow: hidden; 
-    background: var(--fond); /* Fond gris clair VirtTech */
+    background: var(--fond); 
 }
 
 /* =========================================
-   LAYOUT GÉNÉRAL (Mobile First)
+   LAYOUT PRINCIPAL (PC / Mobile)
    ========================================= */
 .main-layout {
     position: absolute; top: 70px; left: 10px; right: 10px; bottom: 10px;
     display: flex; flex-direction: column;
 }
 
-/* L'aperçu PC est caché par défaut (mobile) */
-.preview-pc-panel {
-    display: none;
-}
+.preview-pc-panel { display: none; } /* Caché sur mobile */
 
-/* Le conteneur de l'éditeur */
 .emulator-container {
     display: flex; flex-direction: column; width: 100%; height: 100%;
     border-radius: 20px; overflow: hidden;
-    background: #1a1a1a; /* Gris très foncé */
-    border: 1px solid #333;
+    background: #1a1a1a; border: 1px solid #333;
     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
 /* =========================================
-   BARRE D'OUTILS (Toolbar)
+   BARRE D'OUTILS
    ========================================= */
 .toolbar { 
     display: flex; align-items: center; background: #2a2a2a; 
     border-bottom: 1px solid #444; height: 50px; flex-shrink: 0;
 }
 
-/* Menu déroulant */
 .lang-switcher {
     display: flex; align-items: center; gap: 5px;
     padding: 0 15px; height: 100%; background: #111;
@@ -62,23 +56,20 @@ body, html {
 .lang-menu button:hover { background: #444; color: #fff; }
 .lang-menu button.active { color: #fff; font-weight: bold; background: #444; }
 
-/* Flèches de défilement */
 .scroll-btn {
     background: #222; border: none; color: #888; font-size: 1.2rem;
     height: 100%; padding: 0 10px; cursor: pointer; flex-shrink: 0;
     border-right: 1px solid #444; border-left: 1px solid #444;
-    display: none; /* Caché sur mobile par défaut */
+    display: none; 
 }
 .scroll-btn:hover { color: #fff; background: #333; }
 
-/* Conteneur des symboles */
 .symbols-container {
     display: flex; align-items: center; gap: 5px; padding: 0 10px;
     overflow-x: auto; white-space: nowrap; flex: 1; height: 100%;
-    min-width: 0; /* Important pour le flex */
-    scroll-behavior: smooth;
+    min-width: 0; scroll-behavior: smooth;
 }
-.symbols-container::-webkit-scrollbar { height: 0px; } /* Cache la barre de scroll native */
+.symbols-container::-webkit-scrollbar { height: 0px; }
 
 .btn-symbol {
     background: #333; color: #fff; border: 1px solid #555;
@@ -86,9 +77,7 @@ body, html {
     font-size: 0.85rem; cursor: pointer; flex-shrink: 0;
 }
 .btn-symbol:active { background: #555; }
-
 .btn-project { background: #111; color: #fff; border: 1px solid #555; }
-.btn-project:active { background: #333; }
 
 .group-symbols { display: none; gap: 5px; }
 .group-symbols.active { display: flex; gap: 5px; }
@@ -167,76 +156,136 @@ body, html {
 .btn-play-footer:hover { background: #555; }
 
 /* =========================================
-   MODAL / SLIDE MOBILE
+   OVERLAY DU TÉLÉPHONE (Le faux Samsung)
+   ========================================= */
+.phone-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 3000;
+    opacity: 0; visibility: hidden; transition: all 0.3s ease;
+}
+.phone-overlay.ouvert { opacity: 1; visibility: visible; }
+
+.phone-samsung {
+    width: 320px; height: 680px; background: #000; border-radius: 35px;
+    border: 4px solid #333; position: relative; overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    display: flex; flex-direction: column;
+}
+
+.punch-hole {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 12px; height: 12px; background: #000; border-radius: 50%; z-index: 100;
+    box-shadow: inset 0 0 2px #000, 0 0 2px #333;
+}
+
+.status-bar {
+    height: 35px; display: flex; justify-content: space-between; align-items: center;
+    padding: 5px 20px 0; font-size: 0.75rem; font-weight: 600;
+    z-index: 10; flex-shrink: 0;
+}
+.status-icons { display: flex; gap: 6px; align-items: center; }
+.status-icons i { font-size: 0.75rem; }
+
+/* GESTION DES PAGES (Transition) */
+.pages-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
+.page { position: absolute; inset: 0; display: flex; flex-direction: column; transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease; }
+
+/* PAGE 1 : ACCUEIL */
+#homePage { background: #fff; z-index: 2; transform: translateX(0); opacity: 1; }
+#homePage.slide-out-left { transform: translateX(-30%); opacity: 0; }
+#homePage .status-bar { color: #202124; background: #fff; }
+
+.home-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+.home-scroll::-webkit-scrollbar { width: 0px; }
+
+.google-block { margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.google-logo { width: 130px; height: auto; }
+.search-bar {
+    width: 86%; display: flex; align-items: center; gap: 8px;
+    border: 1px solid #dfe1e5; border-radius: 24px; padding: 10px 14px;
+    background: #fff; box-shadow: 0 1px 6px rgba(32,33,36,0.08);
+}
+.search-bar i { color: #9aa0a6; font-size: 0.9rem; }
+.search-bar input { flex: 1; border: none; outline: none; font-size: 0.85rem; color: #202124; background: transparent; }
+
+.shortcuts { display: flex; justify-content: space-around; width: 92%; margin: 22px auto 0; }
+.shortcut { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 60px; cursor: pointer; background: none; border: none; font-family: Arial, sans-serif; }
+.shortcut-icon { width: 46px; height: 46px; border-radius: 50%; background: #f1f3f4; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; color: #5f6368; }
+.shortcut-label { font-size: 0.55rem; color: #5f6368; text-align: center; line-height: 1.2; }
+
+.news-section { margin-top: 25px; margin-bottom: 20px; }
+.news-section-title { width: 90%; margin: 0 auto 10px; font-size: 0.7rem; font-weight: bold; color: #5f6368; text-transform: uppercase; }
+.news-card { width: 90%; margin: 0 auto 12px; background: #fff; border: 1px solid #e8eaed; border-radius: 14px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(32,33,36,0.08); cursor: pointer; }
+.news-header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #5f6368; font-size: 0.6rem; }
+.news-header i { color: #4285F4; font-size: 0.65rem; }
+.news-title { font-size: 0.85rem; font-weight: bold; color: #202124; margin-bottom: 4px; line-height: 1.3; }
+.news-excerpt { font-size: 0.68rem; color: #5f6368; line-height: 1.35; }
+
+/* PAGE 2 : NAVIGATEUR */
+#browserPage { background: #202124; z-index: 3; transform: translateX(100%); opacity: 1; }
+#browserPage.slide-in { transform: translateX(0); }
+#browserPage .status-bar { color: #fff; background: #111; }
+
+.chrome-bar { background: #202124; padding: 10px 8px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #333; flex-shrink: 0; }
+.chrome-btn { color: #9aa0a6; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; }
+.chrome-btn:hover { background: #35363a; }
+.chrome-btn i { font-size: 0.85rem; }
+.chrome-btn.desactive { opacity: 0.35; pointer-events: none; }
+
+.chrome-address-bar { flex: 1; background: #35363a; border-radius: 20px; padding: 7px 12px; display: flex; align-items: center; gap: 8px; color: #e8eaed; font-size: 0.8rem; }
+.chrome-address-bar i { color: #9aa0a6; font-size: 0.7rem; }
+.chrome-address-bar input { background: transparent; border: none; color: #fff; outline: none; width: 100%; font-size: 0.78rem; font-family: inherit; }
+
+.site-content { flex: 1; background: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+.loading-bar-container { height: 3px; background: #e0e0e0; width: 100%; position: absolute; top: 0; left: 0; z-index: 20; display: none; }
+.loading-bar-container.active { display: block; }
+.loading-bar { height: 100%; background: #4285f4; width: 0%; animation: charger 1s infinite ease-in-out; }
+@keyframes charger { 0% { width: 0%; } 50% { width: 80%; } 100% { width: 100%; } }
+
+#browserIframe { width: 100%; height: 100%; border: none; display: none; background: #fff; }
+.fake-website { padding: 40px 20px; text-align: center; color: #333; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
+.fake-website h1 { font-size: 1.5rem; color: #0B2545; margin-bottom: 10px; }
+.fake-website p { font-size: 0.9rem; color: #666; line-height: 1.5; }
+
+.error-404 { display: none; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center; background: #f9f9f9; }
+.error-404 h1 { font-size: 4rem; color: #0B2545; margin: 0; }
+.error-404 p { color: #666; }
+
+/* =========================================
+   OVERLAY CREATION (Modal VirtEmulator)
    ========================================= */
 .overlay-create {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8); z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s;
+    background: rgba(0,0,0,0.8); z-index: 4000;
     display: flex; justify-content: center; align-items: center;
+    opacity: 0; visibility: hidden; transition: 0.3s;
 }
 .overlay-create.ouvert { opacity: 1; visibility: visible; }
-.modal-create {
-    background: #222; padding: 25px; border-radius: 15px;
-    border: 1px solid #444; width: 300px; text-align: center;
-}
+.modal-create { background: #222; padding: 25px; border-radius: 15px; border: 1px solid #444; width: 300px; text-align: center; }
 .modal-create h3 { color: white; margin-top: 0; }
-.modal-create input {
-    width: 100%; padding: 10px; margin: 15px 0;
-    border-radius: 8px; border: 1px solid #555;
-    background: #111; color: white; outline: none; box-sizing: border-box;
-}
+.modal-create input { width: 100%; padding: 10px; margin: 15px 0; border-radius: 8px; border: 1px solid #555; background: #111; color: white; outline: none; box-sizing: border-box; }
 .modal-create .btns { display: flex; gap: 10px; }
 .modal-create button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
 .btn-annuler { background: #444; color: white; }
 .btn-creer { background: #fff; color: #000; }
 
-.slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; }
-.slide-overlay.ouvert { opacity: 1; visibility: visible; }
-.slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: #222; border-radius: 25px 25px 0 0; z-index: 1001; transform: translateY(100%); transition: transform 0.4s; display: flex; flex-direction: column; }
-.slide-panel.ouvert { transform: translateY(0); }
-.slide-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #111; color: #fff; border-bottom: 1px solid #444; border-radius: 25px 25px 0 0; }
-.slide-header h3 { font-size: 1rem; margin: 0; }
-.btn-fermer { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
-.slide-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: auto; }
-
-/* Téléphone Android */
-.iphone-frame { 
-    width: 320px; height: 650px; background: #000; border-radius: 35px; 
-    padding: 0; border: 2px solid #333;
-    position: relative; transition: transform 0.3s ease; transform-origin: center center; 
-    flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden;
-}
-.status-bar { background: #000; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 5px 15px; font-size: 0.75rem; height: 25px; flex-shrink: 0; }
-.status-icons { display: flex; gap: 5px; align-items: center; }
-.iphone-screen { background: #fff; width: 100%; flex: 1; overflow: hidden; }
-.iphone-screen iframe { width: 100%; height: 100%; border: none; }
-.nav-bar-android { background: #000; height: 40px; display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; border-top: 1px solid #333; }
-.nav-btn { width: 15px; height: 15px; background: transparent; border: 2px solid #666; border-radius: 3px; }
-.nav-btn.home { border-radius: 50%; width: 18px; height: 18px; }
-
-.btn-zoom-header { background: #333; color: white; border: 1px solid #555; width: 30px; height: 30px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-.btn-zoom-header:hover { background: #555; }
-
 /* =========================================
-   MEDIA QUERY : ECRAN PC (Desktop Layout)
+   MEDIA QUERY : ECRAN PC
    ========================================= */
 @media(min-width: 900px) {
     .btn-play-footer { display: none; }
     .main-layout { flex-direction: row; gap: 15px; }
     
-    /* On affiche l'aperçu PC (30%) */
     .preview-pc-panel {
         display: flex; flex-direction: column; width: 30%; height: 100%;
-        background: #1a1a1a; border-radius: 20px; overflow: hidden;
-        border: 1px solid #333;
+        background: #1a1a1a; border-radius: 20px; overflow: hidden; border: 1px solid #333;
     }
     .preview-header { padding: 10px 15px; background: #222; color: #ccc; font-size: 0.85rem; border-bottom: 1px solid #444; text-align: center; }
     .preview-body { flex: 1; background: #fff; overflow: auto; }
     .preview-body iframe { width: 100%; height: 100%; border: none; }
     
-    /* L'éditeur prend le reste (70%) */
     .emulator-container { width: 70%; height: 100%; border-radius: 20px; }
-
-    /* On affiche les flèches de défilement sur PC */
     .scroll-btn { display: block; }
 }
