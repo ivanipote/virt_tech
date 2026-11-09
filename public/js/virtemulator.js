@@ -1,11 +1,12 @@
 // --- virtemulator.js ---
 document.addEventListener("DOMContentLoaded", function() {
-    let files = {}; 
+    let files = {};
     let activeFile = "index.html";
     let editor;
     let zoomLevel = 1;
     let debounceTimer;
-    
+    let modeNuit = false;
+
     // Éléments du slide et du téléphone
     const slideOverlay = document.getElementById('slideOverlay');
     const slidePanel = document.getElementById('slidePanel');
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const btnZoomIn = document.getElementById('btnZoomIn');
     const btnZoomOut = document.getElementById('btnZoomOut');
 
-    // Code de bienvenue
+    // Code de bienvenue (uniquement si aucun index.html sauvegardé)
     const CODE_BIENVENUE = `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -38,18 +39,32 @@ document.addEventListener("DOMContentLoaded", function() {
 </html>`;
 
     // ==========================================
+    // UTILITAIRE : Normaliser un nom de fichier
+    // "index" -> "index.html"  |  "page1.html" -> "page1.html"
+    // ==========================================
+    function normaliserNom(nom) {
+        if (!nom) return "";
+        nom = nom.replace(' (introuvable)', '').trim();
+        return nom.endsWith('.html') ? nom : nom + '.html';
+    }
+
+    // ==========================================
     // 1. INITIALISATION
     // ==========================================
     function init() {
         const savedFiles = localStorage.getItem('virtemulator_files');
         if (savedFiles) {
-            try { 
-                let parsed = JSON.parse(savedFiles);
-                delete parsed["index.html"];
-                files = parsed;
+            try {
+                files = JSON.parse(savedFiles) || {};
             } catch (e) { files = {}; }
         }
 
+        // Si index.html n'existe pas, on le crée avec le code de bienvenue
+        if (!files["index.html"]) {
+            files["index.html"] = CODE_BIENVENUE;
+        }
+
+        // INITIALISATION CODEMIRROR
         editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
             mode: "htmlmixed", theme: "dracula", lineNumbers: true,
             lineWrapping: false, indentUnit: 2, tabSize: 2, viewportMargin: Infinity,
@@ -57,24 +72,45 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         document.getElementById('editorBody').appendChild(editor.getWrapperElement());
 
-        files["index.html"] = CODE_BIENVENUE;
-        editor.setValue(CODE_BIENVENUE);
+        // Charger le premier fichier
+        activeFile = Object.keys(files)[0] || "index.html";
+        editor.setValue(files[activeFile] || CODE_BIENVENUE);
 
         mettreAJourOnglets();
         mettreAJourPreviewPC();
         mettreAJourHorloge();
         genererUserApps();
-        
+
         setInterval(mettreAJourHorloge, 1000);
 
+        // ÉCOUTE DES MODIFICATIONS CODEMIRROR
         editor.on('change', function() {
-            if (activeFile !== "index.html") {
-                files[activeFile] = editor.getValue();
-                localStorage.setItem('virtemulator_files', JSON.stringify(files));
-            }
+            // SAUVEGARDER TOUJOURS (y compris index.html)
+            files[activeFile] = editor.getValue();
+            localStorage.setItem('virtemulator_files', JSON.stringify(files));
+
+            // Preview PC
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(mettreAJourPreviewPC, 500); 
+            debounceTimer = setTimeout(() => {
+                mettreAJourPreviewPC();
+                // Si le slide est ouvert ET qu'on affiche une page, rafraîchir le navigateur interne
+                rafraichirNavigateurSiOuvert();
+            }, 500);
         });
+
+        // Restauration du nom du téléphone
+        const savedName = localStorage.getItem('virttech_device_name');
+        if (savedName) {
+            const nameInput = document.getElementById('deviceNameInput');
+            if (nameInput) nameInput.value = savedName;
+        }
+
+        // Restauration du mode nuit
+        const savedTheme = localStorage.getItem('virttech_dark_mode');
+        if (savedTheme === 'true') {
+            modeNuit = false; // reset avant bascule
+            basculerTheme(); // toggle
+        }
     }
 
     // ==========================================
@@ -93,8 +129,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // ==========================================
     function mettreAJourOnglets() {
         const header = document.getElementById('editorHeader');
+        if (!header) return;
         header.innerHTML = '<button class="btn-add-tab" id="btnAddTab" title="Nouveau fichier">+</button>';
-        
+
         Object.keys(files).forEach(nomFichier => {
             const tab = document.createElement('div');
             tab.className = 'tab' + (nomFichier === activeFile ? ' active' : '');
@@ -115,21 +152,35 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function ouvrirFichier(nomFichier) {
-        if (activeFile && files[activeFile] !== undefined && activeFile !== "index.html") {
+        // Sauvegarder le fichier courant avant de changer
+        if (activeFile && files[activeFile] !== undefined) {
             files[activeFile] = editor.getValue();
+            localStorage.setItem('virtemulator_files', JSON.stringify(files));
         }
         activeFile = nomFichier;
         editor.setValue(files[nomFichier] || "");
         mettreAJourOnglets();
         mettreAJourPreviewPC();
+        rafraichirNavigateurSiOuvert();
     }
 
     function supprimerFichier(nomFichier) {
-        if (Object.keys(files).length <= 1) { alert("Tu ne peux pas supprimer le dernier fichier."); return; }
-        if (nomFichier === "index.html") { alert("Tu ne peux pas supprimer le fichier index.html."); return; }
+        if (Object.keys(files).length <= 1) {
+            alert("Tu ne peux pas supprimer le dernier fichier.");
+            return;
+        }
+        if (nomFichier === "index.html") {
+            alert("Tu ne peux pas supprimer le fichier index.html.");
+            return;
+        }
         delete files[nomFichier];
-        if (activeFile === nomFichier) { activeFile = Object.keys(files)[0]; }
+        localStorage.setItem('virtemulator_files', JSON.stringify(files));
+
+        if (activeFile === nomFichier) {
+            activeFile = Object.keys(files)[0];
+        }
         ouvrirFichier(activeFile);
+        genererUserApps();  // rafraîchir "Mes pages"
     }
 
     // ==========================================
@@ -151,12 +202,17 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('btnValiderCreate').onclick = () => {
         let nom = inputNomFichier.value.trim();
         if (!nom) return;
-        if (!nom.endsWith('.html')) nom += '.html';
-        if (files[nom]) { alert("Ce fichier existe déjà !"); return; }
-        
+        nom = normaliserNom(nom);
+        if (files[nom]) {
+            alert("Ce fichier existe déjà !");
+            return;
+        }
+
         files[nom] = `<!DOCTYPE html>\n<html>\n<head>\n<title>${nom}</title>\n</head>\n<body>\n  <h1>Fichier ${nom}</h1>\n</body>\n</html>`;
+        localStorage.setItem('virtemulator_files', JSON.stringify(files));
         overlayCreate.classList.remove('ouvert');
         ouvrirFichier(nom);
+        genererUserApps();  // rafraîchir "Mes pages" du téléphone
     };
 
     // ==========================================
@@ -165,36 +221,39 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('btnPlay').onclick = function() {
         slideOverlay.classList.add('ouvert');
         slidePanel.classList.add('ouvert');
-        
-        // On s'assure que le Launcher est visible
+
         afficherPage('launcher');
-        
-        // On applique le zoom sauvegardé
+
+        // Zoom sauvegardé
         const savedZoom = localStorage.getItem('virtemulator_zoom');
         if (savedZoom) { zoomLevel = parseFloat(savedZoom); }
         iphoneFrame.style.transform = `scale(${zoomLevel})`;
-        
+
         mettreAJourHorloge();
+        genererUserApps();  // rafraîchir "Mes pages" à chaque ouverture
     };
 
     function fermerSlide() {
         slideOverlay.classList.remove('ouvert');
         slidePanel.classList.remove('ouvert');
+        // Réinitialiser l'état de navigation du téléphone
+        afficherPage('launcher');
+        fermerRecents?.();
     }
     btnFermerSlide.onclick = fermerSlide;
     slideOverlay.onclick = fermerSlide;
 
     // Zoom
     btnZoomIn.onclick = function() {
-        if (zoomLevel < 1.5) { 
-            zoomLevel += 0.1; 
+        if (zoomLevel < 1.5) {
+            zoomLevel += 0.1;
             iphoneFrame.style.transform = `scale(${zoomLevel})`;
             localStorage.setItem('virtemulator_zoom', zoomLevel);
         }
     };
     btnZoomOut.onclick = function() {
-        if (zoomLevel > 0.5) { 
-            zoomLevel -= 0.1; 
+        if (zoomLevel > 0.5) {
+            zoomLevel -= 0.1;
             iphoneFrame.style.transform = `scale(${zoomLevel})`;
             localStorage.setItem('virtemulator_zoom', zoomLevel);
         }
@@ -209,33 +268,45 @@ document.addEventListener("DOMContentLoaded", function() {
     // 6. NAVIGATION INTERNE DU TÉLÉPHONE
     // ==========================================
     let pageActive = 'launcher';
-    let modeNuit = false;
     let historique = ["index"];
     let indexHistorique = 0;
 
+    // Mapping explicite nom logique -> id HTML
+    const PAGE_MAP = {
+        'launcher': 'launcherPage',
+        'google': 'googleHomePage',
+        'browser': 'browserPage',
+        'settings': 'settingsPage',
+        'clock': 'clockPage'
+    };
+
     window.afficherPage = function(nom) {
+        if (!PAGE_MAP[nom]) {
+            console.warn("Page inconnue :", nom);
+            return;
+        }
         pageActive = nom;
-        const pages = ['launcherPage', 'googleHomePage', 'browserPage', 'settingsPage', 'clockPage'];
-        
-        pages.forEach(p => {
-            const el = document.getElementById(p);
+
+        Object.values(PAGE_MAP).forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
             el.className = 'page';
-            if (p === nom + 'Page') {
-                el.classList.add('active');
-            } else {
-                el.classList.add('behind');
-            }
+            el.classList.add(id === PAGE_MAP[nom] ? 'active' : 'behind');
         });
     };
 
+    // ==========================================
+    // 7. GÉNÉRATION DES APPS USER ("Mes pages")
+    // ==========================================
     function genererUserApps() {
         const grid = document.getElementById('userAppsGrid');
         if (!grid) return;
         grid.innerHTML = '';
+
         Object.keys(files).forEach(nom => {
             const div = document.createElement('div');
             div.className = 'app-icon';
-            div.onclick = () => ouvrirNavigateur(nom.replace('.html', ''));
+            div.onclick = () => ouvrirNavigateur(nom);
             div.innerHTML = `
                 <span class="icon-box icon-web"><i class="fa-solid fa-code"></i></span>
                 <span class="app-label">${nom}</span>
@@ -245,18 +316,19 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ==========================================
-    // 7. LOGIQUE DU NAVIGATEUR
+    // 8. LOGIQUE DU NAVIGATEUR
     // ==========================================
     window.ouvrirNavigateur = function(page) {
-        historique = [page || 'index'];
+        const nom = normaliserNom(page || 'index');
+        historique = [nom];
         indexHistorique = 0;
         afficherPage('browser');
-        chargerPage(page || 'index', false);
+        chargerPage(nom, false);
     };
 
+    // "Lire ma page actuelle" : ouvre le fichier en cours d'édition
     window.ouvrirPageActuelle = function() {
-        let nom = activeFile.replace('.html', '');
-        ouvrirNavigateur(nom);
+        ouvrirNavigateur(activeFile);
     };
 
     window.fermerEmulateur = function() {
@@ -272,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (e.key === 'Enter') {
             const val = document.getElementById('homeSearchInput').value.trim();
             if (!val) return;
-            ouvrirNavigateur(val.replace('.html', ''));
+            ouvrirNavigateur(val);
             document.getElementById('homeSearchInput').value = '';
         }
     };
@@ -283,10 +355,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const page404 = document.getElementById('page404');
         const loadingBar = document.getElementById('loadingBar');
 
+        const nomComplet = normaliserNom(nom);
+
         if (ajouterHistorique) {
             historique = historique.slice(0, indexHistorique + 1);
-            if (historique[historique.length - 1] !== nom) {
-                historique.push(nom);
+            if (historique[historique.length - 1] !== nomComplet) {
+                historique.push(nomComplet);
                 indexHistorique = historique.length - 1;
             }
         }
@@ -299,27 +373,44 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => {
             loadingBar.classList.remove('active');
 
-            let nomFichierComplet = nom + ".html";
-            if (files[nomFichierComplet]) {
+            if (files[nomComplet]) {
                 iframe.style.display = 'block';
                 const doc = iframe.contentDocument || iframe.contentWindow.document;
                 doc.open();
-                doc.write(files[nomFichierComplet]);
+                doc.write(files[nomComplet]);
                 doc.close();
-                document.getElementById('urlInput').value = nom;
+                const urlInput = document.getElementById('urlInput');
+                if (urlInput) urlInput.value = nomComplet.replace('.html', '');
             } else {
                 page404.style.display = 'flex';
-                document.getElementById('urlInput').value = nom + " (introuvable)";
+                const urlInput = document.getElementById('urlInput');
+                if (urlInput) urlInput.value = nomComplet + " (introuvable)";
             }
             mettreAJourBoutonsNavigation();
         }, 500);
+    }
+
+    // Rafraîchir le navigateur interne si on y est et qu'on édite
+    function rafraichirNavigateurSiOuvert() {
+        if (pageActive === 'browser' && indexHistorique >= 0) {
+            const nomActuel = historique[indexHistorique];
+            if (nomActuel && files[nomActuel]) {
+                const iframe = document.getElementById('browserIframe');
+                if (iframe && iframe.style.display !== 'none') {
+                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+                    doc.open();
+                    doc.write(files[nomActuel]);
+                    doc.close();
+                }
+            }
+        }
     }
 
     window.handleEnter = function(e) {
         if (e.key === 'Enter') {
             let nom = document.getElementById('urlInput').value.trim();
             if (!nom) return;
-            nom = nom.replace('.html', '').replace(' (introuvable)', '');
+            nom = normaliserNom(nom);
             chargerPage(nom, true);
         }
     };
@@ -358,7 +449,23 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ==========================================
-    // 8. HORLOGE ET CHRONO
+    // 9. BARRE DE NAVIGATION SAMSUNG
+    // ==========================================
+    window.navRetour = function() {
+        if (pageActive === 'browser') {
+            if (indexHistorique > 0) retourArriere();
+            else afficherPage('launcher');
+        } else if (pageActive === 'google' || pageActive === 'settings' || pageActive === 'clock') {
+            afficherPage('launcher');
+        }
+    };
+
+    window.navAccueil = function() {
+        afficherPage('launcher');
+    };
+
+    // ==========================================
+    // 10. HORLOGE ET CHRONO
     // ==========================================
     function mettreAJourHorloge() {
         const maintenant = new Date();
@@ -406,22 +513,24 @@ document.addEventListener("DOMContentLoaded", function() {
         const startBtn = document.getElementById('swStartBtn');
         const startIcon = document.getElementById('swStartIcon');
         const resetBtn = document.getElementById('swResetBtn');
+        if (!startBtn) return;
 
         if (!chronoEnCours) {
             chronoEnCours = true;
             chronoStartTime = Date.now() - chronoElapsed;
             chronoInterval = setInterval(() => {
                 chronoElapsed = Date.now() - chronoStartTime;
-                document.getElementById('stopwatchDisplay').textContent = formaterChrono(chronoElapsed);
+                const disp = document.getElementById('stopwatchDisplay');
+                if (disp) disp.textContent = formaterChrono(chronoElapsed);
             }, 10);
             startBtn.classList.add('running');
-            startIcon.className = 'fa-solid fa-pause';
-            resetBtn.classList.remove('disabled');
+            if (startIcon) startIcon.className = 'fa-solid fa-pause';
+            if (resetBtn) resetBtn.classList.remove('disabled');
         } else {
             chronoEnCours = false;
             clearInterval(chronoInterval);
             startBtn.classList.remove('running');
-            startIcon.className = 'fa-solid fa-play';
+            if (startIcon) startIcon.className = 'fa-solid fa-play';
         }
     };
 
@@ -429,29 +538,38 @@ document.addEventListener("DOMContentLoaded", function() {
         chronoEnCours = false;
         clearInterval(chronoInterval);
         chronoElapsed = 0;
-        document.getElementById('stopwatchDisplay').textContent = '00:00.00';
-        document.getElementById('swStartBtn').classList.remove('running');
-        document.getElementById('swStartIcon').className = 'fa-solid fa-play';
-        document.getElementById('swResetBtn').classList.add('disabled');
+        const disp = document.getElementById('stopwatchDisplay');
+        if (disp) disp.textContent = '00:00.00';
+        const startBtn = document.getElementById('swStartBtn');
+        if (startBtn) startBtn.classList.remove('running');
+        const startIcon = document.getElementById('swStartIcon');
+        if (startIcon) startIcon.className = 'fa-solid fa-play';
+        const resetBtn = document.getElementById('swResetBtn');
+        if (resetBtn) resetBtn.classList.add('disabled');
     };
 
     // ==========================================
-    // 9. PARAMÈTRES (Mode nuit)
+    // 11. PARAMÈTRES (Mode nuit)
     // ==========================================
     window.basculerTheme = function() {
         modeNuit = !modeNuit;
+        const phone = document.getElementById('iphoneFrame');
         const toggle = document.getElementById('themeToggle');
         const value = document.getElementById('themeValue');
         const icon = document.getElementById('themeIcon');
 
         if (modeNuit) {
-            toggle.classList.add('active');
-            value.textContent = 'Activé';
-            icon.className = 'fa-solid fa-sun';
+            phone.classList.add('dark-mode');
+            toggle?.classList.add('active');
+            if (value) value.textContent = 'Activé';
+            if (icon) icon.className = 'fa-solid fa-sun';
+            localStorage.setItem('virttech_dark_mode', 'true');
         } else {
-            toggle.classList.remove('active');
-            value.textContent = 'Désactivé';
-            icon.className = 'fa-solid fa-moon';
+            phone.classList.remove('dark-mode');
+            toggle?.classList.remove('active');
+            if (value) value.textContent = 'Désactivé';
+            if (icon) icon.className = 'fa-solid fa-moon';
+            localStorage.setItem('virttech_dark_mode', 'false');
         }
     };
 
@@ -459,20 +577,26 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.setItem('virttech_device_name', val);
     };
 
+    // Recents placeholder (si jamais tu ajoutes un bouton)
+    window.fermerRecents = function() {
+        const overlay = document.getElementById('recentsOverlay');
+        if (overlay) overlay.classList.remove('active');
+    };
+
     // ==========================================
-    // 10. BARRE D'OUTILS (Injection & Projets)
+    // 12. BARRE D'OUTILS (Injection & Projets)
     // ==========================================
     document.querySelectorAll('.btn-symbol[data-insert]').forEach(btn => {
         btn.addEventListener('click', function() {
             let textToInsert = this.getAttribute('data-insert');
-            if(!textToInsert) return;
+            if (!textToInsert) return;
             textToInsert = textToInsert.replace(/\\n/g, '\n');
             const cursor = editor.getCursor();
             editor.replaceRange(" " + textToInsert, cursor);
             const lines = textToInsert.split('\n');
             const lastLine = cursor.line + lines.length - 1;
             const lastCh = (lines.length === 1) ? cursor.ch + textToInsert.length + 1 : lines[lines.length - 1].length;
-            editor.setCursor({line: lastLine, ch: lastCh});
+            editor.setCursor({ line: lastLine, ch: lastCh });
             editor.focus();
         });
     });
@@ -485,7 +609,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('[data-project]').forEach(btn => {
         btn.addEventListener('click', function() {
             const projKey = this.getAttribute('data-project');
-            if(projets[projKey]) {
+            if (projets[projKey]) {
                 editor.setValue(projets[projKey]);
                 mettreAJourPreviewPC();
             }
@@ -493,19 +617,22 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // ==========================================
-    // 11. BOUTONS SAVE & EXPORT
+    // 13. BOUTONS SAVE & EXPORT
     // ==========================================
     const btnSave = document.getElementById('btnSaveCode');
     const btnExport = document.getElementById('btnExportCode');
 
     if (btnSave) {
         btnSave.onclick = function() {
-            if(activeFile !== "index.html") {
-                files[activeFile] = editor.getValue();
-                localStorage.setItem('virtemulator_files', JSON.stringify(files));
-            }
+            // Sauvegarder TOUJOURS, y compris index.html
+            files[activeFile] = editor.getValue();
+            localStorage.setItem('virtemulator_files', JSON.stringify(files));
+            genererUserApps();
+
             btnSave.innerHTML = "✅ Sauvegardé";
-            setTimeout(() => { btnSave.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> Save`; }, 2000);
+            setTimeout(() => {
+                btnSave.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> Save`;
+            }, 2000);
         };
     }
     if (btnExport) {
@@ -518,12 +645,14 @@ document.addEventListener("DOMContentLoaded", function() {
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
             URL.revokeObjectURL(url);
             btnExport.innerHTML = "✅ Exporté";
-            setTimeout(() => { btnExport.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Exporter`; }, 2000);
+            setTimeout(() => {
+                btnExport.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Exporter`;
+            }, 2000);
         };
     }
 
     // ==========================================
-    // 12. LANCEMENT
+    // 14. LANCEMENT
     // ==========================================
     init();
 });
