@@ -67,6 +67,78 @@
 
     <!-- ÉDITEUR -->
     <div class="emulator-container">
+        
+        <!-- LA BARRE D'OUTILS (Toolbar) -->
+        <div class="toolbar">
+            <div class="lang-switcher" id="btnSwitch">
+                <span id="currentLang">HTML</span>
+                <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                <div class="lang-menu" id="langMenu">
+                    <button class="active" onclick="setLang('html', this)">HTML</button>
+                    <button onclick="setLang('css', this)">CSS</button>
+                    <button onclick="setLang('js', this)">JS</button>
+                    <button onclick="setLang('projets', this)">Projets</button>
+                </div>
+            </div>
+
+            <div class="symbols-container">
+                <!-- HTML -->
+                <div class="group-symbols active" id="grp-html">
+                    <button class="btn-symbol" data-insert="<div>\n  \n</div>">&lt;div&gt;</button>
+                    <button class="btn-symbol" data-insert="<p>\n  \n</p>">&lt;p&gt;</button>
+                    <button class="btn-symbol" data-insert="<h1>\n  \n</h1>">&lt;h1&gt;</button>
+                    <button class="btn-symbol" data-insert="<span>\n  \n</span>">&lt;span&gt;</button>
+                    <button class="btn-symbol" data-insert="<a href=''>Lien</a>">&lt;a&gt; (Lien)</button>
+                    <button class="btn-symbol" data-insert="<img src='' alt=''>">&lt;img&gt; (Image)</button>
+                    <button class="btn-symbol" data-insert="<button>\n  Cliquez\n</button>">&lt;button&gt;</button>
+                    <button class="btn-symbol" data-insert="<ul>\n  <li></li>\n</ul>">&lt;ul&gt; (Liste)</button>
+                    <button class="btn-symbol" data-insert="<br>">&lt;br&gt;</button>
+                    <button class="btn-symbol" data-insert="<!-- Commentaire -->">&lt;!-- --&gt;</button>
+                    <button class="btn-symbol" data-insert="<!DOCTYPE html>">&lt;!DOCTYPE&gt;</button>
+                </div>
+                
+                <!-- CSS -->
+                <div class="group-symbols" id="grp-css">
+                    <button class="btn-symbol" data-insert="color: ;">color:</button>
+                    <button class="btn-symbol" data-insert="background-color: ;">background:</button>
+                    <button class="btn-symbol" data-insert="margin: ;">margin:</button>
+                    <button class="btn-symbol" data-insert="padding: ;">padding:</button>
+                    <button class="btn-symbol" data-insert="display: ;">display:</button>
+                    <button class="btn-symbol" data-insert="font-size: ;">font-size:</button>
+                    <button class="btn-symbol" data-insert="border: ;">border:</button>
+                    <button class="btn-symbol" data-insert="border-radius: ;">border-radius:</button>
+                    <button class="btn-symbol" data-insert="{ }">{ }</button>
+                    <button class="btn-symbol" data-insert="; ">;</button>
+                </div>
+                
+                <!-- JS -->
+                <div class="group-symbols" id="grp-js">
+                    <button class="btn-symbol" data-insert="console.log();">console.log</button>
+                    <button class="btn-symbol" data-insert="function nom() {\n  \n}">function</button>
+                    <button class="btn-symbol" data-insert="if () {\n  \n}">if</button>
+                    <button class="btn-symbol" data-insert="for () {\n  \n}">for</button>
+                    <button class="btn-symbol" data-insert="let ">let</button>
+                    <button class="btn-symbol" data-insert="const ">const</button>
+                    <button class="btn-symbol" data-insert="= ">=</button>
+                    <button class="btn-symbol" data-insert="; ">;</button>
+                </div>
+
+                <!-- PROJETS -->
+                <div class="group-symbols" id="grp-projets">
+                    <button class="btn-symbol btn-project" data-project="calc">Calculatrice</button>
+                    <button class="btn-symbol btn-project" data-project="login">Page Login</button>
+                    <button class="btn-symbol btn-project" data-project="btn">Bouton Animé</button>
+                    <button class="btn-symbol btn-project" data-project="text">Texte Stylé</button>
+                    <button class="btn-symbol btn-project" data-project="carte">Carte Profil</button>
+                    <button class="btn-symbol btn-project" data-project="anim">Animation CSS</button>
+                    <button class="btn-symbol btn-project" data-project="menu">Menu Burger</button>
+                    <button class="btn-symbol btn-project" data-project="form">Formulaire</button>
+                    <button class="btn-symbol btn-project" data-project="galerie">Galerie</button>
+                    <button class="btn-symbol btn-project" data-project="chrono">Chronomètre</button>
+                </div>
+            </div>
+        </div>
+
         <!-- HEADER AVEC ONGLETS ET BOUTONS -->
         <div class="editor-header-wrapper">
             <div class="editor-tabs" id="editorHeader">
