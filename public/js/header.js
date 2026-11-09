@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function() {
     <header class="top">
       <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="side"><i></i>Menu</button>
       <a href="/" class="brand">VIRT<span>TECH</span></a>
-      <a href="/virt-dev" class="top-lien">Résultats</a>
     </header>
 
     <div class="voile" id="voile"></div>
@@ -37,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function() {
           <li><a href="/" class="${actifAccueil}">Accueil</a></li>
           <li><a href="/historique" class="${actifHistorique}">Historique d'activité</a></li>
           
-          <!-- NOUVEAU : VirtEmulator -->
           <li>
             <a href="/virtemulator" class="${actifVirtEmulator}">
               VirtEmulator
