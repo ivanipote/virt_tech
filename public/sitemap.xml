@@ -1,33 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <!-- Page d'accueil -->
   <url>
     <loc>https://virttech.site/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://virttech.site/logo.png</image:loc>
+      <image:title>Logo VirtTech</image:title>
+    </image:image>
   </url>
   
-  <!-- Page des résultats du concours -->
+  <!-- Page des résultats -->
   <url>
     <loc>https://virttech.site/virt-dev</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://virttech.site/logo.png</image:loc>
+      <image:title>Résultats Virt_Dev</image:title>
+    </image:image>
   </url>
 
   <!-- Page historique -->
   <url>
     <loc>https://virttech.site/historique</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://virttech.site/logo.png</image:loc>
+      <image:title>Historique VirtTech</image:title>
+    </image:image>
   </url>
 
   <!-- Page de contact -->
   <url>
     <loc>https://virttech.site/contact</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -35,16 +48,12 @@
   <!-- VirtEmulator -->
   <url>
     <loc>https://virttech.site/virtemulator</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-09</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- NOUVELLE PAGE : Novembre Bleu (à créer la semaine prochaine) -->
-  <url>
-    <loc>https://virttech.site/novembre-bleu</loc>
-    <lastmod>2026-11-07</lastmod>
-    <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://virttech.site/virtemulator-logo.png</image:loc>
+      <image:title>Logo VirtEmulator</image:title>
+    </image:image>
   </url>
 </urlset>
