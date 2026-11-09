@@ -7,17 +7,43 @@ document.addEventListener("DOMContentLoaded", function() {
     let debounceTimer;
     const iphoneFrame = document.querySelector('.iphone-frame');
 
-    // --- INITIALISATION ---
+    // Le code de bienvenue (affiché par défaut)
+    const CODE_BIENVENUE = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>VirtEmulator</title>
+  <style>
+    body { margin: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #1a1a1a; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; }
+    img { width: 120px; height: 120px; margin-bottom: 20px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+    h1 { color: #D4AF37; font-size: 1.5rem; margin-bottom: 10px; }
+    p { color: #aaa; font-size: 0.9rem; line-height: 1.5; max-width: 250px; }
+    .badge { margin-top: 20px; padding: 5px 15px; border: 1px solid #444; border-radius: 20px; font-size: 0.8rem; color: #888; }
+  </style>
+</head>
+<body>
+  <img src="https://virttech.site/virtemulator-logo.png" alt="Logo VirtEmulator">
+  <h1>Bienvenue sur VirtEmulator</h1>
+  <p>Commence à écrire ton code dans l'éditeur.</p>
+  <div class="badge">VirtTech - Apprends, crée, partage</div>
+</body>
+</html>`;
+
+    // ==========================================
+    // 1. INITIALISATION
+    // ==========================================
     function init() {
+        // Chargement des autres fichiers
         const savedFiles = localStorage.getItem('virtemulator_files');
         if (savedFiles) {
-            try { files = JSON.parse(savedFiles); } catch (e) { files = {}; }
-        }
-        
-        if (!files["index.html"]) {
-            files["index.html"] = `<!DOCTYPE html>\n<html>\n<head>\n  <title>Mon site</title>\n</head>\n<body>\n  <h1>Bienvenue sur VirtEmulator !</h1>\n  <p>Crée un nouveau fichier avec le bouton +</p>\n</body>\n</html>`;
+            try { 
+                let parsed = JSON.parse(savedFiles);
+                delete parsed["index.html"]; // On ignore l'ancien index
+                files = parsed;
+            } catch (e) { files = {}; }
         }
 
+        // CodeMirror
         editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
             mode: "htmlmixed", theme: "dracula", lineNumbers: true,
             lineWrapping: false, indentUnit: 2, tabSize: 2, viewportMargin: Infinity,
@@ -25,8 +51,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
         document.getElementById('editorBody').appendChild(editor.getWrapperElement());
 
-        ouvrirFichier(files["index.html"] ? "index.html" : Object.keys(files)[0]);
+        // On met le code de bienvenue dans l'index
+        files["index.html"] = CODE_BIENVENUE;
+        editor.setValue(CODE_BIENVENUE);
+
         mettreAJourOnglets();
+        mettreAJourPreviewPC();
         
         // Horloge Android
         function updateTime() {
@@ -39,43 +69,35 @@ document.addEventListener("DOMContentLoaded", function() {
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Mise à jour temps réel PC
+        // Mise à jour temps réel (On ne sauvegarde pas index.html)
         editor.on('change', function() {
-            files[activeFile] = editor.getValue();
-            localStorage.setItem('virtemulator_files', JSON.stringify(files));
-            
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                mettreAJourPreviewPC();
-            }, 500); 
-        });
-        
-        mettreAJourPreviewPC();
-
-        // AUTO-COMPLÉTION (Déclenchement à la frappe)
-        editor.on("inputRead", function(editor, change) {
-            if (change.text[0] === "<" || (change.text[0] && change.text[0].match(/[a-z]/i))) {
-                editor.showHint({ completeSingle: false });
+            if (activeFile !== "index.html") {
+                files[activeFile] = editor.getValue();
+                localStorage.setItem('virtemulator_files', JSON.stringify(files));
             }
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(mettreAJourPreviewPC, 500); 
         });
 
         // Restauration zoom
         const savedZoom = localStorage.getItem('virtemulator_zoom');
         if (savedZoom) { zoomLevel = parseFloat(savedZoom); }
-        updateZoom(); 
     }
 
-    // --- PREVIEW PC ---
+    // ==========================================
+    // 2. PREVIEW PC
+    // ==========================================
     function mettreAJourPreviewPC() {
         const pcIframe = document.getElementById('pcIframe');
         if (pcIframe) {
-            const code = editor.getValue();
             const doc = pcIframe.contentDocument || pcIframe.contentWindow.document;
-            doc.open(); doc.write(code); doc.close();
+            doc.open(); doc.write(editor.getValue()); doc.close();
         }
     }
 
-    // --- ONGLETS ---
+    // ==========================================
+    // 3. ONGLETS (Fichiers)
+    // ==========================================
     function mettreAJourOnglets() {
         const header = document.getElementById('editorHeader');
         header.innerHTML = '<button class="btn-add-tab" id="btnAddTab" title="Nouveau fichier">+</button>';
@@ -100,23 +122,26 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function ouvrirFichier(nomFichier) {
-        if (activeFile && files[activeFile] !== undefined) {
+        if (activeFile && files[activeFile] !== undefined && activeFile !== "index.html") {
             files[activeFile] = editor.getValue();
         }
         activeFile = nomFichier;
-        editor.setValue(files[nomFichier]);
+        editor.setValue(files[nomFichier] || "");
         mettreAJourOnglets();
         mettreAJourPreviewPC();
     }
 
     function supprimerFichier(nomFichier) {
         if (Object.keys(files).length <= 1) { alert("Tu ne peux pas supprimer le dernier fichier."); return; }
+        if (nomFichier === "index.html") { alert("Tu ne peux pas supprimer le fichier index.html."); return; }
         delete files[nomFichier];
         if (activeFile === nomFichier) { activeFile = Object.keys(files)[0]; }
         ouvrirFichier(activeFile);
     }
 
-    // --- MODAL ---
+    // ==========================================
+    // 4. MODAL CREATION
+    // ==========================================
     const overlayCreate = document.getElementById('overlayCreate');
     const inputNomFichier = document.getElementById('inputNomFichier');
 
@@ -141,44 +166,62 @@ document.addEventListener("DOMContentLoaded", function() {
         ouvrirFichier(nom);
     };
 
-    // --- PLAY MOBILE ---
-    document.getElementById('btnPlay').onclick = () => {
-        const code = editor.getValue();
-        const doc = document.getElementById('mobileIframe').contentDocument;
-        doc.open(); doc.write(code); doc.close();
+    // ==========================================
+    // 5. SLIDE MOBILE & ZOOM
+    // ==========================================
+    const btnPlay = document.getElementById('btnPlay');
+    const overlay = document.getElementById('slideOverlay');
+    const panel = document.getElementById('slidePanel');
+    const btnFermer = document.getElementById('btnFermerSlide');
+    const mobileIframe = document.getElementById('mobileIframe');
 
-        document.getElementById('slideTitle').textContent = "Aperçu de " + activeFile;
-        document.getElementById('slideOverlay').classList.add('ouvert');
-        document.getElementById('slidePanel').classList.add('ouvert');
+    btnPlay.onclick = function() {
+        const doc = mobileIframe.contentDocument || mobileIframe.contentWindow.document;
+        doc.open(); doc.write(editor.getValue()); doc.close();
+
+        overlay.classList.add('ouvert');
+        panel.classList.add('ouvert');
+        
+        iphoneFrame.style.transform = `scale(${zoomLevel})`;
     };
 
-    document.getElementById('btnFermerSlide').onclick = () => {
-        document.getElementById('slideOverlay').classList.remove('ouvert');
-        document.getElementById('slidePanel').classList.remove('ouvert');
-    };
-    document.getElementById('slideOverlay').onclick = () => {
-        document.getElementById('slideOverlay').classList.remove('ouvert');
-        document.getElementById('slidePanel').classList.remove('ouvert');
-    };
+    function fermerSlide() {
+        overlay.classList.remove('ouvert');
+        panel.classList.remove('ouvert');
+    }
+    btnFermer.onclick = fermerSlide;
+    overlay.onclick = fermerSlide;
 
-    // --- ZOOM ---
     const btnZoomIn = document.getElementById('btnZoomIn');
     const btnZoomOut = document.getElementById('btnZoomOut');
-    function updateZoom() { 
-        iphoneFrame.style.transform = `scale(${zoomLevel})`; 
-        localStorage.setItem('virtemulator_zoom', zoomLevel);
-    }
-    btnZoomIn.onclick = () => { if (zoomLevel < 1.5) { zoomLevel += 0.1; updateZoom(); } };
-    btnZoomOut.onclick = () => { if (zoomLevel > 0.5) { zoomLevel -= 0.1; updateZoom(); } };
 
-    // --- SAVE & EXPORT ---
+    btnZoomIn.onclick = function() {
+        if (zoomLevel < 1.5) { 
+            zoomLevel += 0.1; 
+            iphoneFrame.style.transform = `scale(${zoomLevel})`;
+            localStorage.setItem('virtemulator_zoom', zoomLevel);
+        }
+    };
+    btnZoomOut.onclick = function() {
+        if (zoomLevel > 0.5) { 
+            zoomLevel -= 0.1; 
+            iphoneFrame.style.transform = `scale(${zoomLevel})`;
+            localStorage.setItem('virtemulator_zoom', zoomLevel);
+        }
+    };
+
+    // ==========================================
+    // 6. SAVE & EXPORT
+    // ==========================================
     const btnSave = document.getElementById('btnSaveCode');
     const btnExport = document.getElementById('btnExportCode');
 
     if (btnSave) {
         btnSave.onclick = function() {
-            files[activeFile] = editor.getValue();
-            localStorage.setItem('virtemulator_files', JSON.stringify(files));
+            if(activeFile !== "index.html") {
+                files[activeFile] = editor.getValue();
+                localStorage.setItem('virtemulator_files', JSON.stringify(files));
+            }
             btnSave.innerHTML = "✅ Sauvegardé";
             setTimeout(() => { btnSave.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> Save`; }, 2000);
         };
@@ -197,10 +240,15 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     }
 
-    // --- TOOLBAR & INJECTION ---
+    // ==========================================
+    // 7. TOOLBAR & INJECTION
+    // ==========================================
     const btnSwitch = document.getElementById('btnSwitch');
     const langMenu = document.getElementById('langMenu');
     const currentLangText = document.getElementById('currentLang');
+    const symbolsContainer = document.getElementById('symbolsContainer');
+    const btnScrollLeft = document.getElementById('btnScrollLeft');
+    const btnScrollRight = document.getElementById('btnScrollRight');
 
     if(btnSwitch) {
         btnSwitch.addEventListener('click', (e) => {
@@ -210,6 +258,11 @@ document.addEventListener("DOMContentLoaded", function() {
         document.addEventListener('click', (e) => {
             if (!btnSwitch.contains(e.target)) langMenu.classList.remove('ouvert');
         });
+    }
+
+    if(btnScrollLeft && btnScrollRight && symbolsContainer) {
+        btnScrollLeft.onclick = () => { symbolsContainer.scrollBy({ left: -200, behavior: 'smooth' }); };
+        btnScrollRight.onclick = () => { symbolsContainer.scrollBy({ left: 200, behavior: 'smooth' }); };
     }
 
     window.setLang = function(lang, btn) {
@@ -222,11 +275,29 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById(`grp-${lang}`).classList.add('active');
         langMenu.classList.remove('ouvert');
 
+        if(symbolsContainer) symbolsContainer.scrollLeft = 0;
+
         if(lang === 'html') editor.setOption("mode", "htmlmixed");
         if(lang === 'css') editor.setOption("mode", "css");
         if(lang === 'js') editor.setOption("mode", "javascript");
         if(lang === 'projets') editor.setOption("mode", "htmlmixed");
     }
+
+    // Injection des balises
+    document.querySelectorAll('.btn-symbol[data-insert]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            let textToInsert = this.getAttribute('data-insert');
+            if(!textToInsert) return;
+            textToInsert = textToInsert.replace(/\\n/g, '\n');
+            const cursor = editor.getCursor();
+            editor.replaceRange(" " + textToInsert, cursor);
+            const lines = textToInsert.split('\n');
+            const lastLine = cursor.line + lines.length - 1;
+            const lastCh = (lines.length === 1) ? cursor.ch + textToInsert.length + 1 : lines[lines.length - 1].length;
+            editor.setCursor({line: lastLine, ch: lastCh});
+            editor.focus();
+        });
+    });
 
     // Dictionnaire des projets
     const projets = {
@@ -242,7 +313,6 @@ document.addEventListener("DOMContentLoaded", function() {
         'chrono': `<!DOCTYPE html><html><head><style>body{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:#111;color:white;margin:0;font-family:monospace}.temps{font-size:4rem;margin-bottom:20px}button{padding:10px 20px;margin:0 5px;font-size:1rem;cursor:pointer;border-radius:5px;border:none}#start{background:#4CAF50;color:white}#stop{background:#f44336;color:white}</style></head><body><div class="temps" id="affichage">00:00:00</div><div><button id="start">Démarrer</button><button id="stop">Arrêter</button></div><script>let sec=0;let interval;function format(t){return t<10?'0'+t:t}document.getElementById('start').onclick=function(){clearInterval(interval);interval=setInterval(()=>{sec++;let h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;document.getElementById('affichage').innerText=format(h)+':'+format(m)+':'+format(s)},1000)};document.getElementById('stop').onclick=function(){clearInterval(interval)};<\/script></body></html>`
     };
 
-    // Injection des projets
     document.querySelectorAll('[data-project]').forEach(btn => {
         btn.addEventListener('click', function() {
             const projKey = this.getAttribute('data-project');
@@ -250,22 +320,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 editor.setValue(projets[projKey]);
                 mettreAJourPreviewPC();
             }
-        });
-    });
-
-    // Injection des balises
-    document.querySelectorAll('.btn-symbol[data-insert]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            let textToInsert = this.getAttribute('data-insert');
-            if(!textToInsert) return;
-            textToInsert = textToInsert.replace(/\\n/g, '\n');
-            const cursor = editor.getCursor();
-            editor.replaceRange(" " + textToInsert, cursor);
-            const lines = textToInsert.split('\n');
-            const lastLine = cursor.line + lines.length - 1;
-            const lastCh = (lines.length === 1) ? cursor.ch + textToInsert.length + 1 : lines[lines.length - 1].length;
-            editor.setCursor({line: lastLine, ch: lastCh});
-            editor.focus();
         });
     });
 

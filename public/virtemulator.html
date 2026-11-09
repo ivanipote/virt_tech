@@ -47,14 +47,13 @@
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
 <link rel="stylesheet" href="/css/virtemulator.css">
-<!-- CodeMirror Core -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
-<!-- CodeMirror Hint (Auto-complétion) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
 </head>
 <body>
 
+    
 <!-- CONTENEUR PRINCIPAL -->
 <div class="main-layout">
     
@@ -84,46 +83,120 @@
                 </div>
             </div>
 
-            <div class="symbols-container">
-                <!-- HTML -->
+            <!-- Flèche gauche -->
+            <button class="scroll-btn" id="btnScrollLeft">◀</button>
+            
+            <div class="symbols-container" id="symbolsContainer">
+                <!-- HTML (40 balises) -->
                 <div class="group-symbols active" id="grp-html">
-                    <!-- Structure de base -->
-                    <button class="btn-symbol" data-insert="<!DOCTYPE html>\n<html>\n<head>\n  <title>Mon site</title>\n</head>\n<body>\n  \n</body>\n</html>" style="color: var(--or); border-color: var(--or);">Structure HTML</button>
-                    
+                    <button class="btn-symbol" data-insert="<!DOCTYPE html>\n<html>\n<head>\n  <title>Mon site</title>\n</head>\n<body>\n  \n</body>\n</html>">Structure</button>
                     <button class="btn-symbol" data-insert="<div>\n  \n</div>">&lt;div&gt;</button>
                     <button class="btn-symbol" data-insert="<p>\n  \n</p>">&lt;p&gt;</button>
                     <button class="btn-symbol" data-insert="<h1>\n  \n</h1>">&lt;h1&gt;</button>
+                    <button class="btn-symbol" data-insert="<h2>\n  \n</h2>">&lt;h2&gt;</button>
+                    <button class="btn-symbol" data-insert="<span>\n  \n</span>">&lt;span&gt;</button>
                     <button class="btn-symbol" data-insert="<a href=''>Lien</a>">&lt;a&gt;</button>
                     <button class="btn-symbol" data-insert="<img src='' alt=''>">&lt;img&gt;</button>
                     <button class="btn-symbol" data-insert="<button>\n  Cliquez\n</button>">&lt;button&gt;</button>
                     <button class="btn-symbol" data-insert="<ul>\n  <li></li>\n</ul>">&lt;ul&gt;</button>
+                    <button class="btn-symbol" data-insert="<ol>\n  <li></li>\n</ol>">&lt;ol&gt;</button>
+                    <button class="btn-symbol" data-insert="<table>\n  <tr><td></td></tr>\n</table>">&lt;table&gt;</button>
+                    <button class="btn-symbol" data-insert="<form>\n  \n</form>">&lt;form&gt;</button>
+                    <button class="btn-symbol" data-insert="<input type='text' placeholder=''>">&lt;input&gt;</button>
+                    <button class="btn-symbol" data-insert="<label>\n  \n</label>">&lt;label&gt;</button>
                     <button class="btn-symbol" data-insert="<br>">&lt;br&gt;</button>
+                    <button class="btn-symbol" data-insert="<hr>">&lt;hr&gt;</button>
+                    <button class="btn-symbol" data-insert="<header>\n  \n</header>">&lt;header&gt;</button>
+                    <button class="btn-symbol" data-insert="<footer>\n  \n</footer>">&lt;footer&gt;</button>
+                    <button class="btn-symbol" data-insert="<section>\n  \n</section>">&lt;section&gt;</button>
+                    <button class="btn-symbol" data-insert="<nav>\n  \n</nav>">&lt;nav&gt;</button>
+                    <button class="btn-symbol" data-insert="<main>\n  \n</main>">&lt;main&gt;</button>
+                    <button class="btn-symbol" data-insert="<aside>\n  \n</aside>">&lt;aside&gt;</button>
+                    <button class="btn-symbol" data-insert="<article>\n  \n</article>">&lt;article&gt;</button>
+                    <button class="btn-symbol" data-insert="<strong>\n  \n</strong>">&lt;strong&gt;</button>
+                    <button class="btn-symbol" data-insert="<em>\n  \n</em>">&lt;em&gt;</button>
+                    <button class="btn-symbol" data-insert="<video controls>\n  \n</video>">&lt;video&gt;</button>
+                    <button class="btn-symbol" data-insert="<audio controls>\n  \n</audio>">&lt;audio&gt;</button>
+                    <button class="btn-symbol" data-insert="<iframe src=''></iframe>">&lt;iframe&gt;</button>
+                    <button class="btn-symbol" data-insert="<select>\n  <option></option>\n</select>">&lt;select&gt;</button>
+                    <button class="btn-symbol" data-insert="<textarea>\n  \n</textarea>">&lt;textarea&gt;</button>
+                    <button class="btn-symbol" data-insert="<canvas></canvas>">&lt;canvas&gt;</button>
+                    <button class="btn-symbol" data-insert="<svg></svg>">&lt;svg&gt;</button>
+                    <button class="btn-symbol" data-insert="<blockquote>\n  \n</blockquote>">&lt;blockquote&gt;</button>
+                    <button class="btn-symbol" data-insert="<code>\n  \n</code>">&lt;code&gt;</button>
+                    <button class="btn-symbol" data-insert="<pre>\n  \n</pre>">&lt;pre&gt;</button>
+                    <button class="btn-symbol" data-insert="<meta name='' content=''>">&lt;meta&gt;</button>
+                    <button class="btn-symbol" data-insert="<link rel='stylesheet' href=''>">&lt;link&gt;</button>
+                    <button class="btn-symbol" data-insert="<script>\n  \n</script>">&lt;script&gt;</button>
                     <button class="btn-symbol" data-insert="<!-- Commentaire -->">&lt;!-- --&gt;</button>
                 </div>
                 
-                <!-- CSS -->
+                <!-- CSS (40 propriétés) -->
                 <div class="group-symbols" id="grp-css">
-                    <button class="btn-symbol" data-insert="color: ;">color:</button>
-                    <button class="btn-symbol" data-insert="background-color: ;">background:</button>
-                    <button class="btn-symbol" data-insert="margin: ;">margin:</button>
-                    <button class="btn-symbol" data-insert="padding: ;">padding:</button>
-                    <button class="btn-symbol" data-insert="display: ;">display:</button>
-                    <button class="btn-symbol" data-insert="font-size: ;">font-size:</button>
-                    <button class="btn-symbol" data-insert="border: ;">border:</button>
-                    <button class="btn-symbol" data-insert="border-radius: ;">border-radius:</button>
-                    <button class="btn-symbol" data-insert="{ }">{ }</button>
+                    <button class="btn-symbol" data-insert="color: ;">color</button>
+                    <button class="btn-symbol" data-insert="background-color: ;">background</button>
+                    <button class="btn-symbol" data-insert="font-size: ;">font-size</button>
+                    <button class="btn-symbol" data-insert="font-family: ;">font-family</button>
+                    <button class="btn-symbol" data-insert="font-weight: ;">font-weight</button>
+                    <button class="btn-symbol" data-insert="text-align: ;">text-align</button>
+                    <button class="btn-symbol" data-insert="text-decoration: ;">text-decoration</button>
+                    <button class="btn-symbol" data-insert="margin: ;">margin</button>
+                    <button class="btn-symbol" data-insert="padding: ;">padding</button>
+                    <button class="btn-symbol" data-insert="width: ;">width</button>
+                    <button class="btn-symbol" data-insert="height: ;">height</button>
+                    <button class="btn-symbol" data-insert="border: ;">border</button>
+                    <button class="btn-symbol" data-insert="border-radius: ;">border-radius</button>
+                    <button class="btn-symbol" data-insert="box-shadow: ;">box-shadow</button>
+                    <button class="btn-symbol" data-insert="display: ;">display</button>
+                    <button class="btn-symbol" data-insert="flex-direction: ;">flex-direction</button>
+                    <button class="btn-symbol" data-insert="justify-content: ;">justify-content</button>
+                    <button class="btn-symbol" data-insert="align-items: ;">align-items</button>
+                    <button class="btn-symbol" data-insert="position: ;">position</button>
+                    <button class="btn-symbol" data-insert="top: ;">top</button>
+                    <button class="btn-symbol" data-insert="left: ;">left</button>
+                    <button class="btn-symbol" data-insert="right: ;">right</button>
+                    <button class="btn-symbol" data-insert="bottom: ;">bottom</button>
+                    <button class="btn-symbol" data-insert="z-index: ;">z-index</button>
+                    <button class="btn-symbol" data-insert="opacity: ;">opacity</button>
+                    <button class="btn-symbol" data-insert="transition: ;">transition</button>
+                    <button class="btn-symbol" data-insert="transform: ;">transform</button>
+                    <button class="btn-symbol" data-insert="cursor: ;">cursor</button>
+                    <button class="btn-symbol" data-insert="overflow: ;">overflow</button>
+                    <button class="btn-symbol" data-insert="line-height: ;">line-height</button>
+                    <button class="btn-symbol" data-insert="letter-spacing: ;">letter-spacing</button>
+                    <button class="btn-symbol" data-insert="text-transform: ;">text-transform</button>
+                    <button class="btn-symbol" data-insert="list-style: ;">list-style</button>
+                    <button class="btn-symbol" data-insert="background: ;">background</button>
+                    <button class="btn-symbol" data-insert="border-color: ;">border-color</button>
+                    <button class="btn-symbol" data-insert="outline: ;">outline</button>
+                    <button class="btn-symbol" data-insert="visibility: ;">visibility</button>
+                    <button class="btn-symbol" data-insert="float: ;">float</button>
+                    <button class="btn-symbol" data-insert="clear: ;">clear</button>
+                    <button class="btn-symbol" data-insert="filter: ;">filter</button>
                 </div>
                 
-                <!-- JS -->
+                <!-- JS (20 fonctions) -->
                 <div class="group-symbols" id="grp-js">
                     <button class="btn-symbol" data-insert="console.log();">console.log</button>
-                    <button class="btn-symbol" data-insert="function nom() {\n  \n}">function</button>
-                    <button class="btn-symbol" data-insert="if () {\n  \n}">if</button>
-                    <button class="btn-symbol" data-insert="for () {\n  \n}">for</button>
+                    <button class="btn-symbol" data-insert="alert();">alert</button>
+                    <button class="btn-symbol" data-insert="prompt();">prompt</button>
                     <button class="btn-symbol" data-insert="let ">let</button>
                     <button class="btn-symbol" data-insert="const ">const</button>
+                    <button class="btn-symbol" data-insert="function nom() {\n  \n}">function</button>
+                    <button class="btn-symbol" data-insert="document.getElementById('');">getElementById</button>
+                    <button class="btn-symbol" data-insert="document.querySelector('');">querySelector</button>
+                    <button class="btn-symbol" data-insert=".innerText = '';">innerText</button>
+                    <button class="btn-symbol" data-insert=".innerHTML = '';">innerHTML</button>
+                    <button class="btn-symbol" data-insert=".style. = '';">.style</button>
+                    <button class="btn-symbol" data-insert=".classList.add('');">classList.add</button>
+                    <button class="btn-symbol" data-insert=".classList.remove('');">classList.remove</button>
+                    <button class="btn-symbol" data-insert=".addEventListener('click', function() {\n  \n});">addEventListener</button>
+                    <button class="btn-symbol" data-insert="if () {\n  \n}">if</button>
+                    <button class="btn-symbol" data-insert="else {\n  \n}">else</button>
+                    <button class="btn-symbol" data-insert="for () {\n  \n}">for</button>
+                    <button class="btn-symbol" data-insert="setTimeout(function() {\n  \n}, 1000);">setTimeout</button>
+                    <button class="btn-symbol" data-insert="return ;">return</button>
                     <button class="btn-symbol" data-insert="= ">=</button>
-                    <button class="btn-symbol" data-insert="; ">;</button>
                 </div>
 
                 <!-- PROJETS -->
@@ -140,9 +213,12 @@
                     <button class="btn-symbol btn-project" data-project="chrono">Chronomètre</button>
                 </div>
             </div>
+
+            <!-- Flèche droite -->
+            <button class="scroll-btn" id="btnScrollRight">▶</button>
         </div>
 
-        <!-- HEADER AVEC ONGLETS ET BOUTONS -->
+        <!-- HEADER AVEC ONGLETS -->
         <div class="editor-header-wrapper">
             <div class="editor-tabs" id="editorHeader"></div>
             <div class="editor-actions">
@@ -214,7 +290,7 @@
     </div>
 </div>
 
-<!-- Scripts CodeMirror -->
+<!-- Scripts -->
 <script src="/js/header.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
@@ -223,11 +299,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
-<!-- Scripts d'auto-complétion -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/xml-hint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
-
 <script src="/js/virtemulator.js"></script>
+
 </body>
 </html>

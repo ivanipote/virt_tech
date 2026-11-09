@@ -1,42 +1,57 @@
 /* --- virtemulator.css --- */
 body, html { 
-    margin: 0; padding: 0; height: 100%; overflow: hidden; 
-    background: var(--fond); /* Fond du site VirtTech */
+    margin: 0; 
+    padding: 0; 
+    height: 100%; 
+    overflow: hidden; 
+    background: var(--fond); /* Fond gris clair VirtTech */
 }
 
-/* LAYOUT */
+/* =========================================
+   LAYOUT GÉNÉRAL (Mobile First)
+   ========================================= */
 .main-layout {
     position: absolute; top: 70px; left: 10px; right: 10px; bottom: 10px;
     display: flex; flex-direction: column;
 }
 
-.preview-pc-panel { display: none; } /* Caché sur mobile */
+/* L'aperçu PC est caché par défaut (mobile) */
+.preview-pc-panel {
+    display: none;
+}
 
+/* Le conteneur de l'éditeur */
 .emulator-container {
     display: flex; flex-direction: column; width: 100%; height: 100%;
     border-radius: 20px; overflow: hidden;
-    background: #1a1a1a; /* Gris très foncé, presque noir */
+    background: #1a1a1a; /* Gris très foncé */
     border: 1px solid #333;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
-/* BARRE D'OUTILS */
+/* =========================================
+   BARRE D'OUTILS (Toolbar)
+   ========================================= */
 .toolbar { 
     display: flex; align-items: center; background: #2a2a2a; 
     border-bottom: 1px solid #444; height: 50px; flex-shrink: 0;
 }
+
+/* Menu déroulant */
 .lang-switcher {
     display: flex; align-items: center; gap: 5px;
     padding: 0 15px; height: 100%; background: #111;
     border-right: 1px solid #444; cursor: pointer;
     font-weight: bold; font-size: 0.85rem; color: #fff;
+    position: relative; z-index: 10;
 }
 .lang-switcher svg { width: 12px; height: 12px; fill: currentColor; }
 
 .lang-menu {
-    position: absolute; top: 50px; left: 10px;
+    position: absolute; top: 100%; left: 0;
     background: #2a2a2a; border: 1px solid #555; border-radius: 0 0 8px 8px;
     display: none; flex-direction: column; width: 120px;
-    z-index: 100;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 100;
 }
 .lang-menu.ouvert { display: flex; }
 .lang-menu button {
@@ -47,11 +62,23 @@ body, html {
 .lang-menu button:hover { background: #444; color: #fff; }
 .lang-menu button.active { color: #fff; font-weight: bold; background: #444; }
 
+/* Flèches de défilement */
+.scroll-btn {
+    background: #222; border: none; color: #888; font-size: 1.2rem;
+    height: 100%; padding: 0 10px; cursor: pointer; flex-shrink: 0;
+    border-right: 1px solid #444; border-left: 1px solid #444;
+    display: none; /* Caché sur mobile par défaut */
+}
+.scroll-btn:hover { color: #fff; background: #333; }
+
+/* Conteneur des symboles */
 .symbols-container {
     display: flex; align-items: center; gap: 5px; padding: 0 10px;
     overflow-x: auto; white-space: nowrap; flex: 1; height: 100%;
+    min-width: 0; /* Important pour le flex */
+    scroll-behavior: smooth;
 }
-.symbols-container::-webkit-scrollbar { height: 0px; }
+.symbols-container::-webkit-scrollbar { height: 0px; } /* Cache la barre de scroll native */
 
 .btn-symbol {
     background: #333; color: #fff; border: 1px solid #555;
@@ -66,7 +93,9 @@ body, html {
 .group-symbols { display: none; gap: 5px; }
 .group-symbols.active { display: flex; gap: 5px; }
 
-/* HEADER ÉDITEUR */
+/* =========================================
+   HEADER ÉDITEUR
+   ========================================= */
 .editor-header-wrapper {
     display: flex; justify-content: space-between;
     background: #222; border-bottom: 1px solid #444;
@@ -108,7 +137,9 @@ body, html {
 }
 .btn-header-action:hover { background: #444; color: white; }
 
-/* CORPS SCROLLABLE */
+/* =========================================
+   CORPS DE L'ÉDITEUR
+   ========================================= */
 .editor-body { 
     flex: 1; 
     position: relative; 
@@ -122,17 +153,22 @@ body, html {
     overflow: auto !important; 
 }
 
-/* BOUTON PLAY (Mobile) */
+/* =========================================
+   BOUTON PLAY (Mobile)
+   ========================================= */
 .btn-play-footer {
     position: fixed; bottom: 25px; right: 25px; z-index: 100;
     width: 55px; height: 55px; border-radius: 50%;
     background: #333; color: white;
     display: flex; justify-content: center; align-items: center;
-    border: 2px solid #555; cursor: pointer;
+    border: 2px solid #555; cursor: pointer; transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
 }
 .btn-play-footer:hover { background: #555; }
 
-/* MODAL / SLIDE */
+/* =========================================
+   MODAL / SLIDE MOBILE
+   ========================================= */
 .overlay-create {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.8); z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s;
@@ -181,17 +217,26 @@ body, html {
 .btn-zoom-header { background: #333; color: white; border: 1px solid #555; width: 30px; height: 30px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; }
 .btn-zoom-header:hover { background: #555; }
 
-/* --- MEDIA QUERY PC --- */
+/* =========================================
+   MEDIA QUERY : ECRAN PC (Desktop Layout)
+   ========================================= */
 @media(min-width: 900px) {
     .btn-play-footer { display: none; }
     .main-layout { flex-direction: row; gap: 15px; }
+    
+    /* On affiche l'aperçu PC (30%) */
     .preview-pc-panel {
         display: flex; flex-direction: column; width: 30%; height: 100%;
         background: #1a1a1a; border-radius: 20px; overflow: hidden;
         border: 1px solid #333;
     }
     .preview-header { padding: 10px 15px; background: #222; color: #ccc; font-size: 0.85rem; border-bottom: 1px solid #444; text-align: center; }
-    .preview-body { flex: 1; background: #fff; overflow: auto; /* Scroll PC */ }
+    .preview-body { flex: 1; background: #fff; overflow: auto; }
     .preview-body iframe { width: 100%; height: 100%; border: none; }
+    
+    /* L'éditeur prend le reste (70%) */
     .emulator-container { width: 70%; height: 100%; border-radius: 20px; }
+
+    /* On affiche les flèches de défilement sur PC */
+    .scroll-btn { display: block; }
 }
