@@ -47,15 +47,18 @@
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
 <link rel="stylesheet" href="/css/virtemulator.css">
+<!-- CodeMirror Core -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+<!-- CodeMirror Hint (Auto-complétion) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
 </head>
 <body>
 
 <!-- CONTENEUR PRINCIPAL -->
 <div class="main-layout">
     
-    <!-- APERÇU PC (Caché sur mobile via CSS) -->
+    <!-- APERÇU PC -->
     <div class="preview-pc-panel">
         <div class="preview-header">
             <span>🖥️ Aperçu en temps réel</span>
@@ -68,7 +71,7 @@
     <!-- ÉDITEUR -->
     <div class="emulator-container">
         
-        <!-- LA BARRE D'OUTILS (Toolbar) -->
+        <!-- LA BARRE D'OUTILS -->
         <div class="toolbar">
             <div class="lang-switcher" id="btnSwitch">
                 <span id="currentLang">HTML</span>
@@ -84,17 +87,18 @@
             <div class="symbols-container">
                 <!-- HTML -->
                 <div class="group-symbols active" id="grp-html">
+                    <!-- Structure de base -->
+                    <button class="btn-symbol" data-insert="<!DOCTYPE html>\n<html>\n<head>\n  <title>Mon site</title>\n</head>\n<body>\n  \n</body>\n</html>" style="color: var(--or); border-color: var(--or);">Structure HTML</button>
+                    
                     <button class="btn-symbol" data-insert="<div>\n  \n</div>">&lt;div&gt;</button>
                     <button class="btn-symbol" data-insert="<p>\n  \n</p>">&lt;p&gt;</button>
                     <button class="btn-symbol" data-insert="<h1>\n  \n</h1>">&lt;h1&gt;</button>
-                    <button class="btn-symbol" data-insert="<span>\n  \n</span>">&lt;span&gt;</button>
-                    <button class="btn-symbol" data-insert="<a href=''>Lien</a>">&lt;a&gt; (Lien)</button>
-                    <button class="btn-symbol" data-insert="<img src='' alt=''>">&lt;img&gt; (Image)</button>
+                    <button class="btn-symbol" data-insert="<a href=''>Lien</a>">&lt;a&gt;</button>
+                    <button class="btn-symbol" data-insert="<img src='' alt=''>">&lt;img&gt;</button>
                     <button class="btn-symbol" data-insert="<button>\n  Cliquez\n</button>">&lt;button&gt;</button>
-                    <button class="btn-symbol" data-insert="<ul>\n  <li></li>\n</ul>">&lt;ul&gt; (Liste)</button>
+                    <button class="btn-symbol" data-insert="<ul>\n  <li></li>\n</ul>">&lt;ul&gt;</button>
                     <button class="btn-symbol" data-insert="<br>">&lt;br&gt;</button>
                     <button class="btn-symbol" data-insert="<!-- Commentaire -->">&lt;!-- --&gt;</button>
-                    <button class="btn-symbol" data-insert="<!DOCTYPE html>">&lt;!DOCTYPE&gt;</button>
                 </div>
                 
                 <!-- CSS -->
@@ -108,7 +112,6 @@
                     <button class="btn-symbol" data-insert="border: ;">border:</button>
                     <button class="btn-symbol" data-insert="border-radius: ;">border-radius:</button>
                     <button class="btn-symbol" data-insert="{ }">{ }</button>
-                    <button class="btn-symbol" data-insert="; ">;</button>
                 </div>
                 
                 <!-- JS -->
@@ -141,15 +144,13 @@
 
         <!-- HEADER AVEC ONGLETS ET BOUTONS -->
         <div class="editor-header-wrapper">
-            <div class="editor-tabs" id="editorHeader">
-                <!-- Les onglets seront injectés ici par JS -->
-            </div>
+            <div class="editor-tabs" id="editorHeader"></div>
             <div class="editor-actions">
-                <button class="btn-header-action" id="btnExportCode" title="Télécharger le fichier">
+                <button class="btn-header-action" id="btnExportCode" title="Télécharger">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                     Exporter
                 </button>
-                <button class="btn-header-action" id="btnSaveCode" title="Enregistrer dans le navigateur">
+                <button class="btn-header-action" id="btnSaveCode" title="Enregistrer">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
                     Save
                 </button>
@@ -163,7 +164,7 @@
     </div>
 </div>
 
-<!-- BOUTON PLAY (Mobile uniquement) -->
+<!-- BOUTON PLAY (Mobile) -->
 <button class="btn-play-footer" id="btnPlay" title="Voir le rendu">
     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 </button>
@@ -180,13 +181,12 @@
     </div>
 </div>
 
-<!-- SLIDE MOBILE (Aperçu) -->
+<!-- SLIDE MOBILE -->
 <div class="slide-overlay" id="slideOverlay"></div>
 <div class="slide-panel" id="slidePanel">
     <div class="slide-header">
         <h3 id="slideTitle">Aperçu</h3>
         <div style="display: flex; align-items: center; gap: 10px;">
-            <!-- Boutons de zoom -->
             <button class="btn-zoom-header" id="btnZoomOut" title="Zoom arrière">-</button>
             <button class="btn-zoom-header" id="btnZoomIn" title="Zoom avant">+</button>
             <button class="btn-fermer" id="btnFermerSlide">✕</button>
@@ -194,7 +194,6 @@
     </div>
     <div class="slide-content">
         <div class="iphone-frame">
-            <!-- Barre d'état Android -->
             <div class="status-bar">
                 <span class="status-time">12:30</span>
                 <span class="status-icons">
@@ -203,11 +202,9 @@
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
                 </span>
             </div>
-            <!-- Écran -->
             <div class="iphone-screen">
                 <iframe id="mobileIframe" title="Aperçu mobile"></iframe>
             </div>
-            <!-- Boutons de navigation Android -->
             <div class="nav-bar-android">
                 <div class="nav-btn"></div>
                 <div class="nav-btn home"></div>
@@ -217,7 +214,7 @@
     </div>
 </div>
 
-<!-- Scripts -->
+<!-- Scripts CodeMirror -->
 <script src="/js/header.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
@@ -226,7 +223,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
-<script src="/js/virtemulator.js"></script>
+<!-- Scripts d'auto-complétion -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/xml-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
 
+<script src="/js/virtemulator.js"></script>
 </body>
 </html>

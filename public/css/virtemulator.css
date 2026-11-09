@@ -1,61 +1,42 @@
 /* --- virtemulator.css --- */
 body, html { 
-    margin: 0; 
-    padding: 0; 
-    height: 100%; 
-    overflow: hidden; 
-    background: var(--fond); 
+    margin: 0; padding: 0; height: 100%; overflow: hidden; 
+    background: var(--fond); /* Fond du site VirtTech */
 }
 
-/* =========================================
-   LAYOUT GÉNÉRAL (Mobile First)
-   ========================================= */
+/* LAYOUT */
 .main-layout {
     position: absolute; top: 70px; left: 10px; right: 10px; bottom: 10px;
     display: flex; flex-direction: column;
 }
 
-/* L'aperçu PC est caché par défaut (mobile) */
-.preview-pc-panel {
-    display: none;
-}
+.preview-pc-panel { display: none; } /* Caché sur mobile */
 
-/* Le conteneur de l'éditeur */
 .emulator-container {
     display: flex; flex-direction: column; width: 100%; height: 100%;
     border-radius: 20px; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    background: #282a36;
+    background: #1a1a1a; /* Gris très foncé, presque noir */
+    border: 1px solid #333;
 }
 
-/* =========================================
-   BARRE D'OUTILS (Onglets langages & Symboles)
-   ========================================= */
+/* BARRE D'OUTILS */
 .toolbar { 
-    display: flex; 
-    align-items: center; 
-    background: #2d2d2d; 
-    border-bottom: 1px solid #444;
-    height: 50px;
-    position: relative;
-    flex-shrink: 0;
+    display: flex; align-items: center; background: #2a2a2a; 
+    border-bottom: 1px solid #444; height: 50px; flex-shrink: 0;
 }
-
-/* Menu de sélection du langage */
 .lang-switcher {
     display: flex; align-items: center; gap: 5px;
-    padding: 0 15px; height: 100%; background: #1e1e1e;
+    padding: 0 15px; height: 100%; background: #111;
     border-right: 1px solid #444; cursor: pointer;
-    font-weight: bold; font-size: 0.85rem; color: #D4AF37;
-    position: relative; z-index: 10;
+    font-weight: bold; font-size: 0.85rem; color: #fff;
 }
 .lang-switcher svg { width: 12px; height: 12px; fill: currentColor; }
 
 .lang-menu {
-    position: absolute; top: 100%; left: 0;
-    background: #333; border: 1px solid #555; border-radius: 0 0 8px 8px;
+    position: absolute; top: 50px; left: 10px;
+    background: #2a2a2a; border: 1px solid #555; border-radius: 0 0 8px 8px;
     display: none; flex-direction: column; width: 120px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 100;
+    z-index: 100;
 }
 .lang-menu.ouvert { display: flex; }
 .lang-menu button {
@@ -63,40 +44,32 @@ body, html {
     padding: 10px; text-align: left; cursor: pointer;
     font-size: 0.85rem; border-bottom: 1px solid #444;
 }
-.lang-menu button:hover { background: #444; color: white; }
-.lang-menu button.active { color: #D4AF37; font-weight: bold; }
+.lang-menu button:hover { background: #444; color: #fff; }
+.lang-menu button.active { color: #fff; font-weight: bold; background: #444; }
 
-/* Conteneur des symboles */
 .symbols-container {
     display: flex; align-items: center; gap: 5px; padding: 0 10px;
     overflow-x: auto; white-space: nowrap; flex: 1; height: 100%;
 }
 .symbols-container::-webkit-scrollbar { height: 0px; }
 
-/* Boutons des symboles */
 .btn-symbol {
-    background: #444; color: #fff; border: 1px solid #555;
+    background: #333; color: #fff; border: 1px solid #555;
     border-radius: 6px; padding: 8px 12px; font-family: monospace;
     font-size: 0.85rem; cursor: pointer; flex-shrink: 0;
 }
-.btn-symbol:active { background: #666; }
+.btn-symbol:active { background: #555; }
 
-/* Boutons spécifiques aux projets */
-.btn-project {
-    background: #0B2545; color: #D4AF37; border: 1px solid #D4AF37;
-}
-.btn-project:active { background: #D4AF37; color: #0B2545; }
+.btn-project { background: #111; color: #fff; border: 1px solid #555; }
+.btn-project:active { background: #333; }
 
-/* Groupes de symboles */
 .group-symbols { display: none; gap: 5px; }
 .group-symbols.active { display: flex; gap: 5px; }
 
-/* =========================================
-   HEADER DE L'ÉDITEUR (Onglets de fichiers + Boutons)
-   ========================================= */
+/* HEADER ÉDITEUR */
 .editor-header-wrapper {
     display: flex; justify-content: space-between;
-    background: #1e1e1e; border-bottom: 1px solid #444;
+    background: #222; border-bottom: 1px solid #444;
     height: 40px; flex-shrink: 0;
 }
 .editor-tabs {
@@ -112,10 +85,10 @@ body, html {
     color: #888; cursor: pointer; font-size: 0.85rem;
     border-right: 1px solid #333;
 }
-.tab:hover { background: #2d2d2d; color: #ccc; }
-.tab.active { background: #282a36; color: #fff; border-top: 2px solid var(--or); }
-.tab-close { color: #888; font-size: 1rem; margin-left: 5px; cursor: pointer; padding: 0 2px; }
-.tab-close:hover { color: #ff5555; }
+.tab:hover { background: #2a2a2a; color: #ccc; }
+.tab.active { background: #1a1a1a; color: #fff; border-top: 2px solid #fff; }
+.tab-close { color: #888; font-size: 1rem; margin-left: 5px; cursor: pointer; }
+.tab-close:hover { color: #fff; }
 
 .btn-add-tab {
     background: transparent; border: none; color: #888;
@@ -126,18 +99,16 @@ body, html {
 .editor-actions {
     display: flex; align-items: center; gap: 5px;
     padding: 0 10px; border-left: 1px solid #333;
-    background: #1e1e1e; z-index: 10;
+    background: #222; z-index: 10;
 }
 .btn-header-action {
-    background: transparent; color: #ccc;
-    border: 1px solid #444; padding: 4px 8px; border-radius: 6px;
-    font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s;
+    background: transparent; color: #ccc; border: 1px solid #444;
+    padding: 4px 8px; border-radius: 6px; font-size: 0.75rem;
+    cursor: pointer; display: flex; align-items: center; gap: 4px;
 }
 .btn-header-action:hover { background: #444; color: white; }
 
-/* =========================================
-   CORPS DE L'ÉDITEUR
-   ========================================= */
+/* CORPS SCROLLABLE */
 .editor-body { 
     flex: 1; 
     position: relative; 
@@ -151,61 +122,55 @@ body, html {
     overflow: auto !important; 
 }
 
-/* =========================================
-   BOUTON PLAY (Mobile)
-   ========================================= */
+/* BOUTON PLAY (Mobile) */
 .btn-play-footer {
     position: fixed; bottom: 25px; right: 25px; z-index: 100;
     width: 55px; height: 55px; border-radius: 50%;
-    background: var(--metal-fonce); color: white;
+    background: #333; color: white;
     display: flex; justify-content: center; align-items: center;
-    border: 2px solid var(--metal); cursor: pointer; transition: 0.3s;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    border: 2px solid #555; cursor: pointer;
 }
-.btn-play-footer:hover { background: var(--surface); color: var(--ombre); transform: scale(1.1); }
+.btn-play-footer:hover { background: #555; }
 
-/* =========================================
-   MODAL / SLIDE MOBILE
-   ========================================= */
+/* MODAL / SLIDE */
 .overlay-create {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7); backdrop-filter: blur(3px);
+    background: rgba(0,0,0,0.8); z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s;
     display: flex; justify-content: center; align-items: center;
-    z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s;
 }
 .overlay-create.ouvert { opacity: 1; visibility: visible; }
 .modal-create {
-    background: #2d2d2d; padding: 25px; border-radius: 15px;
+    background: #222; padding: 25px; border-radius: 15px;
     border: 1px solid #444; width: 300px; text-align: center;
 }
 .modal-create h3 { color: white; margin-top: 0; }
 .modal-create input {
     width: 100%; padding: 10px; margin: 15px 0;
     border-radius: 8px; border: 1px solid #555;
-    background: #1e1e1e; color: white; outline: none; box-sizing: border-box;
+    background: #111; color: white; outline: none; box-sizing: border-box;
 }
 .modal-create .btns { display: flex; gap: 10px; }
 .modal-create button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
-.btn-annuler { background: #555; color: white; }
-.btn-creer { background: var(--or); color: var(--ombre); }
+.btn-annuler { background: #444; color: white; }
+.btn-creer { background: #fff; color: #000; }
 
-.slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; }
+.slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; }
 .slide-overlay.ouvert { opacity: 1; visibility: visible; }
-.slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: #2d2d2d; border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 1001; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 0.8, 0.3, 1); display: flex; flex-direction: column; }
+.slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: #222; border-radius: 25px 25px 0 0; z-index: 1001; transform: translateY(100%); transition: transform 0.4s; display: flex; flex-direction: column; }
 .slide-panel.ouvert { transform: translateY(0); }
-.slide-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #1e1e1e; color: var(--surface); border-bottom: 1px solid var(--metal); border-radius: 25px 25px 0 0; min-height: 40px; }
-.slide-header h3 { font-size: 1rem; margin: 0; color: white; }
-.btn-fermer { background: none; border: none; color: var(--surface); font-size: 1.2rem; cursor: pointer; }
-.slide-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: auto; text-align: center; }
+.slide-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #111; color: #fff; border-bottom: 1px solid #444; border-radius: 25px 25px 0 0; }
+.slide-header h3 { font-size: 1rem; margin: 0; }
+.btn-fermer { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+.slide-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: auto; }
 
 /* Téléphone Android */
 .iphone-frame { 
     width: 320px; height: 650px; background: #000; border-radius: 35px; 
-    padding: 0; box-shadow: 0 25px 60px rgba(0,0,0,0.6), inset 0 0 0 2px #444; 
+    padding: 0; border: 2px solid #333;
     position: relative; transition: transform 0.3s ease; transform-origin: center center; 
     flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden;
 }
-.status-bar { background: #000; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 5px 15px; font-size: 0.75rem; font-family: sans-serif; height: 25px; flex-shrink: 0; }
+.status-bar { background: #000; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 5px 15px; font-size: 0.75rem; height: 25px; flex-shrink: 0; }
 .status-icons { display: flex; gap: 5px; align-items: center; }
 .iphone-screen { background: #fff; width: 100%; flex: 1; overflow: hidden; }
 .iphone-screen iframe { width: 100%; height: 100%; border: none; }
@@ -213,56 +178,20 @@ body, html {
 .nav-btn { width: 15px; height: 15px; background: transparent; border: 2px solid #666; border-radius: 3px; }
 .nav-btn.home { border-radius: 50%; width: 18px; height: 18px; }
 
-/* Boutons de zoom */
-.btn-zoom-header { background: var(--metal-fonce); color: white; border: 1px solid var(--metal); width: 30px; height: 30px; border-radius: 50%; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
-.btn-zoom-header:hover { background: var(--surface); color: var(--ombre); }
+.btn-zoom-header { background: #333; color: white; border: 1px solid #555; width: 30px; height: 30px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+.btn-zoom-header:hover { background: #555; }
 
-/* =========================================
-   MEDIA QUERY : ECRAN PC (Desktop Layout)
-   ========================================= */
+/* --- MEDIA QUERY PC --- */
 @media(min-width: 900px) {
-    /* On cache le bouton Play mobile */
     .btn-play-footer { display: none; }
-
-    /* On transforme le layout en ligne (côte à côte) */
-    .main-layout {
-        flex-direction: row;
-        gap: 15px;
-    }
-
-    /* On affiche l'aperçu PC à gauche (30%) */
+    .main-layout { flex-direction: row; gap: 15px; }
     .preview-pc-panel {
-        display: flex;
-        flex-direction: column;
-        width: 30%;
-        height: 100%;
-        background: #1e1e1e;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        display: flex; flex-direction: column; width: 30%; height: 100%;
+        background: #1a1a1a; border-radius: 20px; overflow: hidden;
+        border: 1px solid #333;
     }
-    .preview-header {
-        padding: 10px 15px;
-        background: #2d2d2d;
-        color: #ccc;
-        font-size: 0.85rem;
-        border-bottom: 1px solid #444;
-        text-align: center;
-    }
-    .preview-body {
-        flex: 1;
-        background: #fff;
-    }
-    .preview-body iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-    }
-
-    /* L'éditeur prend le reste de la place (70%) */
-    .emulator-container {
-        width: 70%;
-        height: 100%;
-        border-radius: 20px;
-    }
+    .preview-header { padding: 10px 15px; background: #222; color: #ccc; font-size: 0.85rem; border-bottom: 1px solid #444; text-align: center; }
+    .preview-body { flex: 1; background: #fff; overflow: auto; /* Scroll PC */ }
+    .preview-body iframe { width: 100%; height: 100%; border: none; }
+    .emulator-container { width: 70%; height: 100%; border-radius: 20px; }
 }
