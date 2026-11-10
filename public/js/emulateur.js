@@ -2,11 +2,62 @@
 // Cœur de VirtEmulator MOBILE : CodeMirror, fichiers, slide, téléphones,
 // navigation, paramètres, horloge, chrono, save/export.
 //
-// Reçoit de toolsemulator.js : window.setEditorInstance + window.setOnProjetClick
-// Utilise : window.virtToast (défini par toolsemulator.js)
+// + DÉTECTION PC : affiche un overlay "Mauvaise version détectée"
+// + Détecte si l'utilisateur est sur PC (>= 900px) et bloque l'accès mobile.
 
 document.addEventListener("DOMContentLoaded", function() {
     'use strict';
+
+    // ==========================================
+    // DÉTECTION PC — OVERLAY
+    // ==========================================
+    const estPC = window.matchMedia('(min-width: 900px)').matches;
+
+    if (estPC) {
+        afficherOverlayPC();
+    }
+
+    function afficherOverlayPC() {
+        // Éviter les doublons
+        if (document.getElementById('pcOverlay')) return;
+
+        // Cacher le contenu mobile
+        const mainLayout = document.querySelector('.main-layout');
+        if (mainLayout) mainLayout.style.display = 'none';
+
+        const btnPlay = document.getElementById('btnPlay');
+        if (btnPlay) btnPlay.style.display = 'none';
+
+        const slidePanel = document.getElementById('slidePanel');
+        if (slidePanel) slidePanel.style.display = 'none';
+
+        const slideOverlay = document.getElementById('slideOverlay');
+        if (slideOverlay) slideOverlay.style.display = 'none';
+
+        // Bloquer le scroll
+        document.body.style.overflow = 'hidden';
+
+        // Créer l'overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'pcOverlay';
+        overlay.className = 'pc-overlay';
+        overlay.innerHTML = `
+            <div class="pc-modal">
+                <div class="pc-icon">
+                    <i class="fa-solid fa-desktop"></i>
+                </div>
+                <div class="pc-content">
+                    <h3>Mauvaise version détectée</h3>
+                    <p>Tu utilises VirtEmulator Mobile sur PC. Pour une meilleure expérience, utilise la version PC.</p>
+                    <a href="/virtemulator-pc" class="pc-btn">
+                        <i class="fa-solid fa-arrow-right"></i>
+                        Aller sur VirtEmulator PC
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
 
     // ==========================================
     // ÉTAT GLOBAL
@@ -102,6 +153,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // INITIALISATION
     // ==========================================
     function init() {
+        // Si on est sur PC, on ne charge rien (l'overlay est déjà affiché)
+        if (estPC) {
+            return;
+        }
+
         // 1. Charger les fichiers sauvegardés
         const savedFiles = localStorage.getItem('virtemulator_files');
         if (savedFiles) {
