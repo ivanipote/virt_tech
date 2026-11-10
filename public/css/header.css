@@ -1,79 +1,243 @@
-/* header.css */
-.brand{font-weight:900;letter-spacing:3px;font-size:1.2rem;color:var(--surface);text-decoration:none}
-.brand span{color:var(--metal)}
-.top{position:sticky;top:5px;z-index:50;margin:5px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:linear-gradient(135deg,var(--metal-fonce),var(--ombre));color:var(--surface);border:2px solid var(--metal);border-radius:23px;box-shadow:0 10px 28px rgba(22,31,39,.4)}
-.burger{display:flex;align-items:center;gap:12px;background:rgba(217,224,226,.08);border:1px solid var(--metal);color:var(--surface);border-radius:16px;padding:9px 16px;font-weight:700;font-size:.95rem;cursor:pointer;transition:.2s}
-.burger:hover{background:var(--surface);color:var(--ombre)}
-.burger i{display:block;width:18px;height:2px;background:currentColor;box-shadow:0 6px 0 currentColor,0 -6px 0 currentColor}
-.top-lien{background:var(--surface);color:var(--ombre);border:1px solid var(--surface);text-decoration:none;font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px;padding:9px 18px;border-radius:16px;transition:.2s}
-.top-lien:hover{background:transparent;color:var(--surface)}
+/* --- header.css --- */
 
-/* MENU LATÉRAL */
-.voile{position:fixed;inset:0;z-index:90;background:rgba(22,31,39,.55);opacity:0;pointer-events:none;transition:opacity .3s}
-.voile.ouvert{opacity:1;pointer-events:auto}
-.side{position:fixed;top:5px;left:5px;bottom:5px;width:280px;max-width:calc(100% - 10px);z-index:100;display:flex;flex-direction:column;padding:22px 18px;background:linear-gradient(180deg,var(--metal-fonce),var(--ombre));color:var(--surface);border:2px solid var(--metal);border-radius:23px;box-shadow:0 20px 50px rgba(22,31,39,.55);transform:translateX(calc(-100% - 20px));visibility:hidden;transition:transform .35s cubic-bezier(.22,.8,.3,1),visibility 0s .35s}
-.side.ouvert{transform:none;visibility:visible;transition:transform .35s cubic-bezier(.22,.8,.3,1)}
-.side-tete{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--metal)}
-.side-id{display:flex;align-items:center;gap:12px}
-.mini{flex:none;width:52px;height:52px;border-radius:14px;overflow:hidden;border:2px solid var(--metal);background:var(--logo-fond)}
-.mini img{width:100%;height:100%;object-fit:cover;display:block}
-.fermer{flex:none;width:38px;height:38px;border-radius:50%;background:none;border:1px solid var(--metal);color:var(--surface);font-size:1.1rem;cursor:pointer;transition:.2s}
-.fermer:hover{background:var(--surface);color:var(--ombre)}
-.side ul{list-style:none;display:flex;flex-direction:column;gap:6px}
-.side li a{display:flex;align-items:center;justify-content:space-between;color:var(--surface);opacity:.85;text-decoration:none;padding:12px 16px;border-radius:16px;border:1px solid transparent;font-weight:600;transition:.2s}
-.side li a:hover{opacity:1;background:rgba(217,224,226,.1);border-color:var(--metal);padding-left:22px}
-.side li a.actif{opacity:1;background:var(--surface);color:var(--ombre)}
-.side small{margin-top:auto;text-align:center;font-size:.78rem;opacity:.85;border:1px solid var(--metal);border-radius:20px;padding:6px 10px}
-
-/* --- LE BADGE D'ATTENTION --- */
-.badge-attention {
-    background: #e74c3c; /* Rouge vif */
-    color: white;
-    font-size: 0.65rem;
+/* =========================================
+   HEADER PRINCIPAL (barre du haut)
+   ========================================= */
+.brand {
     font-weight: 900;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 10px;
-    letter-spacing: 0.5px;
-    animation: pulse-badge 2s infinite;
+    letter-spacing: 3px;
+    font-size: 1.2rem;
+    color: var(--surface);
+    text-decoration: none;
+}
+.brand span {
+    color: var(--metal);
 }
 
-@keyframes pulse-badge {
-    0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-    70% { box-shadow: 0 0 0 6px rgba(231, 76, 60, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
-}
-
-@media(max-width:600px){.top-lien{display:none}}
-/* Bouton contact dans la sidebar */
-.btn-side-contact {
+.top {
+    position: sticky;
+    top: 5px;
+    z-index: 50;
+    margin: 5px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: transparent;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, var(--metal-fonce), var(--ombre));
     color: var(--surface);
     border: 2px solid var(--metal);
-    border-radius: 16px;
-    padding: 12px;
-    margin-bottom: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    border-radius: 23px;
+    box-shadow: 0 10px 28px rgba(22, 31, 39, .4);
 }
 
-.btn-side-contact:hover {
+.burger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(217, 224, 226, .08);
+    border: 1px solid var(--metal);
+    color: var(--surface);
+    border-radius: 16px;
+    padding: 9px 16px;
+    font-weight: 700;
+    font-size: .95rem;
+    cursor: pointer;
+    transition: .2s;
+}
+.burger:hover {
+    background: var(--surface);
+    color: var(--ombre);
+}
+.burger i {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: currentColor;
+    box-shadow: 0 6px 0 currentColor, 0 -6px 0 currentColor;
+}
+
+.top-lien {
+    background: var(--surface);
+    color: var(--ombre);
+    border: 1px solid var(--surface);
+    text-decoration: none;
+    font-weight: 800;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 9px 18px;
+    border-radius: 16px;
+    transition: .2s;
+}
+.top-lien:hover {
+    background: transparent;
+    color: var(--surface);
+}
+
+/* =========================================
+   MENU LATÉRAL (Sidebar)
+   ========================================= */
+.voile {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(22, 31, 39, .55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s;
+}
+.voile.ouvert {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.side {
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    bottom: 5px;
+    width: 280px;
+    max-width: calc(100% - 10px);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 18px;
+    background: linear-gradient(180deg, var(--metal-fonce), var(--ombre));
+    color: var(--surface);
+    border: 2px solid var(--metal);
+    border-radius: 23px;
+    box-shadow: 0 20px 50px rgba(22, 31, 39, .55);
+    transform: translateX(calc(-100% - 20px));
+    visibility: hidden;
+    transition: transform .35s cubic-bezier(.22, .8, .3, 1), visibility 0s .35s;
+}
+.side.ouvert {
+    transform: none;
+    visibility: visible;
+    transition: transform .35s cubic-bezier(.22, .8, .3, 1);
+}
+
+.side-tete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--metal);
+}
+
+.side-id {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mini {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--metal);
+    background: var(--logo-fond);
+}
+.mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.fermer {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid var(--metal);
+    color: var(--surface);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: .2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.fermer:hover {
+    background: var(--surface);
+    color: var(--ombre);
+}
+
+/* =========================================
+   NAVIGATION (Liens)
+   ========================================= */
+.side nav ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.side nav li a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Texte à gauche, icône à droite */
+    gap: 12px;
+    padding: 14px 16px;
+    color: var(--surface);
+    text-decoration: none;
+    border-radius: 16px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: 0.25s;
+}
+
+.side nav li a span {
+    white-space: nowrap;
+}
+
+.side nav li a i {
+    font-size: 1rem;
+    color: var(--metal);
+    width: 20px;
+    text-align: center;
+    transition: color 0.25s;
+    flex-shrink: 0;
+}
+
+.side nav li a:hover {
+    background: rgba(217, 224, 226, .1);
+    border-color: var(--metal);
+}
+.side nav li a:hover i {
+    color: var(--or);
+}
+
+.side nav li a.actif {
     background: var(--surface);
     color: var(--ombre);
     border-color: var(--surface);
-    transform: translateY(-2px);
+}
+.side nav li a.actif i {
+    color: var(--ombre);
 }
 
-.btn-side-contact svg {
-    flex-shrink: 0;
+/* =========================================
+   FOOTER DE LA SIDEBAR (poussé tout en bas)
+   ========================================= */
+.side-footer {
+    margin-top: auto; /* Pousse le footer tout en bas */
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
-/* --- Bouton contact dans le footer de la sidebar --- */
+
+/* =========================================
+   BOUTON "LAISSEZ-NOUS UN MAIL"
+   ========================================= */
 .btn-side-contact {
     display: flex;
     align-items: center;
@@ -84,14 +248,14 @@
     border: 1px solid var(--metal);
     border-radius: 16px;
     padding: 12px;
-    margin-top: auto; /* Pousse le bouton tout en bas */
-    margin-bottom: 2px; /* L'espace de 2px avec le texte en dessous */
     text-decoration: none;
     font-weight: 600;
     font-size: 0.9rem;
     transition: all 0.3s ease;
 }
-
+.btn-side-contact i {
+    font-size: 1rem;
+}
 .btn-side-contact:hover {
     background: var(--surface);
     color: var(--ombre);
@@ -99,12 +263,23 @@
     transform: translateY(-2px);
 }
 
-.btn-side-contact svg {
-    flex-shrink: 0;
+/* =========================================
+   TEXTE "En transition..."
+   ========================================= */
+.side small {
+    text-align: center;
+    font-size: .78rem;
+    opacity: .85;
+    border: 1px solid var(--metal);
+    border-radius: 20px;
+    padding: 6px 10px;
 }
 
-/* On s'assure que le texte "En transition..." colle au bouton */
-.side small {
-    margin-top: 0; /* Retire la marge du haut qui pourrait créer un espace */
-    margin-bottom: 10px; /* Laisse un peu d'espace avec le bord bas de l'écran */
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 600px) {
+    .top-lien {
+        display: none;
+    }
 }

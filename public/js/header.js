@@ -29,39 +29,63 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="mini"><img src="/logo.png" alt="Logo VirtTech"></div>
           <a href="/" class="brand">VIRT<span>TECH</span></a>
         </div>
-        <button class="fermer" id="fermer" aria-label="Fermer le menu">✕</button>
+        <button class="fermer" id="fermer" aria-label="Fermer le menu"><i class="fa-solid fa-xmark"></i></button>
       </div>
+      
       <nav aria-label="Navigation principale">
         <ul>
-          <li><a href="/" class="${actifAccueil}">Accueil</a></li>
-          <li><a href="/historique" class="${actifHistorique}">Historique d'activité</a></li>
-          
+          <li>
+            <a href="/" class="${actifAccueil}">
+                <span>Accueil</span>
+                <i class="fa-solid fa-house"></i>
+            </a>
+          </li>
+          <li>
+            <a href="/historique" class="${actifHistorique}">
+                <span>Historique d'activité</span>
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </a>
+          </li>
           <li>
             <a href="/virtemulator" class="${actifVirtEmulator}">
-              VirtEmulator
-              <span class="badge-attention" style="background: var(--metal-moyen);">Outil</span>
+                <span>VirtEmulator</span>
+                <i class="fa-solid fa-code"></i>
             </a>
           </li>
-          
           <li>
             <a href="/virt-dev" class="${actifResultats}">
-              Résultats Virt_Dev
-              <span class="badge-attention">Nouveau</span>
+                <span>Résultats Virt_Dev</span>
+                <i class="fa-solid fa-trophy"></i>
             </a>
           </li>
-          <li><a href="/#actus">Actualités</a></li>
-          <li><a href="/#apropos">À propos</a></li>
-          <li><a href="/#contact">Contact</a></li>
+          <li>
+            <a href="/#actus">
+                <span>Actualités</span>
+                <i class="fa-solid fa-newspaper"></i>
+            </a>
+          </li>
+          <li>
+            <a href="/#apropos">
+                <span>À propos</span>
+                <i class="fa-solid fa-circle-info"></i>
+            </a>
+          </li>
+          <li>
+            <a href="/#contact">
+                <span>Contact</span>
+                <i class="fa-solid fa-envelope"></i>
+            </a>
+          </li>
         </ul>
       </nav>
       
-      <!-- BOUTON CONTACT -->
-      <a href="/contact" class="btn-side-contact">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-          Laissez-nous un mail
-      </a>
-
-      <small>En transition vers le domaine .com</small>
+      <!-- FOOTER DE LA SIDEBAR (poussé en bas) -->
+      <div class="side-footer">
+          <a href="/contact" class="btn-side-contact">
+              <i class="fa-solid fa-paper-plane"></i> Laissez-nous un mail
+          </a>
+          <small>En transition vers le domaine .com</small>
+      </div>
     </aside>
     `;
 
