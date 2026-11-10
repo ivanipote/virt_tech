@@ -33,8 +33,12 @@
 </head>
 <body>
 
+<!-- ========================================= -->
+<!-- LAYOUT PRINCIPAL -->
+<!-- ========================================= -->
 <div class="main-layout">
     
+    <!-- Aperçu PC (caché en mobile) -->
     <div class="preview-pc-panel">
         <div class="preview-header">
             <span>🖥️ Aperçu en temps réel</span>
@@ -44,58 +48,213 @@
         </div>
     </div>
 
+    <!-- Éditeur -->
     <div class="emulator-container">
         
-        <div class="toolbar">
+        <!-- ========================================= -->
+        <!-- TOOLBAR (gérée par toolsemulator.js) -->
+        <!-- ========================================= -->
+        <div class="toolbar" id="toolbar">
+            <!-- Switch des langages -->
             <div class="lang-switcher" id="btnSwitch">
                 <span id="currentLang">HTML</span>
                 <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                 <div class="lang-menu" id="langMenu">
-                    <button class="active" onclick="setLang('html', this)">HTML</button>
-                    <button onclick="setLang('css', this)">CSS</button>
-                    <button onclick="setLang('js', this)">JS</button>
-                    <button onclick="setLang('projets', this)">Projets</button>
+                    <button class="active" data-lang="html" onclick="setLang('html', this)">HTML</button>
+                    <button data-lang="css" onclick="setLang('css', this)">CSS</button>
+                    <button data-lang="js" onclick="setLang('js', this)">JS</button>
+                    <button data-lang="projets" onclick="setLang('projets', this)">Mini-projets</button>
                 </div>
             </div>
 
             <button class="scroll-btn" id="btnScrollLeft">◀</button>
             
+            <!-- Conteneur des symboles (rempli par toolsemulator.js) -->
             <div class="symbols-container" id="symbolsContainer">
+                
+                <!-- ===== GROUPE HTML : 30 balises ===== -->
                 <div class="group-symbols active" id="grp-html">
-                    <button class="btn-symbol" data-insert="<!DOCTYPE html>\n<html>\n<head>\n  <title>Mon site</title>\n</head>\n<body>\n  \n</body>\n</html>">Structure</button>
+                    <!-- 1. Structure -->
+                    <button class="btn-symbol" data-insert="<!DOCTYPE html>\n<html>\n<head>\n  <meta charset='UTF-8'>\n  <title>Mon site</title>\n</head>\n<body>\n  \n</body>\n</html>">Structure</button>
+                    <!-- 2. html -->
+                    <button class="btn-symbol" data-insert="<html>\n  \n</html>">&lt;html&gt;</button>
+                    <!-- 3. head -->
+                    <button class="btn-symbol" data-insert="<head>\n  \n</head>">&lt;head&gt;</button>
+                    <!-- 4. body -->
+                    <button class="btn-symbol" data-insert="<body>\n  \n</body>">&lt;body&gt;</button>
+                    <!-- 5. title -->
+                    <button class="btn-symbol" data-insert="<title>Mon titre</title>">&lt;title&gt;</button>
+                    <!-- 6. div -->
                     <button class="btn-symbol" data-insert="<div>\n  \n</div>">&lt;div&gt;</button>
-                    <button class="btn-symbol" data-insert="<p>\n  \n</p>">&lt;p&gt;</button>
-                    <button class="btn-symbol" data-insert="<h1>\n  \n</h1>">&lt;h1&gt;</button>
-                    <button class="btn-symbol" data-insert="<a href=''>Lien</a>">&lt;a&gt;</button>
+                    <!-- 7. p -->
+                    <button class="btn-symbol" data-insert="<p>\n  Texte\n</p>">&lt;p&gt;</button>
+                    <!-- 8. h1 -->
+                    <button class="btn-symbol" data-insert="<h1>Titre</h1>">&lt;h1&gt;</button>
+                    <!-- 9. h2 -->
+                    <button class="btn-symbol" data-insert="<h2>Sous-titre</h2>">&lt;h2&gt;</button>
+                    <!-- 10. span -->
+                    <button class="btn-symbol" data-insert="<span>texte</span>">&lt;span&gt;</button>
+                    <!-- 11. a -->
+                    <button class="btn-symbol" data-insert="<a href='#'>Lien</a>">&lt;a&gt;</button>
+                    <!-- 12. img -->
                     <button class="btn-symbol" data-insert="<img src='' alt=''>">&lt;img&gt;</button>
-                    <button class="btn-symbol" data-insert="<button>\n  Cliquez\n</button>">&lt;button&gt;</button>
-                    <button class="btn-symbol" data-insert="<ul>\n  <li></li>\n</ul>">&lt;ul&gt;</button>
+                    <!-- 13. ul -->
+                    <button class="btn-symbol" data-insert="<ul>\n  <li>Item 1</li>\n  <li>Item 2</li>\n</ul>">&lt;ul&gt;</button>
+                    <!-- 14. ol -->
+                    <button class="btn-symbol" data-insert="<ol>\n  <li>Item 1</li>\n  <li>Item 2</li>\n</ol>">&lt;ol&gt;</button>
+                    <!-- 15. li -->
+                    <button class="btn-symbol" data-insert="<li>Item</li>">&lt;li&gt;</button>
+                    <!-- 16. button -->
+                    <button class="btn-symbol" data-insert="<button>Cliquez</button>">&lt;button&gt;</button>
+                    <!-- 17. input -->
+                    <button class="btn-symbol" data-insert="<input type='text' placeholder=''>">&lt;input&gt;</button>
+                    <!-- 18. form -->
+                    <button class="btn-symbol" data-insert="<form>\n  \n</form>">&lt;form&gt;</button>
+                    <!-- 19. label -->
+                    <button class="btn-symbol" data-insert="<label>Libellé</label>">&lt;label&gt;</button>
+                    <!-- 20. textarea -->
+                    <button class="btn-symbol" data-insert="<textarea></textarea>">&lt;textarea&gt;</button>
+                    <!-- 21. select -->
+                    <button class="btn-symbol" data-insert="<select>\n  <option>Option 1</option>\n  <option>Option 2</option>\n</select>">&lt;select&gt;</button>
+                    <!-- 22. br -->
+                    <button class="btn-symbol" data-insert="<br>">&lt;br&gt;</button>
+                    <!-- 23. hr -->
+                    <button class="btn-symbol" data-insert="<hr>">&lt;hr&gt;</button>
+                    <!-- 24. strong -->
+                    <button class="btn-symbol" data-insert="<strong>Important</strong>">&lt;strong&gt;</button>
+                    <!-- 25. em -->
+                    <button class="btn-symbol" data-insert="<em>Italique</em>">&lt;em&gt;</button>
+                    <!-- 26. table -->
+                    <button class="btn-symbol" data-insert="<table>\n  <tr>\n    <td>Cellule</td>\n  </tr>\n</table>">&lt;table&gt;</button>
+                    <!-- 27. header -->
+                    <button class="btn-symbol" data-insert="<header>\n  \n</header>">&lt;header&gt;</button>
+                    <!-- 28. section -->
+                    <button class="btn-symbol" data-insert="<section>\n  \n</section>">&lt;section&gt;</button>
+                    <!-- 29. link -->
+                    <button class="btn-symbol" data-insert="<link rel='stylesheet' href='style.css'>">&lt;link&gt;</button>
+                    <!-- 30. script -->
+                    <button class="btn-symbol" data-insert="<script>\n  \n<\/script>">&lt;script&gt;</button>
                 </div>
+
+                <!-- ===== GROUPE CSS : 30 propriétés ===== -->
                 <div class="group-symbols" id="grp-css">
+                    <!-- 1 -->
                     <button class="btn-symbol" data-insert="color: ;">color:</button>
+                    <!-- 2 -->
                     <button class="btn-symbol" data-insert="background-color: ;">background:</button>
+                    <!-- 3 -->
+                    <button class="btn-symbol" data-insert="font-size: ;">font-size:</button>
+                    <!-- 4 -->
+                    <button class="btn-symbol" data-insert="font-family: ;">font-family:</button>
+                    <!-- 5 -->
+                    <button class="btn-symbol" data-insert="font-weight: ;">font-weight:</button>
+                    <!-- 6 -->
+                    <button class="btn-symbol" data-insert="text-align: ;">text-align:</button>
+                    <!-- 7 -->
+                    <button class="btn-symbol" data-insert="text-decoration: ;">text-decor:</button>
+                    <!-- 8 -->
                     <button class="btn-symbol" data-insert="margin: ;">margin:</button>
+                    <!-- 9 -->
                     <button class="btn-symbol" data-insert="padding: ;">padding:</button>
+                    <!-- 10 -->
+                    <button class="btn-symbol" data-insert="border: ;">border:</button>
+                    <!-- 11 -->
+                    <button class="btn-symbol" data-insert="border-radius: ;">radius:</button>
+                    <!-- 12 -->
+                    <button class="btn-symbol" data-insert="box-shadow: ;">shadow:</button>
+                    <!-- 13 -->
                     <button class="btn-symbol" data-insert="display: ;">display:</button>
-                    <button class="btn-symbol" data-insert="{ }">{ }</button>
+                    <!-- 14 -->
+                    <button class="btn-symbol" data-insert="flex: ;">flex:</button>
+                    <!-- 15 -->
+                    <button class="btn-symbol" data-insert="justify-content: ;">justify:</button>
+                    <!-- 16 -->
+                    <button class="btn-symbol" data-insert="align-items: ;">align:</button>
+                    <!-- 17 -->
+                    <button class="btn-symbol" data-insert="gap: ;">gap:</button>
+                    <!-- 18 -->
+                    <button class="btn-symbol" data-insert="grid-template-columns: ;">grid:</button>
+                    <!-- 19 -->
+                    <button class="btn-symbol" data-insert="width: ;">width:</button>
+                    <!-- 20 -->
+                    <button class="btn-symbol" data-insert="height: ;">height:</button>
+                    <!-- 21 -->
+                    <button class="btn-symbol" data-insert="max-width: ;">max-width:</button>
+                    <!-- 22 -->
+                    <button class="btn-symbol" data-insert="position: ;">position:</button>
+                    <!-- 23 -->
+                    <button class="btn-symbol" data-insert="top: ;">top:</button>
+                    <!-- 24 -->
+                    <button class="btn-symbol" data-insert="z-index: ;">z-index:</button>
+                    <!-- 25 -->
+                    <button class="btn-symbol" data-insert="overflow: ;">overflow:</button>
+                    <!-- 26 -->
+                    <button class="btn-symbol" data-insert="opacity: ;">opacity:</button>
+                    <!-- 27 -->
+                    <button class="btn-symbol" data-insert="transform: ;">transform:</button>
+                    <!-- 28 -->
+                    <button class="btn-symbol" data-insert="transition: ;">transition:</button>
+                    <!-- 29 -->
+                    <button class="btn-symbol" data-insert="animation: ;">animation:</button>
+                    <!-- 30 -->
+                    <button class="btn-symbol" data-insert=":hover { }">:hover</button>
                 </div>
+
+                <!-- ===== GROUPE JS : 10 éléments ===== -->
                 <div class="group-symbols" id="grp-js">
+                    <!-- 1 -->
                     <button class="btn-symbol" data-insert="console.log();">console.log</button>
-                    <button class="btn-symbol" data-insert="function nom() {\n  \n}">function</button>
-                    <button class="btn-symbol" data-insert="if () {\n  \n}">if</button>
-                    <button class="btn-symbol" data-insert="for () {\n  \n}">for</button>
+                    <!-- 2 -->
                     <button class="btn-symbol" data-insert="let ">let</button>
+                    <!-- 3 -->
                     <button class="btn-symbol" data-insert="const ">const</button>
+                    <!-- 4 -->
+                    <button class="btn-symbol" data-insert="function nom() {\n  \n}">function</button>
+                    <!-- 5 -->
+                    <button class="btn-symbol" data-insert="if () {\n  \n}">if</button>
+                    <!-- 6 -->
+                    <button class="btn-symbol" data-insert="for () {\n  \n}">for</button>
+                    <!-- 7 -->
+                    <button class="btn-symbol" data-insert="while () {\n  \n}">while</button>
+                    <!-- 8 -->
+                    <button class="btn-symbol" data-insert="document.getElementById('');">getElementById</button>
+                    <!-- 9 -->
+                    <button class="btn-symbol" data-insert="addEventListener('click', function() {\n  \n});">addEventListener</button>
+                    <!-- 10 -->
+                    <button class="btn-symbol" data-insert="alert();">alert</button>
                 </div>
+
+                <!-- ===== GROUPE MINI-PROJETS : 20 projets ===== -->
                 <div class="group-symbols" id="grp-projets">
-                    <button class="btn-symbol btn-project" data-project="calc">Calculatrice</button>
-                    <button class="btn-symbol btn-project" data-project="login">Page Login</button>
+                    <button class="btn-symbol btn-project" data-project="calc">🧮 Calculatrice</button>
+                    <button class="btn-symbol btn-project" data-project="login">🔐 Login</button>
+                    <button class="btn-symbol btn-project" data-project="portfolio">💼 Portfolio</button>
+                    <button class="btn-symbol btn-project" data-project="bouton">🎨 Boutons</button>
+                    <button class="btn-symbol btn-project" data-project="profil">👤 Profil</button>
+                    <button class="btn-symbol btn-project" data-project="contact">✉️ Contact</button>
+                    <button class="btn-symbol btn-project" data-project="galerie">🖼️ Galerie</button>
+                    <button class="btn-symbol btn-project" data-project="horloge">🕐 Horloge</button>
+                    <button class="btn-symbol btn-project" data-project="compteur">🔢 Compteur</button>
+                    <button class="btn-symbol btn-project" data-project="todo">📝 To-Do</button>
+                    <button class="btn-symbol btn-project" data-project="menu">📱 Menu</button>
+                    <button class="btn-symbol btn-project" data-project="typing">⌨️ Typing</button>
+                    <button class="btn-symbol btn-project" data-project="loader">⏳ Loader</button>
+                    <button class="btn-symbol btn-project" data-project="accordeon">📂 FAQ</button>
+                    <button class="btn-symbol btn-project" data-project="tabs">📑 Onglets</button>
+                    <button class="btn-symbol btn-project" data-project="modal">💬 Modal</button>
+                    <button class="btn-symbol btn-project" data-project="quizHtml">🎯 Quiz HTML</button>
+                    <button class="btn-symbol btn-project" data-project="quizCss">🎨 Quiz CSS</button>
+                    <button class="btn-symbol btn-project" data-project="quizJs">⚡ Quiz JS</button>
+                    <button class="btn-symbol btn-project" data-project="quizWeb">🌐 Quiz Web</button>
                 </div>
             </div>
 
             <button class="scroll-btn" id="btnScrollRight">▶</button>
         </div>
 
+        <!-- ========================================= -->
+        <!-- HEADER ÉDITEUR (onglets + Save/Export) -->
+        <!-- ========================================= -->
         <div class="editor-header-wrapper">
             <div class="editor-tabs" id="editorHeader"></div>
             <div class="editor-actions">
@@ -110,12 +269,18 @@
             </div>
         </div>
 
+        <!-- ========================================= -->
+        <!-- ZONE DE CODE -->
+        <!-- ========================================= -->
         <div class="editor-body" id="editorBody">
             <textarea id="codeInput" style="display:none;"></textarea>
         </div>
     </div>
 </div>
 
+<!-- ========================================= -->
+<!-- BOUTON PLAY (lance le slide téléphone) -->
+<!-- ========================================= -->
 <button class="btn-play-footer" id="btnPlay" title="Lancer le navigateur">
     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 </button>
@@ -126,6 +291,7 @@
 <div class="slide-overlay" id="slideOverlay"></div>
 <div class="slide-panel" id="slidePanel">
     
+    <!-- Header du slide -->
     <div class="slide-header">
         <div class="model-switcher">
             <button class="model-btn active" id="btnModelSamsung" onclick="changerModele('samsung')">
@@ -140,7 +306,7 @@
             <button class="btn-accueil-header" id="btnAccueil" title="Retour à l'accueil">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
             </button>
-            <button class="btn-toggle-chrome" id="btnToggleChrome" title="Masquer la barre" style="display:none;">
+            <button class="btn-toggle-chrome" id="btnToggleChrome" onclick="toggleChromeBar()" title="Masquer la barre" style="display:none;">
                 <i class="fa-solid fa-eye" id="iconToggleChrome"></i>
             </button>
             <button class="btn-zoom-header" id="btnZoomOut" title="Zoom arrière">-</button>
@@ -151,9 +317,9 @@
 
     <div class="slide-content">
         
-        <!-- =========================================
-             COQUE SAMSUNG
-             ========================================= -->
+        <!-- ========================================= -->
+        <!-- COQUE SAMSUNG -->
+        <!-- ========================================= -->
         <div class="phone-samsung" id="phoneSamsung">
             <div class="punch-hole"></div>
 
@@ -286,9 +452,9 @@
             </div>
         </div>
 
-        <!-- =========================================
-             COQUE iPHONE
-             ========================================= -->
+        <!-- ========================================= -->
+        <!-- COQUE iPHONE -->
+        <!-- ========================================= -->
         <div class="phone-iphone" id="phoneIphone" style="display:none;">
             <div class="dynamic-island"></div>
 
@@ -424,7 +590,9 @@
     </div>
 </div>
 
+<!-- ========================================= -->
 <!-- OVERLAY CREATION DE FICHIER -->
+<!-- ========================================= -->
 <div class="overlay-create" id="overlayCreate">
     <div class="modal-create">
         <h3>Nouveau fichier</h3>
@@ -436,7 +604,13 @@
     </div>
 </div>
 
+<!-- ========================================= -->
+<!-- SCRIPTS -->
+<!-- ========================================= -->
+<!-- Header du site -->
 <script src="/js/header.js"></script>
+
+<!-- CodeMirror -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
@@ -447,7 +621,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/xml-hint.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
-<script src="/js/virtemulator.js"></script>
+
+<!-- Projets (données) -->
+<script src="/js/projets.js"></script>
+
+<!-- Toolbar (logique) -->
+<script src="/js/toolsemulator.js"></script>
+
+<!-- Émulateur (cœur) -->
+<script src="/js/emulateur.js"></script>
 
 </body>
 </html>
