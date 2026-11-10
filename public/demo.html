@@ -3,170 +3,1322 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Démo - Samsung Chrome Interactif</title>
-<style>
-    body { background: #111; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; }
+<title>VirtEmulator PC - Démo complète | VirtTech</title>
 
-    /* LE TÉLÉPHONE SAMSUNG */
-    .phone-samsung { 
-        width: 300px; height: 620px; background: #000; border-radius: 35px; 
-        border: 4px solid #333; position: relative; overflow: hidden;
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- CodeMirror -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+
+<style>
+    /* =========================================
+       VARIABLES VIRTTECH
+       ========================================= */
+    :root {
+        --fond: #CED3D6;
+        --surface: #D9E0E2;
+        --logo-fond: #D2D7DA;
+        --metal: #606A73;
+        --metal-moyen: #515B64;
+        --metal-fonce: #323F48;
+        --ombre: #161F27;
+        --blanc: #FFFFFF;
+        --or: #D4AF37;
+        --or-clair: #F6D58E;
+        --ease: cubic-bezier(.22,.8,.3,1);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+        background: var(--fond);
+        color: var(--ombre);
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* =========================================
+       LAYOUT PC
+       ========================================= */
+    .pc-layout {
+        display: flex;
+        height: 100vh;
+        width: 100%;
+    }
+
+    /* =========================================
+       COLONNE GAUCHE : Header + Éditeur
+       ========================================= */
+    .left-column {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 5px 0 5px 5px;
+        gap: 5px;
+    }
+
+    /* --- HEADER GLOBAL --- */
+    .top {
+        position: relative;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 14px;
+        background: linear-gradient(135deg, var(--metal-fonce), var(--ombre));
+        color: var(--surface);
+        border: 2px solid var(--metal);
+        border-radius: 23px;
+        box-shadow: 0 10px 28px rgba(22, 31, 39, .4);
+        flex-shrink: 0;
+    }
+
+    .brand {
+        font-weight: 900;
+        letter-spacing: 3px;
+        font-size: 1.2rem;
+        color: var(--surface);
+        text-decoration: none;
+    }
+    .brand span {
+        color: var(--metal);
+    }
+
+    .burger {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(217, 224, 226, .08);
+        border: 1px solid var(--metal);
+        color: var(--surface);
+        border-radius: 16px;
+        padding: 9px 16px;
+        font-weight: 700;
+        font-size: .95rem;
+        cursor: pointer;
+        transition: .2s;
+    }
+    .burger:hover {
+        background: var(--surface);
+        color: var(--ombre);
+    }
+    .burger i {
+        display: block;
+        width: 18px;
+        height: 2px;
+        background: currentColor;
+        box-shadow: 0 6px 0 currentColor, 0 -6px 0 currentColor;
+    }
+
+    /* --- ÉDITEUR --- */
+    .editor-panel {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        background: #1a1a1a;
+        border-radius: 15px;
+        border: 1px solid #333;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    /* --- TOOLBAR --- */
+    .toolbar {
+        display: flex;
+        align-items: center;
+        background: #2a2a2a;
+        border-bottom: 1px solid #444;
+        height: 50px;
+        flex-shrink: 0;
+    }
+
+    .lang-switcher {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 15px;
+        height: 100%;
+        background: #111;
+        border-right: 1px solid #444;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.85rem;
+        color: #fff;
+        position: relative;
+        z-index: 10;
+        flex-shrink: 0;
+    }
+
+    .lang-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #2a2a2a;
+        border: 1px solid #555;
+        border-radius: 0 0 8px 8px;
+        display: none;
+        flex-direction: column;
+        width: 140px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        z-index: 100;
+    }
+    .lang-menu.ouvert { display: flex; }
+    .lang-menu button {
+        background: transparent;
+        border: none;
+        color: #ccc;
+        padding: 10px;
+        text-align: left;
+        cursor: pointer;
+        font-size: 0.85rem;
+        border-bottom: 1px solid #444;
+    }
+    .lang-menu button:hover { background: #444; color: #fff; }
+    .lang-menu button.active { color: #fff; font-weight: bold; background: #444; }
+
+    /* --- BOUTONS DE SCROLL --- */
+    .scroll-btn {
+        background: #222;
+        border: none;
+        color: #888;
+        font-size: 1.2rem;
+        height: 100%;
+        padding: 0 12px;
+        cursor: pointer;
+        flex-shrink: 0;
+        border-right: 1px solid #444;
+        border-left: 1px solid #444;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, color 0.2s;
+    }
+    .scroll-btn:hover { color: #fff; background: #333; }
+    .scroll-btn:active { background: #444; }
+    .scroll-btn:focus-visible { outline: 2px solid var(--or); outline-offset: -2px; }
+
+    /* --- SYMBOLS CONTAINER --- */
+    .symbols-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        flex: 1;
+        height: 100%;
+        min-width: 0;
+        scroll-behavior: smooth;
+    }
+    .symbols-container::-webkit-scrollbar { height: 4px; }
+    .symbols-container::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
+    .symbols-container::-webkit-scrollbar-track { background: transparent; }
+
+    .btn-symbol {
+        background: #333;
+        color: #fff;
+        border: 1px solid #555;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.2s;
+    }
+    .btn-symbol:hover { background: #444; }
+    .btn-symbol:active { background: #555; }
+    .btn-symbol:focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
+
+    .btn-project { background: #111; color: #fff; border: 1px solid #555; }
+
+    .group-symbols { display: none; gap: 5px; }
+    .group-symbols.active { display: flex; gap: 5px; }
+
+    /* --- HEADER ÉDITEUR --- */
+    .editor-header-wrapper {
+        display: flex;
+        justify-content: space-between;
+        background: #222;
+        border-bottom: 1px solid #444;
+        height: 40px;
+        flex-shrink: 0;
+    }
+
+    .editor-tabs {
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
+        white-space: nowrap;
+        flex: 1;
+    }
+    .editor-tabs::-webkit-scrollbar { height: 4px; }
+    .editor-tabs::-webkit-scrollbar-thumb { background: #555; }
+
+    .tab {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 15px;
+        height: 100%;
+        color: #888;
+        cursor: pointer;
+        font-size: 0.85rem;
+        border-right: 1px solid #333;
+    }
+    .tab:hover { background: #2a2a2a; color: #ccc; }
+    .tab.active { background: #1a1a1a; color: #fff; border-top: 2px solid #fff; }
+    .tab-close { color: #888; font-size: 1rem; margin-left: 5px; cursor: pointer; }
+    .tab-close:hover { color: #fff; }
+
+    .btn-add-tab {
+        background: transparent;
+        border: none;
+        color: #888;
+        font-size: 1.2rem;
+        padding: 0 15px;
+        cursor: pointer;
+        height: 100%;
+    }
+    .btn-add-tab:hover { color: white; }
+
+    .editor-actions {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 10px;
+        border-left: 1px solid #333;
+        background: #222;
+        z-index: 10;
+    }
+
+    .btn-header-action {
+        background: transparent;
+        color: #ccc;
+        border: 1px solid #444;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .btn-header-action:hover { background: #444; color: white; }
+
+    /* --- CORPS DE L'ÉDITEUR --- */
+    .editor-body {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .CodeMirror {
+        height: 100% !important;
+        font-size: 14px;
+        font-family: 'Fira Code', 'Courier New', monospace;
+    }
+    .CodeMirror-scroll {
+        overflow: auto !important;
+    }
+    .CodeMirror-hints {
+        z-index: 2000 !important;
+    }
+
+    /* =========================================
+       COLONNE DROITE : Téléphone
+       ========================================= */
+    .phone-panel {
+        width: 440px;
+        flex-shrink: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: #2d2d2d;
+        /* ✅ BORDS ARRONDIS AJOUTÉS */
+        border-radius: 25px;
+        border: 2px solid var(--metal);
+        margin: 5px;
+        overflow: hidden;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+        transition: width 0.3s, border-radius 0.3s;
+    }
+
+    /* Panel fermé */
+    .phone-panel.closed {
+        width: 60px;
+        border-radius: 25px;
+    }
+    .phone-panel.closed .slide-header-content,
+    .phone-panel.closed .slide-body { display: none; }
+    .phone-panel.closed .slide-header {
+        justify-content: center;
+        padding: 10px 0;
+        border-radius: 25px;
+    }
+
+    /* Header du slide */
+    .slide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background: #1e1e1e;
+        color: #fff;
+        border-bottom: 1px solid #444;
+        min-height: 50px;
+        flex-shrink: 0;
+        gap: 10px;
+        /* ✅ Arrondi en haut pour suivre le panel */
+        border-radius: 23px 23px 0 0;
+    }
+
+    .slide-header-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+    }
+
+    .model-switcher {
+        display: flex;
+        background: #111;
+        border-radius: 20px;
+        padding: 3px;
+        border: 1px solid #444;
+        gap: 2px;
+    }
+
+    .model-btn {
+        background: transparent;
+        color: #888;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 17px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .model-btn i { font-size: 0.85rem; }
+    .model-btn:hover { color: #fff; }
+    .model-btn.active {
+        background: linear-gradient(135deg, var(--metal-fonce), var(--ombre));
+        color: #fff;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-zoom-header, .btn-accueil-header, .btn-fermer, .btn-toggle-chrome {
+        background: var(--metal-fonce);
+        color: white;
+        border: 1px solid var(--metal);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.2s;
+        flex-shrink: 0;
+    }
+    .btn-accueil-header { background: #333; border-color: #555; }
+    .btn-zoom-header:hover, .btn-accueil-header:hover, .btn-fermer:hover, .btn-toggle-chrome:hover { background: #555; }
+
+    .slide-body {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        overflow: auto;
+        background: #232323;
+        /* ✅ Arrondi en bas pour suivre le panel */
+        border-radius: 0 0 23px 23px;
+    }
+
+    /* =========================================
+       COQUE SAMSUNG
+       ========================================= */
+    .phone-samsung {
+        width: 300px;
+        height: 600px;
+        background: #000;
+        border-radius: 35px;
+        border: 4px solid #222;
+        position: relative;
+        overflow: hidden;
         box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-        display: flex; flex-direction: column;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        transition: transform 0.3s ease;
+        transform-origin: center center;
     }
 
     .punch-hole {
-        position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
-        width: 12px; height: 12px; background: #000; border-radius: 50%; z-index: 100;
+        position: absolute;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 12px;
+        height: 12px;
+        background: #000;
+        border-radius: 50%;
+        z-index: 100;
         box-shadow: inset 0 0 2px #000, 0 0 2px #333;
     }
 
-    /* BARRE D'ÉTAT */
-    .status-bar { 
-        height: 35px; display: flex; justify-content: space-between; align-items: center; 
-        padding: 0 20px; color: #fff; font-size: 0.75rem; font-weight: 600; 
-        background: #111; z-index: 10; padding-top: 5px;
+    /* =========================================
+       COQUE iPHONE
+       ========================================= */
+    .phone-iphone {
+        width: 300px;
+        height: 600px;
+        background: #000;
+        border-radius: 44px;
+        border: 4px solid #1a1a1a;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        transition: transform 0.3s ease;
+        transform-origin: center center;
     }
-    .status-icons { display: flex; gap: 6px; align-items: center; }
-    .status-icons svg { width: 14px; height: 14px; fill: #fff; }
 
-    /* BARRE CHROME */
+    .dynamic-island {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90px;
+        height: 26px;
+        background: #000;
+        border-radius: 20px;
+        z-index: 100;
+    }
+
+    /* =========================================
+       PAGES DU TÉLÉPHONE
+       ========================================= */
+    .pages-wrapper {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+    }
+
+    .page {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+        transform: translateX(100%);
+        opacity: 0;
+        pointer-events: none;
+    }
+    .page.active { transform: translateX(0); opacity: 1; pointer-events: auto; z-index: 5; }
+    .page.behind { transform: translateX(-25%); opacity: 0; pointer-events: none; z-index: 1; }
+
+    .status-bar {
+        height: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 18px 0;
+        font-size: 0.7rem;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .launcher-page {
+        background: linear-gradient(160deg, var(--metal-fonce) 0%, var(--ombre) 100%);
+        color: var(--blanc);
+    }
+
+    .weather-widget { text-align: center; margin-top: 16px; padding: 0 20px; }
+    .weather-time { font-size: 2.4rem; font-weight: 300; letter-spacing: -1px; line-height: 1; }
+    .weather-date { font-size: 0.7rem; opacity: 0.8; margin-top: 4px; text-transform: capitalize; }
+    .weather-info { margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.75rem; opacity: 0.9; }
+    .weather-info i { color: var(--or); }
+
+    .user-apps { padding: 20px 18px 0; margin-top: auto; }
+    .user-apps-title {
+        color: rgba(255,255,255,0.5);
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+        padding-left: 4px;
+    }
+    .user-apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 12px; }
+
+    .app-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+    .app-icon .icon-box {
+        width: 48px; height: 48px; border-radius: 14px;
+        display: flex; justify-content: center; align-items: center;
+        font-size: 1.4rem; color: var(--blanc);
+        box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+    .app-icon .app-label {
+        font-size: 0.55rem; color: var(--blanc); text-align: center;
+        max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .icon-web { background: linear-gradient(135deg, var(--metal-fonce), var(--ombre)); }
+    .icon-google { background: var(--blanc); color: #4285F4 !important; }
+    .icon-chrome { background: var(--blanc); color: #4285F4 !important; }
+    .icon-settings { background: linear-gradient(135deg, var(--metal), var(--metal-moyen)); }
+    .icon-clock { background: linear-gradient(135deg, #1c1c1e, #3a3a3c); }
+
+    .search-widget {
+        margin: 16px auto 12px; width: 86%;
+        background: rgba(255,255,255,0.95); border-radius: 24px;
+        padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer;
+    }
+    .search-widget .google-g {
+        font-weight: bold; font-size: 1.1rem;
+        background: linear-gradient(135deg, #4285F4, #EA4335, #FBBC05, #34A853);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .search-widget span.placeholder { flex: 1; font-size: 0.75rem; color: #5f6368; }
+    .search-widget i { color: #9aa0a6; }
+
+    .dock {
+        margin: 0 14px 8px; background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px); border-radius: 22px;
+        padding: 10px 8px; display: flex; justify-content: space-around; align-items: center;
+    }
+    .dock .app-icon .icon-box { width: 44px; height: 44px; border-radius: 12px; font-size: 1.2rem; }
+    .dock .app-label { display: none; }
+
+    .google-page { background: var(--blanc); color: #202124; }
+    .google-block { margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .google-logo { width: 120px; }
+    .search-bar {
+        width: 86%; display: flex; align-items: center; gap: 8px;
+        border: 1px solid #dfe1e5; border-radius: 24px; padding: 10px 14px;
+        background: var(--blanc); box-shadow: 0 1px 6px rgba(32,33,36,0.08);
+    }
+    .search-bar i { color: #9aa0a6; font-size: 0.9rem; }
+    .search-bar input { flex: 1; border: none; outline: none; font-size: 0.85rem; background: transparent; }
+
+    .browser-page { background: #202124; color: #fff; }
     .chrome-bar {
-        background: #202124; padding: 10px 12px; display: flex; align-items: center; gap: 10px;
-        z-index: 10; border-bottom: 1px solid #333;
+        background: #202124; padding: 10px 6px;
+        display: flex; align-items: center; gap: 4px;
+        border-bottom: 1px solid #333; flex-shrink: 0;
     }
-    
-    .chrome-tabs { display: flex; gap: 15px; color: #9aa0a6; cursor: pointer; }
-    .chrome-tabs svg { width: 20px; height: 20px; fill: currentColor; transition: 0.2s; }
-    .chrome-tabs svg:active { fill: #fff; transform: scale(0.9); }
-    
-    /* BARRE D'ADRESSE ÉDITABLE */
+    .chrome-btn {
+        color: #9aa0a6; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        width: 24px; height: 24px; border-radius: 50%;
+    }
     .chrome-address-bar {
-        flex: 1; background: #35363a; border-radius: 20px; padding: 8px 15px;
-        display: flex; align-items: center; gap: 10px; color: #e8eaed; font-size: 0.8rem;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); cursor: text;
+        flex: 1; background: #35363a; border-radius: 20px; padding: 6px 10px;
+        display: flex; align-items: center; gap: 6px; color: #e8eaed; font-size: 0.72rem;
     }
-    .chrome-address-bar:focus-within { background: #444; }
-    .chrome-address-bar input {
-        background: transparent; border: none; color: #fff; outline: none; width: 100%;
-        font-size: 0.8rem; font-family: inherit;
-    }
-    .chrome-address-bar svg { width: 14px; height: 14px; fill: #9aa0a6; flex-shrink: 0; }
+    .chrome-address-bar i { color: #9aa0a6; font-size: 0.65rem; }
 
-    /* ZONE DU SITE WEB */
-    .site-content { flex: 1; background: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-
-    /* BARRE DE CHARGEMENT */
-    .loading-bar-container { height: 3px; background: #e0e0e0; width: 100%; position: absolute; top: 0; left: 0; z-index: 20; display: none; }
-    .loading-bar-container.active { display: block; }
-    .loading-bar { height: 100%; background: #4285f4; width: 0%; animation: charger 1s infinite ease-in-out; }
-    @keyframes charger { 0% { width: 0%; } 50% { width: 80%; } 100% { width: 100%; } }
-
-    /* L'IFRAME QUI CHARGE LE VRAI SITE */
-    #browserIframe {
-        width: 100%; height: 100%; border: none; display: none; background: #fff;
+    .site-content {
+        flex: 1; background: #fff; display: flex;
+        align-items: center; justify-content: center;
+        color: #333; font-size: 0.8rem; text-align: center; padding: 20px;
     }
 
-    /* PAGE D'ACCUEIL PAR DÉFAUT */
-    .fake-website { padding: 40px 20px; text-align: center; color: #333; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; }
-    .fake-website h1 { font-size: 1.5rem; color: #0B2545; margin-bottom: 10px; }
-    .fake-website p { font-size: 0.9rem; color: #666; line-height: 1.5; }
-    .fake-website .note { margin-top: 20px; font-size: 0.7rem; color: #999; background: #f0f0f0; padding: 5px 10px; border-radius: 10px; }
+    /* --- Bouton play flottant (mobile uniquement) --- */
+    .btn-play-footer {
+        position: fixed; bottom: 25px; right: 25px; z-index: 100;
+        width: 55px; height: 55px; border-radius: 50%;
+        background: #333; color: white;
+        display: none; justify-content: center; align-items: center;
+        border: 2px solid #555; cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    }
 
-    /* BOUTON DE TEST */
-    .test-btn { background: #0B2545; color: white; padding: 10px 20px; border-radius: 5px; margin-top: 20px; font-size: 0.9rem; border: none; cursor: pointer; font-weight: bold; }
-    .test-btn:active { background: #D4AF37; color: #000; }
+    /* =========================================
+       RESPONSIVE : MOBILE
+       ========================================= */
+    @media (max-width: 900px) {
+        .pc-layout { flex-direction: column; }
+        .left-column { padding: 5px; }
+        .phone-panel {
+            width: 100%; height: 500px; display: none;
+            margin: 0;
+            border-radius: 25px 25px 0 0;
+        }
+        .phone-panel.mobile-open {
+            display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+            height: 90vh; z-index: 1000;
+            border-radius: 25px 25px 0 0;
+            margin: 0;
+        }
+        .btn-play-footer { display: flex; }
+    }
 </style>
 </head>
 <body>
 
-    <div class="phone-samsung">
-        <div class="punch-hole"></div>
+    <!-- ========================================= -->
+    <!-- LAYOUT PC -->
+    <!-- ========================================= -->
+    <div class="pc-layout">
 
-        <!-- Barre d'état -->
-        <div class="status-bar">
-            <span>9:41</span>
-            <span class="status-icons">
-                <svg viewBox="0 0 24 24"><path d="M12 21L15.6 16.2C14.6 15.5 13.3 15 12 15C10.7 15 9.4 15.5 8.4 16.2L12 21ZM12 3C7.95 3 4.21 4.34 1.2 6.6L3 9C5.5 7.12 8.62 6 12 6C15.38 6 18.5 7.12 21 9L22.8 6.6C19.79 4.34 16.05 3 12 3ZM12 9C9.17 9 6.57 10 4.53 11.7L6.33 14.1C7.89 12.8 9.9 12 12 12C14.1 12 16.11 12.8 17.67 14.1L19.47 11.7C17.43 10 14.83 9 12 9Z"/></svg>
-                <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
-            </span>
+        <!-- ========================================= -->
+        <!-- COLONNE GAUCHE : Header + Éditeur -->
+        <!-- ========================================= -->
+        <div class="left-column">
+
+            <!-- Header GLOBAL -->
+            <header class="top">
+                <button class="burger"><i></i>Menu</button>
+                <a href="#" class="brand">VIRT<span>TECH</span></a>
+            </header>
+
+            <!-- Éditeur -->
+            <div class="editor-panel">
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="lang-switcher" id="btnSwitch">
+                        <span id="currentLang">HTML</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size:0.7rem;margin-left:4px;"></i>
+                        <div class="lang-menu" id="langMenu">
+                            <button class="active" data-lang="html" onclick="setLang('html', this)">HTML</button>
+                            <button data-lang="css" onclick="setLang('css', this)">CSS</button>
+                            <button data-lang="js" onclick="setLang('js', this)">JS</button>
+                            <button data-lang="projets" onclick="setLang('projets', this)">Mini-projets</button>
+                        </div>
+                    </div>
+
+                    <button class="scroll-btn" id="btnScrollLeft" title="Défiler à gauche">◀</button>
+
+                    <div class="symbols-container" id="symbolsContainer">
+
+                        <!-- GROUPE HTML -->
+                        <div class="group-symbols active" id="grp-html">
+                            <button class="btn-symbol" data-insert="<!DOCTYPE html>\n<html>\n<head>\n  <meta charset='UTF-8'>\n  <title>Mon site</title>\n</head>\n<body>\n  \n</body>\n</html>">Structure</button>
+                            <button class="btn-symbol" data-insert="<html>\n  \n</html>">&lt;html&gt;</button>
+                            <button class="btn-symbol" data-insert="<head>\n  \n</head>">&lt;head&gt;</button>
+                            <button class="btn-symbol" data-insert="<body>\n  \n</body>">&lt;body&gt;</button>
+                            <button class="btn-symbol" data-insert="<title>Mon titre</title>">&lt;title&gt;</button>
+                            <button class="btn-symbol" data-insert="<div>\n  \n</div>">&lt;div&gt;</button>
+                            <button class="btn-symbol" data-insert="<p>\n  Texte\n</p>">&lt;p&gt;</button>
+                            <button class="btn-symbol" data-insert="<h1>Titre</h1>">&lt;h1&gt;</button>
+                            <button class="btn-symbol" data-insert="<h2>Sous-titre</h2>">&lt;h2&gt;</button>
+                            <button class="btn-symbol" data-insert="<span>texte</span>">&lt;span&gt;</button>
+                            <button class="btn-symbol" data-insert="<a href='#'>Lien</a>">&lt;a&gt;</button>
+                            <button class="btn-symbol" data-insert="<img src='' alt=''>">&lt;img&gt;</button>
+                            <button class="btn-symbol" data-insert="<ul>\n  <li>Item 1</li>\n  <li>Item 2</li>\n</ul>">&lt;ul&gt;</button>
+                            <button class="btn-symbol" data-insert="<ol>\n  <li>Item 1</li>\n  <li>Item 2</li>\n</ol>">&lt;ol&gt;</button>
+                            <button class="btn-symbol" data-insert="<li>Item</li>">&lt;li&gt;</button>
+                            <button class="btn-symbol" data-insert="<button>Cliquez</button>">&lt;button&gt;</button>
+                            <button class="btn-symbol" data-insert="<input type='text' placeholder=''>">&lt;input&gt;</button>
+                            <button class="btn-symbol" data-insert="<form>\n  \n</form>">&lt;form&gt;</button>
+                            <button class="btn-symbol" data-insert="<label>Libellé</label>">&lt;label&gt;</button>
+                            <button class="btn-symbol" data-insert="<textarea></textarea>">&lt;textarea&gt;</button>
+                            <button class="btn-symbol" data-insert="<select>\n  <option>Option 1</option>\n  <option>Option 2</option>\n</select>">&lt;select&gt;</button>
+                            <button class="btn-symbol" data-insert="<br>">&lt;br&gt;</button>
+                            <button class="btn-symbol" data-insert="<hr>">&lt;hr&gt;</button>
+                            <button class="btn-symbol" data-insert="<strong>Important</strong>">&lt;strong&gt;</button>
+                            <button class="btn-symbol" data-insert="<em>Italique</em>">&lt;em&gt;</button>
+                            <button class="btn-symbol" data-insert="<table>\n  <tr>\n    <td>Cellule</td>\n  </tr>\n</table>">&lt;table&gt;</button>
+                            <button class="btn-symbol" data-insert="<header>\n  \n</header>">&lt;header&gt;</button>
+                            <button class="btn-symbol" data-insert="<section>\n  \n</section>">&lt;section&gt;</button>
+                            <button class="btn-symbol" data-insert="<link rel='stylesheet' href='style.css'>">&lt;link&gt;</button>
+                            <button class="btn-symbol" data-insert="<script>\n  \n<\/script>">&lt;script&gt;</button>
+                        </div>
+
+                        <!-- GROUPE CSS -->
+                        <div class="group-symbols" id="grp-css">
+                            <button class="btn-symbol" data-insert="color: ;">color:</button>
+                            <button class="btn-symbol" data-insert="background-color: ;">background:</button>
+                            <button class="btn-symbol" data-insert="font-size: ;">font-size:</button>
+                            <button class="btn-symbol" data-insert="font-family: ;">font-family:</button>
+                            <button class="btn-symbol" data-insert="font-weight: ;">font-weight:</button>
+                            <button class="btn-symbol" data-insert="text-align: ;">text-align:</button>
+                            <button class="btn-symbol" data-insert="text-decoration: ;">text-decor:</button>
+                            <button class="btn-symbol" data-insert="margin: ;">margin:</button>
+                            <button class="btn-symbol" data-insert="padding: ;">padding:</button>
+                            <button class="btn-symbol" data-insert="border: ;">border:</button>
+                            <button class="btn-symbol" data-insert="border-radius: ;">radius:</button>
+                            <button class="btn-symbol" data-insert="box-shadow: ;">shadow:</button>
+                            <button class="btn-symbol" data-insert="display: ;">display:</button>
+                            <button class="btn-symbol" data-insert="flex: ;">flex:</button>
+                            <button class="btn-symbol" data-insert="justify-content: ;">justify:</button>
+                            <button class="btn-symbol" data-insert="align-items: ;">align:</button>
+                            <button class="btn-symbol" data-insert="gap: ;">gap:</button>
+                            <button class="btn-symbol" data-insert="grid-template-columns: ;">grid:</button>
+                            <button class="btn-symbol" data-insert="width: ;">width:</button>
+                            <button class="btn-symbol" data-insert="height: ;">height:</button>
+                            <button class="btn-symbol" data-insert="max-width: ;">max-width:</button>
+                            <button class="btn-symbol" data-insert="position: ;">position:</button>
+                            <button class="btn-symbol" data-insert="top: ;">top:</button>
+                            <button class="btn-symbol" data-insert="z-index: ;">z-index:</button>
+                            <button class="btn-symbol" data-insert="overflow: ;">overflow:</button>
+                            <button class="btn-symbol" data-insert="opacity: ;">opacity:</button>
+                            <button class="btn-symbol" data-insert="transform: ;">transform:</button>
+                            <button class="btn-symbol" data-insert="transition: ;">transition:</button>
+                            <button class="btn-symbol" data-insert="animation: ;">animation:</button>
+                            <button class="btn-symbol" data-insert=":hover { }">:hover</button>
+                        </div>
+
+                        <!-- GROUPE JS -->
+                        <div class="group-symbols" id="grp-js">
+                            <button class="btn-symbol" data-insert="console.log();">console.log</button>
+                            <button class="btn-symbol" data-insert="let ">let</button>
+                            <button class="btn-symbol" data-insert="const ">const</button>
+                            <button class="btn-symbol" data-insert="function nom() {\n  \n}">function</button>
+                            <button class="btn-symbol" data-insert="if () {\n  \n}">if</button>
+                            <button class="btn-symbol" data-insert="for () {\n  \n}">for</button>
+                            <button class="btn-symbol" data-insert="while () {\n  \n}">while</button>
+                            <button class="btn-symbol" data-insert="document.getElementById('');">getElementById</button>
+                            <button class="btn-symbol" data-insert="addEventListener('click', function() {\n  \n});">addEventListener</button>
+                            <button class="btn-symbol" data-insert="alert();">alert</button>
+                        </div>
+
+                        <!-- GROUPE MINI-PROJETS -->
+                        <div class="group-symbols" id="grp-projets">
+                            <button class="btn-symbol btn-project" data-project="calc">🧮 Calculatrice</button>
+                            <button class="btn-symbol btn-project" data-project="login">🔐 Login</button>
+                            <button class="btn-symbol btn-project" data-project="portfolio">💼 Portfolio</button>
+                            <button class="btn-symbol btn-project" data-project="bouton">🎨 Boutons</button>
+                            <button class="btn-symbol btn-project" data-project="profil">👤 Profil</button>
+                            <button class="btn-symbol btn-project" data-project="contact">✉️ Contact</button>
+                            <button class="btn-symbol btn-project" data-project="galerie">🖼️ Galerie</button>
+                            <button class="btn-symbol btn-project" data-project="horloge">🕐 Horloge</button>
+                            <button class="btn-symbol btn-project" data-project="compteur">🔢 Compteur</button>
+                            <button class="btn-symbol btn-project" data-project="todo">📝 To-Do</button>
+                            <button class="btn-symbol btn-project" data-project="menu">📱 Menu</button>
+                            <button class="btn-symbol btn-project" data-project="typing">⌨️ Typing</button>
+                            <button class="btn-symbol btn-project" data-project="loader">⏳ Loader</button>
+                            <button class="btn-symbol btn-project" data-project="accordeon">📂 FAQ</button>
+                            <button class="btn-symbol btn-project" data-project="tabs">📑 Onglets</button>
+                            <button class="btn-symbol btn-project" data-project="modal">💬 Modal</button>
+                            <button class="btn-symbol btn-project" data-project="quizHtml">🎯 Quiz HTML</button>
+                            <button class="btn-symbol btn-project" data-project="quizCss">🎨 Quiz CSS</button>
+                            <button class="btn-symbol btn-project" data-project="quizJs">⚡ Quiz JS</button>
+                            <button class="btn-symbol btn-project" data-project="quizWeb">🌐 Quiz Web</button>
+                        </div>
+                    </div>
+
+                    <button class="scroll-btn" id="btnScrollRight" title="Défiler à droite">▶</button>
+                </div>
+
+                <!-- Onglets -->
+                <div class="editor-header-wrapper">
+                    <div class="editor-tabs" id="editorHeader">
+                        <div class="tab active">index.html</div>
+                    </div>
+                    <div class="editor-actions">
+                        <button class="btn-header-action" id="btnExportCode">
+                            <i class="fa-solid fa-download"></i> Exporter
+                        </button>
+                        <button class="btn-header-action" id="btnSaveCode">
+                            <i class="fa-solid fa-save"></i> Save
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CodeMirror -->
+                <div class="editor-body" id="editorBody">
+                    <textarea id="codeInput" style="display:none;"></textarea>
+                </div>
+            </div>
         </div>
 
-        <!-- Barre Chrome -->
-        <div class="chrome-bar">
-            <div class="chrome-tabs" onclick="simulerAction('Retour')">
-                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        <!-- ========================================= -->
+        <!-- COLONNE DROITE : Téléphone (bords arrondis) -->
+        <!-- ========================================= -->
+        <div class="phone-panel" id="phonePanel">
+            <div class="slide-header">
+                <div class="slide-header-content">
+                    <div class="model-switcher">
+                        <button class="model-btn active" id="btnModelSamsung" onclick="changerModele('samsung')">
+                            <i class="fa-brands fa-android"></i> Samsung
+                        </button>
+                        <button class="model-btn" id="btnModelIphone" onclick="changerModele('iphone')">
+                            <i class="fa-brands fa-apple"></i> iPhone
+                        </button>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-accueil-header" onclick="afficherPage('launcher')" title="Accueil">
+                            <i class="fa-solid fa-house"></i>
+                        </button>
+                        <button class="btn-toggle-chrome" onclick="toggleChromeBar()" title="Masquer la barre">
+                            <i class="fa-solid fa-eye" id="iconToggleChrome"></i>
+                        </button>
+                        <button class="btn-zoom-header" onclick="changerZoom(-0.1)" title="Zoom arrière">-</button>
+                        <button class="btn-zoom-header" onclick="changerZoom(0.1)" title="Zoom avant">+</button>
+                    </div>
+                </div>
+                <button class="btn-fermer" onclick="togglePhonePanel()" id="btnTogglePanel" title="Fermer le slide">
+                    <i class="fa-solid fa-chevron-right" id="iconTogglePanel"></i>
+                </button>
             </div>
-            <div class="chrome-address-bar">
-                <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                <input type="text" id="urlInput" value="virttech.site" onkeypress="handleEnter(event)" spellcheck="false">
-            </div>
-            <div class="chrome-tabs" onclick="simulerAction('Menu')">
-                <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-            </div>
-        </div>
 
-        <!-- Contenu du site -->
-        <div class="site-content">
-            <div class="loading-bar-container" id="loadingBar"><div class="loading-bar"></div></div>
-            
-            <!-- L'iframe qui affichera le vrai site -->
-            <iframe id="browserIframe" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+            <div class="slide-body">
+                <!-- COQUE SAMSUNG -->
+                <div class="phone-samsung" id="phoneSamsung">
+                    <div class="punch-hole"></div>
+                    <div class="pages-wrapper">
+                        <div id="samsung-launcherPage" class="page active launcher-page">
+                            <div class="status-bar">
+                                <span>9:41</span>
+                                <span><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-wifi"></i> <i class="fa-solid fa-battery-full"></i></span>
+                            </div>
+                            <div class="weather-widget">
+                                <div class="weather-time">9:41</div>
+                                <div class="weather-date">Lundi 10 novembre</div>
+                                <div class="weather-info"><i class="fa-solid fa-sun"></i><span>24°C · Abidjan</span></div>
+                            </div>
+                            <div class="user-apps">
+                                <div class="user-apps-title">Mes pages</div>
+                                <div class="user-apps-grid">
+                                    <div class="app-icon" onclick="afficherPage('browser')">
+                                        <span class="icon-box icon-web"><i class="fa-solid fa-code"></i></span>
+                                        <span class="app-label">index</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="search-widget" onclick="afficherPage('google')">
+                                <span class="google-g">G</span>
+                                <span class="placeholder">Rechercher sur Google</span>
+                                <i class="fa-solid fa-microphone"></i>
+                            </div>
+                            <div class="dock">
+                                <div class="app-icon" onclick="afficherPage('google')">
+                                    <span class="icon-box icon-google"><i class="fa-brands fa-google"></i></span>
+                                </div>
+                                <div class="app-icon" onclick="afficherPage('browser')">
+                                    <span class="icon-box icon-chrome"><i class="fa-brands fa-chrome"></i></span>
+                                </div>
+                                <div class="app-icon">
+                                    <span class="icon-box icon-settings"><i class="fa-solid fa-gear"></i></span>
+                                </div>
+                                <div class="app-icon">
+                                    <span class="icon-box icon-clock"><i class="fa-solid fa-clock"></i></span>
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Page d'accueil -->
-            <div class="fake-website" id="pageContent">
-                <h1>Bienvenue</h1>
-                <p>Tape une URL ci-dessus et appuie sur Entrée pour naviguer.</p>
-                <button class="test-btn" onclick="document.getElementById('urlInput').value='wikipedia.org'; handleEnter({key:'Enter'})">Tester avec Wikipédia</button>
-                <div class="note">⚠️ Certains sites (Google, YouTube) refusent l'affichage intégré pour des raisons de sécurité.</div>
+                        <div id="samsung-googleHomePage" class="page google-page">
+                            <div class="status-bar"><span>9:41</span><span><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-battery-full"></i></span></div>
+                            <div class="google-block">
+                                <img class="google-logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google">
+                                <div class="search-bar">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" placeholder="Rechercher...">
+                                    <i class="fa-solid fa-microphone"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="samsung-browserPage" class="page browser-page">
+                            <div class="status-bar"><span>9:41</span><span><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-battery-full"></i></span></div>
+                            <div class="chrome-bar" id="samsung-chromeBar">
+                                <div class="chrome-btn" onclick="afficherPage('launcher')"><i class="fa-solid fa-house"></i></div>
+                                <div class="chrome-btn"><i class="fa-solid fa-chevron-left"></i></div>
+                                <div class="chrome-btn"><i class="fa-solid fa-chevron-right"></i></div>
+                                <div class="chrome-address-bar">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <span>index</span>
+                                </div>
+                                <div class="chrome-btn"><i class="fa-solid fa-rotate-right"></i></div>
+                            </div>
+                            <div class="site-content">
+                                <p>Bienvenue sur la page d'accueil VirtTech</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COQUE iPHONE -->
+                <div class="phone-iphone" id="phoneIphone" style="display:none;">
+                    <div class="dynamic-island"></div>
+                    <div class="pages-wrapper">
+                        <div id="iphone-launcherPage" class="page active launcher-page">
+                            <div class="status-bar">
+                                <span>9:41</span>
+                                <span><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-wifi"></i> <i class="fa-solid fa-battery-full"></i></span>
+                            </div>
+                            <div class="weather-widget">
+                                <div class="weather-time">9:41</div>
+                                <div class="weather-date">Lundi 10 novembre</div>
+                                <div class="weather-info"><i class="fa-solid fa-sun"></i><span>24°C · Abidjan</span></div>
+                            </div>
+                            <div class="user-apps">
+                                <div class="user-apps-title">Mes pages</div>
+                                <div class="user-apps-grid">
+                                    <div class="app-icon" onclick="afficherPage('browser')">
+                                        <span class="icon-box icon-web"><i class="fa-solid fa-code"></i></span>
+                                        <span class="app-label">index</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="search-widget" onclick="afficherPage('google')">
+                                <span class="google-g">G</span>
+                                <span class="placeholder">Rechercher sur Google</span>
+                                <i class="fa-solid fa-microphone"></i>
+                            </div>
+                            <div class="dock">
+                                <div class="app-icon" onclick="afficherPage('google')">
+                                    <span class="icon-box icon-google"><i class="fa-brands fa-google"></i></span>
+                                </div>
+                                <div class="app-icon" onclick="afficherPage('browser')">
+                                    <span class="icon-box icon-chrome"><i class="fa-brands fa-chrome"></i></span>
+                                </div>
+                                <div class="app-icon">
+                                    <span class="icon-box icon-settings"><i class="fa-solid fa-gear"></i></span>
+                                </div>
+                                <div class="app-icon">
+                                    <span class="icon-box icon-clock"><i class="fa-solid fa-clock"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="iphone-googleHomePage" class="page google-page">
+                            <div class="status-bar"><span>9:41</span><span><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-battery-full"></i></span></div>
+                            <div class="google-block">
+                                <img class="google-logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google">
+                                <div class="search-bar">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" placeholder="Rechercher...">
+                                    <i class="fa-solid fa-microphone"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="iphone-browserPage" class="page browser-page">
+                            <div class="status-bar"><span>9:41</span><span><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-battery-full"></i></span></div>
+                            <div class="chrome-bar" id="iphone-chromeBar">
+                                <div class="chrome-btn" onclick="afficherPage('launcher')"><i class="fa-solid fa-house"></i></div>
+                                <div class="chrome-btn"><i class="fa-solid fa-chevron-left"></i></div>
+                                <div class="chrome-btn"><i class="fa-solid fa-chevron-right"></i></div>
+                                <div class="chrome-address-bar">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <span>index</span>
+                                </div>
+                                <div class="chrome-btn"><i class="fa-solid fa-rotate-right"></i></div>
+                            </div>
+                            <div class="site-content">
+                                <p>Bienvenue sur la page d'accueil VirtTech</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Bouton play flottant (mobile) -->
+    <button class="btn-play-footer" onclick="togglePhonePanelMobile()" title="Ouvrir l'émulateur">
+        <i class="fa-solid fa-play"></i>
+    </button>
+
+    <!-- ========================================= -->
+    <!-- SCRIPTS -->
+    <!-- ========================================= -->
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/xml-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
+
     <script>
-        // Fonction pour les boutons retour/menu
-        function simulerAction(action) {
-            alert("Action simulée : " + action);
+        // ==========================================
+        // INIT CODEMIRROR
+        // ==========================================
+        let editor;
+
+        const CODE_DEMO = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ma page VirtTech</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0B2545, #161F27);
+      color: white;
+      padding: 40px;
+    }
+    h1 {
+      color: #D4AF37;
+      font-size: 2.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bienvenue sur VirtEmulator</h1>
+  <p>Commence à écrire ton code dans l'éditeur.</p>
+  <button onclick="alert('Bonjour !')">Cliquez-moi</button>
+</body>
+</html>`;
+
+        function initEditor() {
+            editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
+                mode: "htmlmixed",
+                theme: "dracula",
+                lineNumbers: true,
+                lineWrapping: false,
+                indentUnit: 2,
+                tabSize: 2,
+                viewportMargin: Infinity,
+                autoCloseBrackets: true,
+                autoCloseTags: true,
+                matchBrackets: true,
+                extraKeys: {
+                    "Ctrl-Space": "autocomplete",
+                    "Ctrl-/": "toggleComment"
+                }
+            });
+            document.getElementById('editorBody').appendChild(editor.getWrapperElement());
+            editor.setValue(CODE_DEMO);
         }
 
-        // Fonction pour charger une URL
-        function handleEnter(e) {
-            if (e.key === 'Enter') {
-                let url = document.getElementById('urlInput').value.trim();
-                
-                if (!url) return;
+        // ==========================================
+        // SWITCH LANGAGE
+        // ==========================================
+        function setLang(lang, btn) {
+            const labels = { html: 'HTML', css: 'CSS', js: 'JS', projets: 'Mini-projets' };
+            const currentLang = document.getElementById('currentLang');
+            if (currentLang) currentLang.textContent = labels[lang] || lang.toUpperCase();
 
-                // On ajoute https:// si besoin
-                if (!url.startsWith('http')) {
-                    url = 'https://' + url;
+            const menu = document.getElementById('langMenu');
+            if (menu) {
+                menu.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                if (btn) btn.classList.add('active');
+            }
+
+            ['html', 'css', 'js', 'projets'].forEach(function(l) {
+                const grp = document.getElementById('grp-' + l);
+                if (!grp) return;
+                if (l === lang) grp.classList.add('active');
+                else grp.classList.remove('active');
+            });
+
+            if (menu) menu.classList.remove('ouvert');
+            setTimeout(mettreAJourBoutonsScroll, 50);
+        }
+
+        document.getElementById('btnSwitch').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('langMenu').classList.toggle('ouvert');
+        });
+
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('langMenu');
+            const btnSwitch = document.getElementById('btnSwitch');
+            if (menu && btnSwitch && !btnSwitch.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('ouvert');
+            }
+        });
+
+        // ==========================================
+        // SCROLL TOOLBAR
+        // ==========================================
+        function initScrollButtons() {
+            const container = document.getElementById('symbolsContainer');
+            const btnLeft = document.getElementById('btnScrollLeft');
+            const btnRight = document.getElementById('btnScrollRight');
+
+            if (!container || !btnLeft || !btnRight) return;
+
+            btnLeft.addEventListener('click', function() {
+                container.scrollBy({ left: -200, behavior: 'smooth' });
+            });
+            btnRight.addEventListener('click', function() {
+                container.scrollBy({ left: 200, behavior: 'smooth' });
+            });
+
+            container.addEventListener('wheel', function(e) {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    container.scrollLeft += e.deltaY;
                 }
+            }, { passive: false });
 
-                const iframe = document.getElementById('browserIframe');
-                const pageContent = document.getElementById('pageContent');
-                const loadingBar = document.getElementById('loadingBar');
+            container.addEventListener('scroll', mettreAJourBoutonsScroll);
+            window.addEventListener('resize', mettreAJourBoutonsScroll);
+            setTimeout(mettreAJourBoutonsScroll, 100);
+        }
 
-                // On cache la page d'accueil, on montre l'iframe
-                pageContent.style.display = 'none';
-                iframe.style.display = 'block';
-                loadingBar.classList.add('active');
+        function mettreAJourBoutonsScroll() {
+            const container = document.getElementById('symbolsContainer');
+            const btnLeft = document.getElementById('btnScrollLeft');
+            const btnRight = document.getElementById('btnScrollRight');
+            if (!container || !btnLeft || !btnRight) return;
+            const aScrollGauche = container.scrollLeft > 0;
+            const aScrollDroite = container.scrollLeft < (container.scrollWidth - container.clientWidth - 1);
+            btnLeft.style.opacity = aScrollGauche ? '1' : '0.35';
+            btnRight.style.opacity = aScrollDroite ? '1' : '0.35';
+        }
 
-                // On utilise un proxy CORS gratuit pour contourner les blocages
-                const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-                
-                iframe.src = proxyUrl;
+        // ==========================================
+        // INSERTION DANS CODEMIRROR
+        // ==========================================
+        function insererTexte(texte) {
+            if (!editor) return;
+            texte = texte.replace(/\\n/g, '\n');
+            const cursor = editor.getCursor();
+            editor.replaceRange(texte, cursor);
+            const lignes = texte.split('\n');
+            const derniereLigne = cursor.line + lignes.length - 1;
+            const dernierCh = lignes.length === 1 ? cursor.ch + texte.length : lignes[lignes.length - 1].length;
+            editor.setCursor({ line: derniereLigne, ch: dernierCh });
+            editor.focus();
+        }
 
-                // Quand le chargement est terminé
-                iframe.onload = function() {
-                    loadingBar.classList.remove('active');
-                };
+        // ==========================================
+        // BOUTONS DE BALISES
+        // ==========================================
+        function initBalises() {
+            document.querySelectorAll('.btn-symbol[data-insert]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const texte = this.getAttribute('data-insert');
+                    if (!texte) return;
+                    insererTexte(texte);
+                });
+            });
+        }
 
-                // En cas d'erreur
-                iframe.onerror = function() {
-                    loadingBar.classList.remove('active');
-                    alert("Impossible de charger cette page. Le site refuse peut-être l'affichage.");
-                };
+        // ==========================================
+        // PROJETS (simulé)
+        // ==========================================
+        function initProjets() {
+            document.querySelectorAll('[data-project]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const projKey = this.getAttribute('data-project');
+                    const nom = 'projet-' + projKey + '.html';
+                    const code = `<!DOCTYPE html>\n<html>\n<head>\n<title>${nom}</title>\n</head>\n<body>\n  <h1>Projet ${projKey}</h1>\n  <p>Ceci est une démo du projet ${projKey}.</p>\n</body>\n</html>`;
+                    editor.setValue(code);
+                    alert('✅ Projet "' + projKey + '" chargé dans l\'éditeur !');
+                });
+            });
+        }
+
+        // ==========================================
+        // SÉLECTEUR DE MODÈLE
+        // ==========================================
+        let modeleActif = 'samsung';
+        let chromeMasque = false;
+        let zoomLevel = 1;
+
+        function changerModele(modele) {
+            modeleActif = modele;
+            const samsung = document.getElementById('phoneSamsung');
+            const iphone = document.getElementById('phoneIphone');
+            const btnSamsung = document.getElementById('btnModelSamsung');
+            const btnIphone = document.getElementById('btnModelIphone');
+
+            if (modele === 'iphone') {
+                samsung.style.display = 'none';
+                iphone.style.display = 'flex';
+                btnSamsung.classList.remove('active');
+                btnIphone.classList.add('active');
+            } else {
+                iphone.style.display = 'none';
+                samsung.style.display = 'flex';
+                btnIphone.classList.remove('active');
+                btnSamsung.classList.add('active');
             }
         }
+
+        function afficherPage(nom) {
+            const prefix = modeleActif;
+            const pages = ['launcher', 'googleHome', 'browser'];
+            pages.forEach(function(p) {
+                const id = prefix + '-' + p + 'Page';
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.className = 'page';
+                if (p === (nom === 'google' ? 'googleHome' : nom)) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.add('behind');
+                }
+            });
+        }
+
+        function toggleChromeBar() {
+            chromeMasque = !chromeMasque;
+            ['samsung', 'iphone'].forEach(function(prefix) {
+                const bar = document.getElementById(prefix + '-chromeBar');
+                if (bar) bar.style.display = chromeMasque ? 'none' : 'flex';
+            });
+            const icon = document.getElementById('iconToggleChrome');
+            if (icon) icon.className = chromeMasque ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+        }
+
+        function changerZoom(delta) {
+            zoomLevel = Math.max(0.5, Math.min(1.5, zoomLevel + delta));
+            ['phoneSamsung', 'phoneIphone'].forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) el.style.transform = 'scale(' + zoomLevel + ')';
+            });
+        }
+
+        function togglePhonePanel() {
+            const panel = document.getElementById('phonePanel');
+            const icon = document.getElementById('iconTogglePanel');
+            const btn = document.getElementById('btnTogglePanel');
+            const isClosed = panel.classList.contains('closed');
+            if (isClosed) {
+                panel.classList.remove('closed');
+                icon.className = 'fa-solid fa-chevron-right';
+                btn.title = 'Fermer le slide';
+            } else {
+                panel.classList.add('closed');
+                icon.className = 'fa-solid fa-chevron-left';
+                btn.title = 'Ouvrir le slide';
+            }
+        }
+
+        function togglePhonePanelMobile() {
+            const panel = document.getElementById('phonePanel');
+            panel.classList.toggle('mobile-open');
+        }
+
+        // ==========================================
+        // INIT
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initEditor();
+            initScrollButtons();
+            initBalises();
+            initProjets();
+        });
     </script>
 
 </body>

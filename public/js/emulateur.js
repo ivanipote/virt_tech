@@ -1,6 +1,6 @@
 // --- emulateur.js ---
-// Cœur de VirtEmulator : CodeMirror, fichiers, slide, téléphones, navigation,
-// paramètres, horloge, chrono, save/export.
+// Cœur de VirtEmulator MOBILE : CodeMirror, fichiers, slide, téléphones,
+// navigation, paramètres, horloge, chrono, save/export.
 //
 // Reçoit de toolsemulator.js : window.setEditorInstance + window.setOnProjetClick
 // Utilise : window.virtToast (défini par toolsemulator.js)
@@ -83,14 +83,18 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function sauvegarder() {
-        localStorage.setItem('virtemulator_files', JSON.stringify(files));
+        try {
+            localStorage.setItem('virtemulator_files', JSON.stringify(files));
+        } catch (e) {
+            console.error('Erreur sauvegarde:', e);
+        }
     }
 
     function toast(message, duree) {
         if (window.virtToast) {
             window.virtToast(message, duree);
         } else {
-            console.log(message);
+            console.log('[Toast]', message);
         }
     }
 
@@ -98,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // INITIALISATION
     // ==========================================
     function init() {
-        // Charger les fichiers sauvegardés
+        // 1. Charger les fichiers sauvegardés
         const savedFiles = localStorage.getItem('virtemulator_files');
         if (savedFiles) {
             try {
@@ -111,14 +115,21 @@ document.addEventListener("DOMContentLoaded", function() {
             files["index.html"] = CODE_BIENVENUE;
         }
 
-        // Restaurer le modèle choisi
+        // 2. Restaurer le modèle choisi
         const savedModele = localStorage.getItem('virtemulator_modele');
         if (savedModele === 'iphone' || savedModele === 'samsung') {
             modeleActif = savedModele;
         }
 
-        // INIT CODEMIRROR
-        editor = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
+        // 3. INIT CODEMIRROR
+        const codeInput = document.getElementById('codeInput');
+        const editorBody = document.getElementById('editorBody');
+        if (!codeInput || !editorBody) {
+            console.error('CodeMirror : éléments DOM manquants');
+            return;
+        }
+
+        editor = CodeMirror.fromTextArea(codeInput, {
             mode: "htmlmixed",
             theme: "dracula",
             lineNumbers: true,
@@ -128,45 +139,49 @@ document.addEventListener("DOMContentLoaded", function() {
             viewportMargin: Infinity,
             autoCloseBrackets: true,
             autoCloseTags: true,
-            matchBrackets: true
+            matchBrackets: true,
+            extraKeys: {
+                "Ctrl-Space": "autocomplete",
+                "Ctrl-/": "toggleComment"
+            }
         });
-        document.getElementById('editorBody').appendChild(editor.getWrapperElement());
+        editorBody.appendChild(editor.getWrapperElement());
 
-        // Donner l'instance CodeMirror à toolsemulator.js
+        // 4. Donner l'instance à toolsemulator.js
         if (window.setEditorInstance) {
             window.setEditorInstance(editor);
         }
 
-        // Brancher le callback projets de toolsemulator.js
+        // 5. Brancher le callback projets
         if (window.setOnProjetClick) {
             window.setOnProjetClick(gererCreationProjet);
         }
 
+        // 6. Charger le premier fichier
         activeFile = Object.keys(files)[0] || "index.html";
         editor.setValue(files[activeFile] || CODE_BIENVENUE);
 
-        // Mise à jour UI
+        // 7. Mise à jour UI
         mettreAJourOnglets();
-        mettreAJourPreviewPC();
         mettreAJourHorloge();
         appliquerModele();
         genererUserApps();
         brancherEvenements();
 
+        // 8. Horloge en temps réel
         setInterval(mettreAJourHorloge, 1000);
 
-        // ÉCOUTE MODIFICATIONS CODEMIRROR
+        // 9. Écoute des modifications
         editor.on('change', function() {
             files[activeFile] = editor.getValue();
             sauvegarder();
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(function() {
-                mettreAJourPreviewPC();
                 rafraichirNavigateurSiOuvert();
             }, 500);
         });
 
-        // Restauration nom téléphone
+        // 10. Restaurer nom téléphone
         const savedName = localStorage.getItem('virttech_device_name');
         if (savedName) {
             ['samsung', 'iphone'].forEach(function(prefix) {
@@ -175,15 +190,20 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
-        // Restauration mode nuit
+        // 11. Restaurer mode nuit
         if (localStorage.getItem('virttech_dark_mode') === 'true') {
             modeNuit = false;
             basculerTheme();
         }
+
+        // 12. Restaurer zoom
+        const savedZoom = localStorage.getItem('virtemulator_zoom');
+        if (savedZoom) zoomLevel = parseFloat(savedZoom);
+        appliquerZoom();
     }
 
     // ==========================================
-    // GESTION DES PROJETS (appelée par toolsemulator.js)
+    // GESTION DES PROJETS
     // ==========================================
     function gererCreationProjet(projKey, contenuProjet) {
         const nomFichier = 'projet-' + projKey + '.html';
@@ -202,183 +222,71 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // ==========================================
-    // BRANCHEMENT DES ÉVÉNEMENTS (hors toolbar)
+    // BRANCHEMENT DES ÉVÉNEMENTS
     // ==========================================
     function brancherEvenements() {
-        // Play
+        // --- Play (ouvre le slide) ---
         const btnPlay = document.getElementById('btnPlay');
         if (btnPlay) btnPlay.onclick = ouvrirSlide;
 
-        // Fermer slide
+        // --- Fermer slide ---
         if (btnFermerSlide) btnFermerSlide.onclick = fermerSlide;
         if (slideOverlay) slideOverlay.onclick = fermerSlide;
 
-        // Zoom
-        if (btnZoomIn) btnZoomIn.onclick = function() {
-            if (zoomLevel < 1.5) {
-                zoomLevel += 0.1;
-                appliquerZoom();
-                localStorage.setItem('virtemulator_zoom', zoomLevel);
-            }
-        };
-        if (btnZoomOut) btnZoomOut.onclick = function() {
-            if (zoomLevel > 0.5) {
-                zoomLevel -= 0.1;
-                appliquerZoom();
-                localStorage.setItem('virtemulator_zoom', zoomLevel);
-            }
-        };
+        // --- Zoom ---
+        if (btnZoomIn) {
+            btnZoomIn.onclick = function() {
+                if (zoomLevel < 1.5) {
+                    zoomLevel = Math.min(1.5, zoomLevel + 0.1);
+                    appliquerZoom();
+                    localStorage.setItem('virtemulator_zoom', zoomLevel);
+                }
+            };
+        }
+        if (btnZoomOut) {
+            btnZoomOut.onclick = function() {
+                if (zoomLevel > 0.5) {
+                    zoomLevel = Math.max(0.5, zoomLevel - 0.1);
+                    appliquerZoom();
+                    localStorage.setItem('virtemulator_zoom', zoomLevel);
+                }
+            };
+        }
 
-        // Accueil header
-        if (btnAccueilHeader) btnAccueilHeader.onclick = function() {
-            afficherPage('launcher');
-        };
+        // --- Accueil header ---
+        if (btnAccueilHeader) {
+            btnAccueilHeader.onclick = function() {
+                afficherPage('launcher');
+            };
+        }
 
-        // Modal création
+        // --- Modal création ---
         const btnAnnuler = document.getElementById('btnAnnulerCreate');
         const btnValider = document.getElementById('btnValiderCreate');
-        if (btnAnnuler) btnAnnuler.onclick = function() {
-            document.getElementById('overlayCreate').classList.remove('ouvert');
-        };
-        if (btnValider) btnValider.onclick = validerCreationFichier;
+        if (btnAnnuler) {
+            btnAnnuler.onclick = function() {
+                const overlay = document.getElementById('overlayCreate');
+                if (overlay) overlay.classList.remove('ouvert');
+            };
+        }
+        if (btnValider) {
+            btnValider.onclick = validerCreationFichier;
+        }
 
+        // --- Save & Export ---
         brancherSaveExport();
     }
 
     // ==========================================
-    // PREVIEW PC
+    // ZOOM
     // ==========================================
-    function mettreAJourPreviewPC() {
-        const pcIframe = document.getElementById('pcIframe');
-        if (pcIframe) {
-            const doc = pcIframe.contentDocument || pcIframe.contentWindow.document;
-            doc.open();
-            doc.write(editor.getValue());
-            doc.close();
-        }
-    }
-
-    // ==========================================
-    // ONGLETS
-    // ==========================================
-    function mettreAJourOnglets() {
-        const header = document.getElementById('editorHeader');
-        if (!header) return;
-        header.innerHTML = '<button class="btn-add-tab" id="btnAddTab" title="Nouveau fichier">+</button>';
-
-        Object.keys(files).forEach(function(nomFichier) {
-            const tab = document.createElement('div');
-            tab.className = 'tab' + (nomFichier === activeFile ? ' active' : '');
-            tab.innerHTML = `
-                <span class="tab-name">${nomFichier}</span>
-                <span class="tab-close" data-file="${nomFichier}">✕</span>
-            `;
-            tab.onclick = function(e) {
-                if (e.target.classList.contains('tab-close')) {
-                    supprimerFichier(e.target.getAttribute('data-file'));
-                } else {
-                    ouvrirFichier(nomFichier);
-                }
-            };
-            header.insertBefore(tab, header.lastChild);
-        });
-
-        const btnAddTab = document.getElementById('btnAddTab');
-        if (btnAddTab) btnAddTab.onclick = ouvrirModalCreate;
-    }
-
-    function ouvrirFichier(nomFichier) {
-        if (activeFile && files[activeFile] !== undefined) {
-            files[activeFile] = editor.getValue();
-            sauvegarder();
-        }
-        activeFile = nomFichier;
-        editor.setValue(files[nomFichier] || "");
-        mettreAJourOnglets();
-        mettreAJourPreviewPC();
-        rafraichirNavigateurSiOuvert();
-    }
-
-    function supprimerFichier(nomFichier) {
-        if (Object.keys(files).length <= 1) {
-            toast("❌ Impossible : dernier fichier");
-            return;
-        }
-        if (nomFichier === "index.html") {
-            toast("❌ Impossible : index.html protégé");
-            return;
-        }
-        delete files[nomFichier];
-        sauvegarder();
-        if (activeFile === nomFichier) activeFile = Object.keys(files)[0];
-        ouvrirFichier(activeFile);
-        genererUserApps();
-    }
-
-    // ==========================================
-    // MODAL CRÉATION
-    // ==========================================
-    function ouvrirModalCreate() {
-        const overlayCreate = document.getElementById('overlayCreate');
-        const inputNomFichier = document.getElementById('inputNomFichier');
-        if (!overlayCreate || !inputNomFichier) return;
-        overlayCreate.classList.add('ouvert');
-        inputNomFichier.value = "";
-        inputNomFichier.focus();
-    }
-
-    function validerCreationFichier() {
-        const inputNomFichier = document.getElementById('inputNomFichier');
-        const overlayCreate = document.getElementById('overlayCreate');
-        let nom = inputNomFichier.value.trim();
-        if (!nom) return;
-        nom = normaliserNom(nom);
-        if (files[nom]) {
-            toast("❌ Ce fichier existe déjà");
-            return;
-        }
-        files[nom] = `<!DOCTYPE html>\n<html>\n<head>\n<title>${nom}</title>\n</head>\n<body>\n  <h1>Fichier ${nom}</h1>\n</body>\n</html>`;
-        sauvegarder();
-        overlayCreate.classList.remove('ouvert');
-        ouvrirFichier(nom);
-        genererUserApps();
-    }
-
-    // ==========================================
-    // SLIDE
-    // ==========================================
-    function ouvrirSlide() {
-        slideOverlay.classList.add('ouvert');
-        slidePanel.classList.add('ouvert');
-        afficherPage('launcher');
-        chromeMasque = false;
-        appliquerMasquageChrome();
-        if (iconToggleChrome) iconToggleChrome.className = 'fa-solid fa-eye';
-
-        const savedZoom = localStorage.getItem('virtemulator_zoom');
-        if (savedZoom) zoomLevel = parseFloat(savedZoom);
-        appliquerZoom();
-
-        mettreAJourHorloge();
-        genererUserApps();
-    }
-
-    function fermerSlide() {
-        slideOverlay.classList.remove('ouvert');
-        slidePanel.classList.remove('ouvert');
-        afficherPage('launcher');
-        chromeMasque = false;
-        appliquerMasquageChrome();
-        if (iconToggleChrome) iconToggleChrome.className = 'fa-solid fa-eye';
-    }
-
     function appliquerZoom() {
         if (phoneSamsung) phoneSamsung.style.transform = 'scale(' + zoomLevel + ')';
         if (phoneIphone) phoneIphone.style.transform = 'scale(' + zoomLevel + ')';
     }
 
     // ==========================================
-    // MODÈLE (Samsung / iPhone)
+    // CHANGER DE MODÈLE
     // ==========================================
     window.changerModele = function(modele) {
         if (modele !== 'samsung' && modele !== 'iphone') return;
@@ -395,16 +303,20 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     function appliquerModele() {
+        if (!phoneSamsung || !phoneIphone) return;
+        const btnSamsung = document.getElementById('btnModelSamsung');
+        const btnIphone = document.getElementById('btnModelIphone');
+
         if (modeleActif === 'iphone') {
             phoneSamsung.style.display = 'none';
             phoneIphone.style.display = 'flex';
-            document.getElementById('btnModelSamsung').classList.remove('active');
-            document.getElementById('btnModelIphone').classList.add('active');
+            if (btnSamsung) btnSamsung.classList.remove('active');
+            if (btnIphone) btnIphone.classList.add('active');
         } else {
             phoneIphone.style.display = 'none';
             phoneSamsung.style.display = 'flex';
-            document.getElementById('btnModelIphone').classList.remove('active');
-            document.getElementById('btnModelSamsung').classList.add('active');
+            if (btnIphone) btnIphone.classList.remove('active');
+            if (btnSamsung) btnSamsung.classList.add('active');
         }
     }
 
@@ -510,13 +422,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        pageContent.style.display = 'none';
-        page404.style.display = 'none';
+        if (pageContent) pageContent.style.display = 'none';
+        if (page404) page404.style.display = 'none';
         iframe.style.display = 'none';
-        loadingBar.classList.add('active');
+        if (loadingBar) loadingBar.classList.add('active');
 
         setTimeout(function() {
-            loadingBar.classList.remove('active');
+            if (loadingBar) loadingBar.classList.remove('active');
             if (files[nomComplet]) {
                 iframe.style.display = 'block';
                 const doc = iframe.contentDocument || iframe.contentWindow.document;
@@ -525,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 doc.close();
                 if (urlInput) urlInput.value = nomComplet.replace('.html', '');
             } else {
-                page404.style.display = 'flex';
+                if (page404) page404.style.display = 'flex';
                 if (urlInput) urlInput.value = nomComplet + " (introuvable)";
             }
             mettreAJourBoutonsNavigation();
@@ -602,6 +514,120 @@ document.addEventListener("DOMContentLoaded", function() {
             const bar = document.getElementById(prefix + '-chromeBar');
             if (bar) bar.classList.toggle('hidden', chromeMasque);
         });
+    }
+
+    // ==========================================
+    // ONGLETS
+    // ==========================================
+    function mettreAJourOnglets() {
+        const header = document.getElementById('editorHeader');
+        if (!header) return;
+        header.innerHTML = '<button class="btn-add-tab" id="btnAddTab" title="Nouveau fichier">+</button>';
+
+        Object.keys(files).forEach(function(nomFichier) {
+            const tab = document.createElement('div');
+            tab.className = 'tab' + (nomFichier === activeFile ? ' active' : '');
+            tab.innerHTML = `
+                <span class="tab-name">${nomFichier}</span>
+                <span class="tab-close" data-file="${nomFichier}">✕</span>
+            `;
+            tab.onclick = function(e) {
+                if (e.target.classList.contains('tab-close')) {
+                    supprimerFichier(e.target.getAttribute('data-file'));
+                } else {
+                    ouvrirFichier(nomFichier);
+                }
+            };
+            header.insertBefore(tab, header.lastChild);
+        });
+
+        const btnAddTab = document.getElementById('btnAddTab');
+        if (btnAddTab) btnAddTab.onclick = ouvrirModalCreate;
+    }
+
+    function ouvrirFichier(nomFichier) {
+        if (activeFile && files[activeFile] !== undefined) {
+            files[activeFile] = editor.getValue();
+            sauvegarder();
+        }
+        activeFile = nomFichier;
+        editor.setValue(files[nomFichier] || "");
+        mettreAJourOnglets();
+        rafraichirNavigateurSiOuvert();
+    }
+
+    function supprimerFichier(nomFichier) {
+        if (Object.keys(files).length <= 1) {
+            toast("❌ Impossible : dernier fichier");
+            return;
+        }
+        if (nomFichier === "index.html") {
+            toast("❌ Impossible : index.html protégé");
+            return;
+        }
+        delete files[nomFichier];
+        sauvegarder();
+        if (activeFile === nomFichier) activeFile = Object.keys(files)[0];
+        ouvrirFichier(activeFile);
+        genererUserApps();
+    }
+
+    // ==========================================
+    // MODAL CRÉATION
+    // ==========================================
+    function ouvrirModalCreate() {
+        const overlayCreate = document.getElementById('overlayCreate');
+        const inputNomFichier = document.getElementById('inputNomFichier');
+        if (!overlayCreate || !inputNomFichier) return;
+        overlayCreate.classList.add('ouvert');
+        inputNomFichier.value = "";
+        inputNomFichier.focus();
+    }
+
+    function validerCreationFichier() {
+        const inputNomFichier = document.getElementById('inputNomFichier');
+        const overlayCreate = document.getElementById('overlayCreate');
+        if (!inputNomFichier) return;
+        let nom = inputNomFichier.value.trim();
+        if (!nom) return;
+        nom = normaliserNom(nom);
+        if (files[nom]) {
+            toast("❌ Ce fichier existe déjà");
+            return;
+        }
+        files[nom] = `<!DOCTYPE html>\n<html>\n<head>\n<title>${nom}</title>\n</head>\n<body>\n  <h1>Fichier ${nom}</h1>\n</body>\n</html>`;
+        sauvegarder();
+        if (overlayCreate) overlayCreate.classList.remove('ouvert');
+        ouvrirFichier(nom);
+        genererUserApps();
+    }
+
+    // ==========================================
+    // SLIDE
+    // ==========================================
+    function ouvrirSlide() {
+        if (slideOverlay) slideOverlay.classList.add('ouvert');
+        if (slidePanel) slidePanel.classList.add('ouvert');
+        afficherPage('launcher');
+        chromeMasque = false;
+        appliquerMasquageChrome();
+        if (iconToggleChrome) iconToggleChrome.className = 'fa-solid fa-eye';
+
+        const savedZoom = localStorage.getItem('virtemulator_zoom');
+        if (savedZoom) zoomLevel = parseFloat(savedZoom);
+        appliquerZoom();
+
+        mettreAJourHorloge();
+        genererUserApps();
+    }
+
+    function fermerSlide() {
+        if (slideOverlay) slideOverlay.classList.remove('ouvert');
+        if (slidePanel) slidePanel.classList.remove('ouvert');
+        afficherPage('launcher');
+        chromeMasque = false;
+        appliquerMasquageChrome();
+        if (iconToggleChrome) iconToggleChrome.className = 'fa-solid fa-eye';
     }
 
     // ==========================================
@@ -688,8 +714,8 @@ document.addEventListener("DOMContentLoaded", function() {
     // ==========================================
     window.basculerTheme = function() {
         modeNuit = !modeNuit;
-        phoneSamsung.classList.toggle('dark-mode', modeNuit);
-        phoneIphone.classList.toggle('dark-mode', modeNuit);
+        if (phoneSamsung) phoneSamsung.classList.toggle('dark-mode', modeNuit);
+        if (phoneIphone) phoneIphone.classList.toggle('dark-mode', modeNuit);
 
         ['samsung', 'iphone'].forEach(function(prefix) {
             const toggle = document.getElementById(prefix + '-themeToggle');
