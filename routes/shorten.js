@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { creerLien, trouverLien } = require('../services/linkService');
 
-// C'est CETTE route qui est appelée par ton formulaire
+// Créer un lien
 router.post('/', async (req, res) => {
     const { url, code } = req.body;
 
@@ -12,7 +12,6 @@ router.post('/', async (req, res) => {
 
     try {
         const lien = await creerLien(url, code || null);
-        
         res.json({ 
             succes: true, 
             short_url: `https://virttech.site/${lien.short_code}`,
@@ -23,15 +22,18 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Route pour la redirection (le GET /l/code)
+// Redirection : quand quelqu'un tape /mon-projet
 router.get('/:code', async (req, res) => {
     const { code } = req.params;
+    
     try {
         const url = await trouverLien(code);
         if (url) {
+            // Si le lien existe, on redirige
             res.redirect(301, url);
         } else {
-            res.status(404).send("Lien introuvable.");
+            // Sinon, on passe au middleware suivant (qui affichera la 404)
+            res.status(404).sendFile('404.html', { root: './public' });
         }
     } catch (error) {
         res.status(500).send("Erreur serveur.");
