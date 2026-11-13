@@ -1,0 +1,271 @@
+/* =========================================
+   TRANSFORMLINK.CSS - Structure Complète
+   ========================================= */
+
+/* 1. CONFIGURATION GÉNÉRALE & VARIABLES
+   ========================================= */
+:root {
+    --radius-standard: 15px;
+    --radius-btn: 12px;
+    --shadow-light: 0 8px 20px rgba(22,31,39,.1);
+    --shadow-medium: 0 10px 30px rgba(22,31,39,.15);
+    --transition: all 0.3s ease;
+}
+
+/* 2. TYPOGRAPHIE & TITRES DE LA PAGE
+   ========================================= */
+h1 {
+    text-align: center;
+    color: var(--ombre);
+    margin-bottom: 10px;
+    font-size: 2rem;
+}
+.sous-titre {
+    text-align: center;
+    color: var(--metal-fonce);
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+/* 3. SECTION INTRODUCTION
+   ========================================= */
+.intro-box {
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    text-align: center;
+    color: var(--metal-fonce);
+    line-height: 1.8;
+    background: var(--blanc);
+    padding: 25px;
+    border-radius: var(--radius-standard);
+    box-shadow: var(--shadow-light);
+    border-top: 4px solid var(--or);
+}
+.intro-box p { font-size: 1.05rem; }
+.intro-box code {
+    background: var(--surface);
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-family: monospace;
+    color: var(--metal-fonce);
+    font-weight: bold;
+}
+
+/* 4. FORMULAIRE PRINCIPAL
+   ========================================= */
+.form-container {
+    background: var(--blanc);
+    border: 2px solid var(--metal);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+    box-shadow: var(--shadow-medium);
+    border-top: 6px solid var(--metal-fonce);
+}
+
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--metal-fonce);
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid var(--surface);
+    border-radius: var(--radius-btn);
+    font-size: 1rem;
+    background: #fdfdfd;
+    outline: none;
+    transition: var(--transition);
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    border-color: var(--metal-fonce);
+    box-shadow: 0 0 0 4px rgba(96, 106, 115, 0.1);
+}
+
+/* 5. BOUTON PRINCIPAL
+   ========================================= */
+.btn-envoyer {
+    width: 100%;
+    padding: 16px;
+    background: var(--metal-fonce);
+    color: var(--blanc);
+    border: none;
+    border-radius: var(--radius-btn);
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(22,31,39,0.2);
+}
+.btn-envoyer:hover {
+    background: var(--ombre);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(22,31,39,0.3);
+}
+.btn-envoyer:disabled {
+    background: var(--metal-moyen);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 6. ZONE DE RÉSULTAT (Lien généré)
+   ========================================= */
+.resultat-box {
+    margin-top: 25px;
+    padding: 20px;
+    background: var(--surface);
+    border-radius: var(--radius-btn);
+    text-align: center;
+    display: none;
+    border-left: 5px solid var(--or);
+    animation: fadeIn 0.4s ease;
+}
+.resultat-box.visible { display: block; }
+
+.lien-court {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--metal-fonce);
+    word-break: break-all;
+    margin: 15px 0;
+    display: block;
+    background: var(--blanc);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px dashed var(--metal);
+}
+
+.btn-copier {
+    background: var(--blanc);
+    color: var(--metal-fonce);
+    border: 1px solid var(--metal);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: var(--transition);
+}
+.btn-copier:hover { 
+    background: var(--metal-fonce); 
+    color: white; 
+}
+
+.error-msg {
+    color: #c62828;
+    font-weight: bold;
+    margin-top: 15px;
+    text-align: center;
+    background: rgba(198, 40, 40, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* 7. GRILLE D'INFORMATIONS (Les 3 cartes)
+   ========================================= */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    max-width: 900px;
+    margin: 0 auto 50px auto;
+}
+
+.info-card {
+    background: var(--blanc);
+    border: 1px solid var(--metal);
+    border-top: 5px solid var(--or);
+    border-radius: var(--radius-standard);
+    padding: 25px;
+    box-shadow: var(--shadow-light);
+    transition: var(--transition);
+}
+.info-card:hover { transform: translateY(-5px); }
+
+.info-card h3 {
+    color: var(--ombre);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+.info-card p {
+    color: var(--metal-fonce);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.info-card code {
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* 8. SECTION ÉTAPES (Comment ça marche)
+   ========================================= */
+.etapes {
+    max-width: 800px;
+    margin: 0 auto 50px auto;
+    background: var(--blanc);
+    padding: 30px;
+    border-radius: var(--radius-standard);
+    box-shadow: var(--shadow-light);
+    border-left: 6px solid var(--metal-fonce);
+}
+.etapes h3 {
+    color: var(--ombre);
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+.etapes ol {
+    margin-left: 20px;
+    color: var(--metal-fonce);
+    line-height: 1.8;
+}
+.etapes li { 
+    margin-bottom: 12px; 
+    padding-left: 10px;
+}
+
+/* 9. ANIMATIONS D'APPARITION
+   ========================================= */
+@keyframes monter {
+    from { opacity: 0; transform: translateY(26px); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.js .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .7s var(--ease) var(--d,0s), transform .7s var(--ease) var(--d,0s);
+}
+.js .reveal.z { transform: scale(.93); }
+.js .reveal.vu { opacity: 1; transform: none; }
+
+/* 10. RESPONSIVE (Mobile)
+   ========================================= */
+@media(max-width: 600px) {
+    h1 { font-size: 1.8rem; }
+    .form-container { padding: 25px; }
+    .intro-box { padding: 20px; }
+    .etapes { padding: 20px; }
+}
+@media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .js .reveal{opacity:1;transform:none}
+}

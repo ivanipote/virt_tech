@@ -78,7 +78,7 @@ app.get('/virt-dev/resultat', (req, res) => res.sendFile(path.join(__dirname, 'p
 app.get('/historique', (req, res) => res.sendFile(path.join(__dirname, 'public', 'historique.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contact.html')));
 app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator.html')));
-
+app.get('/transformlink', (req, res) => res.sendFile(path.join(__dirname, 'public', 'transformlink.html')));
 // ROUTES API
 const contactRoutes = require('./routes/contact');
 app.use('/api/contact', contactRoutes);
