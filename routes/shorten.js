@@ -2,23 +2,28 @@ const express = require('express');
 const router = express.Router();
 const { creerLien, trouverLien } = require('../services/linkService');
 
-// POST /api/shorten/test -> créer un lien
-router.post('/test', async (req, res) => {
+// C'est CETTE route qui est appelée par ton formulaire
+router.post('/', async (req, res) => {
+    const { url, code } = req.body;
+
+    if (!url) {
+        return res.status(400).json({ succes: false, message: "L'URL est requise." });
+    }
+
     try {
-        // On crée un lien de test
-        const lien = await creerLien("https://github.com/ivanipote", "test123");
+        const lien = await creerLien(url, code || null);
         
         res.json({ 
             succes: true, 
-            message: "Lien inséré avec succès !",
-            data: lien 
+            short_url: `https://virttech.site/${lien.short_code}`,
+            original_url: lien.original_url
         });
     } catch (error) {
-        res.status(500).json({ succes: false, message: error.message });
+        res.status(400).json({ succes: false, message: error.message });
     }
 });
 
-// GET /:code -> redirection
+// Route pour la redirection (le GET /l/code)
 router.get('/:code', async (req, res) => {
     const { code } = req.params;
     try {
