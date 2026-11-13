@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const { envoyerAlerteVisites } = require('./services/alerteService');
+const { initDB } = require('./database'); // Importation de la base de données
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,8 +40,8 @@ morgan.format('virttech', (tokens, req, res) => {
     else if (url.includes('/virtemulator')) url = 'VIRTEMULATOR';
     else if (url.includes('/contact')) url = 'CONTACT';
     else if (url.includes('/api/contact')) url = 'API_CONTACT';
-    else if (url.includes('/api/download')) url = 'API_DOWNLOAD';
-    else if (url.includes('/test-download')) url = 'TEST_DOWNLOAD';
+    else if (url.includes('/api/shorten')) url = 'API_SHORTEN';
+    else if (url.startsWith('/l/')) url = 'SHORTLINK';
     
     const temps = tokens['response-time'](req, res) + 'ms';
     
@@ -59,17 +60,15 @@ app.use(morgan('virttech', {
                req.originalUrl.includes('/js/') || 
                req.originalUrl.includes('/logo.png') ||
                req.originalUrl.includes('/favicon.ico') ||
-               req.originalUrl.includes('/participants/') ||
-               req.originalUrl.includes('/downloads/');
+               req.originalUrl.includes('/participants/');
     }
 }));
 
-// On sert les fichiers statiques
+// On sert les fichiers statiques (CSS, JS, Images, Participants)
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/downloads', express.static(path.join(__dirname, 'public', 'downloads')));
 
 // ==========================================
-// ROUTES
+// ROUTES DU SITE
 // ==========================================
 
 // Accueil avec compteur
@@ -86,25 +85,20 @@ app.get('/', (req, res) => {
 });
 
 app.get('/accueil', (req, res) => res.redirect('/'));
-
-// Pages principales
 app.get('/virt-dev', (req, res) => res.sendFile(path.join(__dirname, 'public', 'resultats.html')));
 app.get('/virt-dev/resultat', (req, res) => res.sendFile(path.join(__dirname, 'public', 'resultats.html')));
 app.get('/historique', (req, res) => res.sendFile(path.join(__dirname, 'public', 'historique.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contact.html')));
 app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator.html')));
 
-// Test de téléchargement
-app.get('/test-download', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'test-download.html'));
-});
-
 // Routes API
 const contactRoutes = require('./routes/contact');
 app.use('/api/contact', contactRoutes);
 
-const downloadRoutes = require('./routes/download');
-app.use('/api/download', downloadRoutes);
+// ROUTES POUR LE TEST DE LA BASE DE DONNÉES (Raccourcisseur)
+const shortenRoutes = require('./routes/shorten');
+app.use('/api/shorten', shortenRoutes); // Route pour l'API (POST /api/shorten/test)
+app.use('/l', shortenRoutes);           // Route pour les redirections (GET /l/code)
 
 // ==========================================
 // GESTION DES ERREURS 404
@@ -114,9 +108,11 @@ app.use((req, res) => {
 });
 
 // ==========================================
-// DÉMARRAGE
+// DÉMARRAGE (Avec la base de données)
 // ==========================================
-app.listen(PORT, () => {
-    console.log(`Le serveur VirtTech tourne sur http://localhost:${PORT}`);
-    console.log(`Mode : ${process.env.NODE_ENV || 'développement'}`);
+initDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Le serveur VirtTech tourne sur http://localhost:${PORT}`);
+        console.log(`Mode : ${process.env.NODE_ENV || 'développement'}`);
+    });
 });
