@@ -22,19 +22,16 @@ morgan.format('virttech', (tokens, req, res) => {
     const now = new Date();
     const heure = now.getHours().toString().padStart(2, '0') + 'h' + now.getMinutes().toString().padStart(2, '0');
     
-    // Détection de l'appareil
     const ua = req.headers['user-agent'] || '';
     const appareil = /mobile|android|iphone|ipad|tablet/i.test(ua) ? '📱 Mobile' : '💻 PC';
     
-    // Code de statut avec couleur
     const status = res.statusCode;
     let statusStr = status.toString();
-    if (status >= 200 && status < 300) statusStr = `\x1b[32m${status}\x1b[0m`; // Vert
-    else if (status >= 300 && status < 400) statusStr = `\x1b[36m${status}\x1b[0m`; // Cyan
-    else if (status >= 400 && status < 500) statusStr = `\x1b[33m${status}\x1b[0m`; // Jaune
-    else if (status >= 500) statusStr = `\x1b[31m${status}\x1b[0m`; // Rouge
+    if (status >= 200 && status < 300) statusStr = `\x1b[32m${status}\x1b[0m`;
+    else if (status >= 300 && status < 400) statusStr = `\x1b[36m${status}\x1b[0m`;
+    else if (status >= 400 && status < 500) statusStr = `\x1b[33m${status}\x1b[0m`;
+    else if (status >= 500) statusStr = `\x1b[31m${status}\x1b[0m`;
     
-    // Nom de la page demandée
     let url = req.originalUrl;
     if (url === '/') url = 'ACCUEIL';
     else if (url.includes('/virt-dev')) url = 'RESULTATS';
@@ -42,11 +39,11 @@ morgan.format('virttech', (tokens, req, res) => {
     else if (url.includes('/virtemulator')) url = 'VIRTEMULATOR';
     else if (url.includes('/contact')) url = 'CONTACT';
     else if (url.includes('/api/contact')) url = 'API_CONTACT';
+    else if (url.includes('/api/download')) url = 'API_DOWNLOAD';
+    else if (url.includes('/test-download')) url = 'TEST_DOWNLOAD';
     
-    // Temps de réponse
     const temps = tokens['response-time'](req, res) + 'ms';
     
-    // Provenance de la visite (Référent)
     let referent = req.headers['referer'] || 'Direct';
     if (referent.includes('whatsapp') || referent.includes('wa.me')) referent = 'WhatsApp';
     else if (referent.includes('google')) referent = 'Google';
@@ -56,39 +53,38 @@ morgan.format('virttech', (tokens, req, res) => {
     return `[${heure}] ${appareil} | ${statusStr} | ${url} | 🌍 ${referent} (${temps})`;
 });
 
-// On utilise notre format en ignorant les fichiers techniques
 app.use(morgan('virttech', {
     skip: function (req, res) {
         return req.originalUrl.includes('/css/') || 
                req.originalUrl.includes('/js/') || 
                req.originalUrl.includes('/logo.png') ||
                req.originalUrl.includes('/favicon.ico') ||
-               req.originalUrl.includes('/participants/'); 
+               req.originalUrl.includes('/participants/') ||
+               req.originalUrl.includes('/downloads/');
     }
 }));
 
-// On sert les fichiers statiques (CSS, JS, Images, Participants)
+// On sert les fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/downloads', express.static(path.join(__dirname, 'public', 'downloads')));
 
 // ==========================================
 // ROUTES
 // ==========================================
 
-// Route de l'accueil avec compteur
+// Accueil avec compteur
 app.get('/', (req, res) => {
     compteurVisitesAccueil++;
     console.log(`👀 Visite n°${compteurVisitesAccueil} sur l'accueil`);
     
-    // Envoi de l'alerte toutes les 5 visites
     if (compteurVisitesAccueil >= 5) {
         envoyerAlerteVisites(compteurVisitesAccueil);
-        compteurVisitesAccueil = 0; // Remise à zéro après envoi
+        compteurVisitesAccueil = 0;
     }
     
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Redirection de /accueil vers /
 app.get('/accueil', (req, res) => res.redirect('/'));
 
 // Pages principales
@@ -96,13 +92,19 @@ app.get('/virt-dev', (req, res) => res.sendFile(path.join(__dirname, 'public', '
 app.get('/virt-dev/resultat', (req, res) => res.sendFile(path.join(__dirname, 'public', 'resultats.html')));
 app.get('/historique', (req, res) => res.sendFile(path.join(__dirname, 'public', 'historique.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contact.html')));
-
-// --- NOUVELLE ROUTE : VIRTEMULATOR ---
 app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator.html')));
+
+// Test de téléchargement
+app.get('/test-download', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'test-download.html'));
+});
 
 // Routes API
 const contactRoutes = require('./routes/contact');
 app.use('/api/contact', contactRoutes);
+
+const downloadRoutes = require('./routes/download');
+app.use('/api/download', downloadRoutes);
 
 // ==========================================
 // GESTION DES ERREURS 404
