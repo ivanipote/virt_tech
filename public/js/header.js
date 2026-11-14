@@ -2,20 +2,25 @@
 document.addEventListener("DOMContentLoaded", function() {
     const path = window.location.pathname;
 
-    // On détermine quel onglet est actif
+    // 1. Détermination de l'onglet actif
     let actifAccueil = "";
     let actifHistorique = "";
     let actifResultats = "";
     let actifContact = "";
     let actifVirtEmulator = "";
+    let actifTransformLink = "";
 
     if (path === "/" || path === "/accueil") { actifAccueil = "actif"; }
     else if (path === "/historique") { actifHistorique = "actif"; }
     else if (path.includes("/virt-dev")) { actifResultats = "actif"; }
     else if (path === "/contact") { actifContact = "actif"; }
     else if (path === "/virtemulator") { actifVirtEmulator = "actif"; }
+    else if (path === "/transformlink") { actifTransformLink = "actif"; }
 
+    // 2. Injection du header
     const headerHTML = `
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <header class="top">
       <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="side"><i></i>Menu</button>
       <a href="/" class="brand">VIRT<span>TECH</span></a>
@@ -53,6 +58,12 @@ document.addEventListener("DOMContentLoaded", function() {
             </a>
           </li>
           <li>
+            <a href="/transformlink" class="${actifTransformLink}">
+                <span>TransformLink</span>
+                <i class="fa-solid fa-link"></i>
+            </a>
+          </li>
+          <li>
             <a href="/virt-dev" class="${actifResultats}">
                 <span>Résultats Virt_Dev</span>
                 <i class="fa-solid fa-trophy"></i>
@@ -79,7 +90,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </ul>
       </nav>
       
-      <!-- FOOTER DE LA SIDEBAR (poussé en bas) -->
       <div class="side-footer">
           <a href="/contact" class="btn-side-contact">
               <i class="fa-solid fa-paper-plane"></i> Laissez-nous un mail
@@ -91,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.body.insertAdjacentHTML('afterbegin', headerHTML);
 
+    // 3. Gestion de l'ouverture / fermeture du menu
     const b = document.getElementById('burger');
     const sd = document.getElementById('side');
     const v = document.getElementById('voile');

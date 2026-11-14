@@ -57,24 +57,6 @@
     box-shadow: 0 6px 0 currentColor, 0 -6px 0 currentColor;
 }
 
-.top-lien {
-    background: var(--surface);
-    color: var(--ombre);
-    border: 1px solid var(--surface);
-    text-decoration: none;
-    font-weight: 800;
-    font-size: .8rem;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    padding: 9px 18px;
-    border-radius: 16px;
-    transition: .2s;
-}
-.top-lien:hover {
-    background: transparent;
-    color: var(--surface);
-}
-
 /* =========================================
    MENU LATÉRAL (Sidebar)
    ========================================= */
@@ -182,7 +164,7 @@
 .side nav li a {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Texte à gauche, icône à droite */
+    justify-content: space-between;
     gap: 12px;
     padding: 14px 16px;
     color: var(--surface);
@@ -225,10 +207,10 @@
 }
 
 /* =========================================
-   FOOTER DE LA SIDEBAR (poussé tout en bas)
+   FOOTER DE LA SIDEBAR
    ========================================= */
 .side-footer {
-    margin-top: auto; /* Pousse le footer tout en bas */
+    margin-top: auto;
     padding-top: 20px;
     display: flex;
     flex-direction: column;
