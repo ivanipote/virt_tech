@@ -1,0 +1,266 @@
+/* =========================================
+   PAIX.CSS - Styles de la page
+   ========================================= */
+
+.contenu-paix {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.contenu-paix h1 {
+    text-align: center;
+    color: var(--ombre);
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.contenu-paix .sous-titre {
+    text-align: center;
+    color: var(--metal-fonce);
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+/* --- FILTRE --- */
+.filtre-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.btn-filtre {
+    background: var(--blanc);
+    border: 2px solid var(--metal);
+    color: var(--metal-fonce);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-filtre:hover { background: var(--surface); }
+
+.btn-filtre.actif {
+    background: var(--metal-fonce);
+    color: white;
+    border-color: var(--metal-fonce);
+}
+
+/* --- GRILLE DES HISTOIRES --- */
+.grille-histoires {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-bottom: 80px;
+}
+
+.loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--metal);
+    font-style: italic;
+    padding: 50px;
+}
+
+/* --- CARTE PAIX --- */
+.carte-paix {
+    background: var(--metal-fonce);
+    color: var(--surface);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(22,31,39,0.4);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.carte-paix::before {
+    content: "“";
+    position: absolute;
+    top: -20px; left: 10px;
+    font-size: 120px;
+    color: rgba(255,255,255,0.04);
+    font-family: 'Georgia', serif;
+    line-height: 1;
+}
+
+.carte-paix .histoire {
+    font-size: 1rem;
+    line-height: 1.7;
+    font-weight: 300;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 25px;
+    font-style: italic;
+}
+
+.carte-paix .pied {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    position: relative;
+    z-index: 1;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.carte-paix .pseudo {
+    color: var(--or);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.btn-like {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--surface);
+    font-size: 0.85rem;
+}
+
+.btn-like:hover { background: rgba(255,255,255,0.1); }
+.btn-like:active { transform: scale(0.95); }
+.btn-like .coeur { font-size: 1.1rem; transition: transform 0.3s; }
+
+.btn-like.deja-like {
+    background: rgba(231, 76, 60, 0.15);
+    border-color: rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+    cursor: not-allowed;
+}
+
+/* --- BOUTON FLOTTANT STORY --- */
+.btn-story-flottant {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--metal-fonce);
+    color: white;
+    border: 2px solid var(--metal);
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    transition: 0.3s;
+    z-index: 100;
+}
+
+.btn-story-flottant:hover {
+    background: var(--surface);
+    color: var(--ombre);
+    transform: translateY(-5px);
+}
+
+/* --- MODAL --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+}
+
+.modal-overlay.ouvert { opacity: 1; visibility: visible; }
+
+.modal-contenu {
+    background: var(--fond);
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    transform: translateY(20px);
+    transition: 0.3s;
+}
+.modal-overlay.ouvert .modal-contenu { transform: translateY(0); }
+
+.btn-fermer-modal {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: none; border: none;
+    font-size: 1.5rem; color: var(--metal-fonce);
+    cursor: pointer;
+}
+
+.modal-contenu h2 { color: var(--ombre); margin-bottom: 10px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--metal-fonce); }
+.form-group input, .form-group textarea {
+    width: 100%; padding: 12px;
+    border: 2px solid var(--metal);
+    border-radius: 10px;
+    font-family: inherit; font-size: 1rem;
+    outline: none; box-sizing: border-box;
+    background: var(--blanc);
+}
+.form-group input:focus, .form-group textarea:focus { border-color: var(--metal-fonce); }
+
+.btn-envoyer-story {
+    width: 100%; padding: 15px;
+    background: var(--metal-fonce);
+    color: white; border: none;
+    border-radius: 10px;
+    font-size: 1.1rem; font-weight: bold;
+    cursor: pointer; transition: 0.3s;
+}
+.btn-envoyer-story:hover { background: var(--ombre); }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media(max-width: 600px) {
+    .btn-story-flottant { padding: 12px 20px; font-size: 0.9rem; bottom: 20px; right: 20px; }
+    .contenu-paix h1 { font-size: 1.8rem; }
+}
+
+/* --- BOUTON SUPPRIMER SUR LA CARTE --- */
+.btn-delete {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+    margin-left: 10px;
+}
+
+.btn-delete:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+.carte-paix .actions {
+    display: flex;
+    align-items: center;
+}

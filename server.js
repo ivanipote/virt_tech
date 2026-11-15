@@ -79,6 +79,7 @@ app.get('/historique', (req, res) => res.sendFile(path.join(__dirname, 'public',
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contact.html')));
 app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator.html')));
 app.get('/transformlink', (req, res) => res.sendFile(path.join(__dirname, 'public', 'transformlink.html')));
+app.get('/paix', (req, res) => res.sendFile(path.join(__dirname, 'public', 'paix.html')));
 // ROUTES API
 const contactRoutes = require('./routes/contact');
 app.use('/api/contact', contactRoutes);
@@ -86,7 +87,12 @@ app.use('/api/contact', contactRoutes);
 // ROUTES DU RACCOURCISSEUR
 const shortenRoutes = require('./routes/shorten');
 app.use('/api/shorten', shortenRoutes); // Route POST pour créer
-app.use('/', shortenRoutes);           // Route GET pour rediriger (ex: /test123)
+app.use('/', shortenRoutes);  
+
+
+// Routes pour la page Paix
+const paixRoutes = require('./routes/paix');
+app.use('/api/paix', paixRoutes);// Route GET pour rediriger (ex: /test123)
 
 // ==========================================
 // GESTION DES ERREURS 404
