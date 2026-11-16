@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let actifResultats = "";
     let actifVirtEmulator = "";
     let actifTransformLink = "";
-    let actifAstuces = ""; // Nouvel onglet
+    let actifAstuces = "";
 
     if (path === "/" || path === "/accueil") { actifAccueil = "actif"; }
     else if (path === "/historique") { actifHistorique = "actif"; }
@@ -63,15 +63,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 <i class="fa-solid fa-link"></i>
             </a>
           </li>
-          
-          <!-- NOUVEL ONGLET ASTUCES -->
           <li>
             <a href="/astuces" class="${actifAstuces}">
                 <span>Astuces</span>
                 <i class="fa-solid fa-lightbulb"></i>
             </a>
           </li>
-
           <li>
             <a href="/virt-dev" class="${actifResultats}">
                 <span>Résultats Virt_Dev</span>
