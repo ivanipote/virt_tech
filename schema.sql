@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS likes_histoires (
     UNIQUE(histoire_id, device_id)
 );
 
--- Table pour les astuces
+-- Table pour les astuces (Mise à jour avec owner_token)
 CREATE TABLE IF NOT EXISTS astuces (
     id SERIAL PRIMARY KEY,
     auteur VARCHAR(100) NOT NULL,
@@ -35,6 +35,6 @@ CREATE TABLE IF NOT EXISTS astuces (
     code TEXT,
     likes INTEGER DEFAULT 0,
     vues INTEGER DEFAULT 0,
-    is_mine BOOLEAN DEFAULT FALSE, -- Pour l'instant, on simule "mes astuces"
+    owner_token VARCHAR(255) NOT NULL, -- Le jeton unique de l'utilisateur
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
