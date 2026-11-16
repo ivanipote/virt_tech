@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overlay VirtTech - Démo</title>
+<link rel="stylesheet" href="/css/style.css">
+<style>
+    body { background: var(--fond); margin: 0; padding: 40px; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    
+    /* Bouton de test */
+    .btn-test { 
+        padding: 15px 30px; 
+        background: var(--metal-fonce); 
+        color: white; 
+        border: none; 
+        border-radius: 10px; 
+        font-weight: bold; 
+        cursor: pointer; 
+        font-size: 1.1rem;
+    }
+    .btn-test:hover { background: var(--ombre); }
+
+    /* --- OVERLAY --- */
+    .overlay-bg {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(22,31,39,0.7); backdrop-filter: blur(4px);
+        display: flex; justify-content: center; align-items: center;
+        z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s;
+    }
+    .overlay-bg.ouvert { opacity: 1; visibility: visible; }
+
+    .overlay-box {
+        background: var(--surface); /* Fond gris clair VirtTech */
+        padding: 30px; 
+        border-radius: 15px;
+        width: 90%; 
+        max-width: 400px; 
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        transform: scale(0.9); 
+        transition: 0.3s;
+        border: 2px solid var(--metal);
+    }
+    .overlay-bg.ouvert .overlay-box { transform: scale(1); }
+
+    .overlay-box h3 { 
+        color: var(--ombre); 
+        margin-top: 0; 
+        margin-bottom: 10px; 
+        font-size: 1.3rem;
+    }
+    .overlay-box p { 
+        color: var(--metal-fonce); 
+        font-size: 1rem; 
+        margin-bottom: 25px; 
+        line-height: 1.5;
+    }
+    
+    .overlay-actions { 
+        display: flex; 
+        gap: 15px; 
+        justify-content: center; 
+    }
+    .btn-ov { 
+        padding: 12px 25px; 
+        border-radius: 8px; 
+        border: none; 
+        font-weight: bold; 
+        cursor: pointer; 
+        transition: 0.2s; 
+        flex: 1; 
+        font-size: 1rem;
+    }
+    .btn-ov-annuler { 
+        background: var(--metal); 
+        color: white; 
+    }
+    .btn-ov-annuler:hover { 
+        background: var(--metal-fonce); 
+    }
+    .btn-ov-confirmer { 
+        background: var(--ombre); 
+        color: white; 
+        border: 1px solid var(--metal);
+    }
+    .btn-ov-confirmer:hover { 
+        background: var(--metal-fonce); 
+    }
+</style>
+</head>
+<body>
+
+<!-- Le bouton pour ouvrir l'overlay -->
+<button class="btn-test" onclick="ouvrirOverlay()">Supprimer l'astuce</button>
+
+<!-- L'OVERLAY -->
+<div class="overlay-bg" id="overlay">
+    <div class="overlay-box">
+        <h3>Supprimer l'astuce ?</h3>
+        <p>Cette action est définitive. Voulez-vous vraiment supprimer cette astuce ?</p>
+        <div class="overlay-actions">
+            <button class="btn-ov btn-ov-annuler" onclick="fermerOverlay()">Annuler</button>
+            <button class="btn-ov btn-ov-confirmer" onclick="confirmerSuppression()">OK</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ouvrir l'overlay
+    function ouvrirOverlay() {
+        document.getElementById('overlay').classList.add('ouvert');
+    }
+
+    // Fermer l'overlay (sans supprimer)
+    function fermerOverlay() {
+        document.getElementById('overlay').classList.remove('ouvert');
+    }
+
+    // Confirmer la suppression
+    function confirmerSuppression() {
+        fermerOverlay();
+        // Ici, tu mettras le fetch DELETE vers ton API
+        console.log("Astuce supprimée !");
+        
+        // Petit retour visuel après fermeture
+        setTimeout(() => {
+            alert("L'astuce a bien été supprimée.");
+        }, 300);
+    }
+</script>
+
+</body>
+</html>

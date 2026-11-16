@@ -3,238 +3,488 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Raccourcisseur de Liens - VirtTech</title>
+<title>Démo Complète - Astuces VirtTech</title>
 
-<!-- SEO -->
-<meta name="description" content="Créez des liens courts et personnalisés avec VirtTech. Partagez facilement vos liens GitHub ou autres." />
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+
 <style>
-    /* Styles spécifiques à cette page */
-    body {
-        background: var(--fond);
-        min-height: 100vh;
-    }
+    /* [Le CSS reste le même que celui de ta dernière version, il était bon] */
+    body { background: var(--fond); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+    .page-container { max-width: 1000px; margin: 0 auto; padding: 20px 20px 100px 20px; }
+    .page-header { text-align: center; margin-bottom: 30px; }
+    .page-header h1 { color: var(--ombre); font-size: 2rem; margin-bottom: 15px; }
+    .tabs-container { display: flex; justify-content: center; gap: 10px; background: var(--blanc); padding: 5px; border-radius: 50px; width: fit-content; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.05); white-space: nowrap; }
+    .tab-btn { padding: 10px 25px; border: none; background: transparent; border-radius: 50px; font-weight: bold; font-size: 1rem; color: var(--metal); cursor: pointer; transition: 0.3s; }
+    .tab-btn.actif { background: var(--metal-fonce); color: white; }
+    .grille-astuces { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; margin-top: 20px; }
+    .card-astuce { background: var(--blanc); border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); display: flex; flex-direction: column; border: 1px solid #e0e0e0; transition: transform 0.3s; }
+    .card-astuce:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
+    .card-header { padding: 20px 20px 10px 20px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .card-header h3 { margin: 0; color: var(--ombre); font-size: 1.2rem; line-height: 1.3; }
+    .tag-langage { background: var(--metal-fonce); color: white; font-size: 0.7rem; font-weight: bold; padding: 4px 10px; border-radius: 15px; text-transform: uppercase; }
+    .card-content { padding: 0 20px 15px 20px; color: var(--metal-fonce); font-size: 0.95rem; line-height: 1.6; }
+    .code-wrapper { margin: 0 20px 20px 20px; border-radius: 10px; overflow: hidden; background: #282a36; border: 1px solid #444; }
+    .code-header { background: #1e1e1e; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; }
+    .code-lang { color: #888; font-family: monospace; font-size: 0.8rem; }
+    .btn-copy { background: transparent; color: #ccc; border: 1px solid #555; padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+    .btn-copy:hover { background: #444; color: white; }
+    .code-content { padding: 15px; overflow-x: auto; font-family: monospace; font-size: 0.85rem; color: #d4d4d4; white-space: pre; }
+    .card-footer { padding: 15px 20px; background: #f9f9f9; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 15px 15px; }
+    .social-actions { display: flex; gap: 15px; align-items: center; }
+    .social-btn { background: none; border: none; display: flex; align-items: center; gap: 5px; color: var(--metal); font-size: 0.9rem; cursor: pointer; transition: 0.2s; padding: 5px; }
+    .social-btn:hover { color: var(--or); }
+    .social-btn.liked { color: var(--metal-fonce); }
+    .social-btn.delete-btn { color: var(--metal-fonce); }
+    .social-btn.delete-btn:hover { color: var(--ombre); }
+    .author-info { font-size: 0.8rem; color: var(--metal); text-align: right; display: flex; flex-direction: column; }
+    .author-info strong { color: var(--metal-fonce); font-size: 0.9rem; }
+    .time-post { font-size: 0.7rem; color: #999; margin-top: 2px; }
+    .btn-add-astuce { position: fixed; bottom: 30px; right: 30px; z-index: 900; width: 60px; height: 60px; border-radius: 50%; background: var(--metal-fonce); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; border: 2px solid var(--or); cursor: pointer; transition: 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+    .btn-add-astuce:hover { background: var(--or); color: var(--ombre); transform: scale(1.1) rotate(90deg); }
 
-    .shortener-container {
-        max-width: 600px;
-        margin: 40px auto;
-        padding: 30px;
-        background: var(--blanc);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(22,31,39,0.1);
-        border-top: 6px solid var(--or);
-    }
+    /* LOADER VIRTTECH */
+    #loader { display: flex; justify-content: center; align-items: center; padding: 40px; width: 100%; }
+    .loader-virttech { width: 80px; height: 80px; position: relative; }
+    .loader-virttech::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; border: 3px solid transparent; border-top-color: var(--metal); border-right-color: var(--metal); animation: spin-horaire 1.2s linear infinite; }
+    .loader-virttech::after { content: ""; position: absolute; top: 10px; left: 10px; width: calc(100% - 20px); height: calc(100% - 20px); border-radius: 50%; border: 3px solid transparent; border-bottom-color: var(--metal-fonce); border-left-color: var(--metal-fonce); animation: spin-anti-horaire 1.5s linear infinite; }
+    .loader-virttech img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; object-fit: cover; border-radius: 50%; z-index: 10; }
+    @keyframes spin-horaire { 100% { transform: rotate(360deg); } }
+    @keyframes spin-anti-horaire { 100% { transform: rotate(-360deg); } }
+    
+    #loaderFin { text-align: center; padding: 20px; display: none; }
+    #loaderFin .spinner { border: 3px solid #e0e0e0; border-top: 3px solid var(--metal-fonce); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto; }
 
-    .shortener-container h1 {
-        text-align: center;
-        color: var(--ombre);
-        margin-bottom: 10px;
-        font-size: 1.8rem;
-    }
+    /* SLIDE FORMULAIRE */
+    .slide-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,31,39,0.8); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; }
+    .slide-overlay.ouvert { opacity: 1; visibility: visible; }
+    .slide-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: var(--surface); border-radius: 25px 25px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 1001; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 0.8, 0.3, 1); display: flex; flex-direction: column; }
+    .slide-panel.ouvert { transform: translateY(0); }
+    .slide-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--metal-fonce); color: white; border-radius: 25px 25px 0 0; }
+    .slide-header h3 { margin: 0; font-size: 1.2rem; }
+    .header-actions { display: flex; gap: 10px; }
+    .btn-header { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 5px 10px; transition: 0.2s; border-radius: 8px;}
+    .btn-header.btn-run { color: var(--or); }
+    .btn-header.btn-run:hover { background: rgba(212, 175, 55, 0.2); }
+    .btn-header.btn-annuler:hover { background: rgba(255, 255, 255, 0.1); }
+    .slide-body { flex: 1; overflow-y: auto; padding: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .full-width { grid-column: 1 / -1; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--metal-fonce); }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #ccc; font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; box-sizing: border-box;}
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--or); }
+    .code-editor-wrapper { border: 2px solid #ccc; border-radius: 8px; overflow: hidden; background: #282a36; }
+    .CodeMirror { height: 150px !important; font-family: monospace; font-size: 14px; }
 
-    .shortener-container p.subtitle {
-        text-align: center;
-        color: var(--metal-moyen);
-        margin-bottom: 30px;
-    }
+    /* OVERLAY DE CONFIRMATION */
+    .overlay-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,31,39,0.7); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s; }
+    .overlay-bg.ouvert { opacity: 1; visibility: visible; }
+    .overlay-box { background: var(--surface); padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: scale(0.9); transition: 0.3s; border: 2px solid var(--metal); }
+    .overlay-bg.ouvert .overlay-box { transform: scale(1); }
+    .overlay-box h3 { color: var(--ombre); margin-top: 0; margin-bottom: 10px; font-size: 1.3rem; }
+    .overlay-box p { color: var(--metal-fonce); font-size: 1rem; margin-bottom: 25px; line-height: 1.5; }
+    .overlay-actions { display: flex; gap: 15px; justify-content: center; }
+    .btn-ov { padding: 12px 25px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; flex: 1; font-size: 1rem; }
+    .btn-ov-annuler { background: var(--metal); color: white; }
+    .btn-ov-annuler:hover { background: var(--metal-fonce); }
+    .btn-ov-confirmer { background: var(--ombre); color: white; border: 1px solid var(--metal); }
+    .btn-ov-confirmer:hover { background: var(--metal-fonce); }
 
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: var(--metal-fonce);
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 15px;
-        border: 2px solid var(--surface);
-        border-radius: 12px;
-        font-size: 1rem;
-        background: #fdfdfd;
-        outline: none;
-        transition: 0.3s;
-        box-sizing: border-box;
-    }
-
-    .form-group input:focus {
-        border-color: var(--metal-fonce);
-        box-shadow: 0 0 0 4px rgba(96, 106, 115, 0.1);
-    }
-
-    .btn-submit {
-        width: 100%;
-        padding: 15px;
-        background: var(--metal-fonce);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .btn-submit:hover {
-        background: var(--ombre);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    .btn-submit:disabled {
-        background: var(--metal-moyen);
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    /* Zone de résultat */
-    .resultat-box {
-        margin-top: 25px;
-        padding: 20px;
-        background: var(--surface);
-        border-radius: 12px;
-        text-align: center;
-        display: none; /* Caché par défaut */
-        border-left: 5px solid var(--or);
-    }
-
-    .resultat-box.visible {
-        display: block;
-    }
-
-    .lien-court {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: var(--metal-fonce);
-        word-break: break-all;
-        margin: 10px 0;
-        display: block;
-    }
-
-    .btn-copier {
-        background: var(--blanc);
-        color: var(--metal-fonce);
-        border: 1px solid var(--metal);
-        padding: 8px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: 0.2s;
-        margin-top: 10px;
-    }
-
-    .btn-copier:hover {
-        background: var(--metal-fonce);
-        color: white;
-    }
-
-    .error-msg {
-        color: #ff4d4d;
-        font-weight: bold;
-        margin-top: 15px;
-        text-align: center;
+    @media(max-width: 600px) {
+        .form-grid { grid-template-columns: 1fr; }
     }
 </style>
 </head>
 <body>
 
-<!-- Le header s'injecte ici via header.js -->
 <script src="/js/header.js"></script>
 
-<div class="shortener-container">
-    <h1>Raccourcisseur de Liens</h1>
-    <p class="subtitle">Transformez vos longs liens GitHub en liens courts et personnalisés.</p>
-
-    <div class="form-group">
-        <label for="urlOriginale">Lien long (URL)</label>
-        <input type="url" id="urlOriginale" placeholder="https://github.com/votre-profil/mon-projet">
+<div class="page-container">
+    <div class="page-header">
+        <h1>Astuces VirtTech</h1>
+        <div class="tabs-container">
+            <button class="tab-btn actif" id="tabToutes" onclick="changerOnglet('toutes')">Toutes les astuces</button>
+            <button class="tab-btn" id="tabMes" onclick="changerOnglet('mes')">Mes astuces</button>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="codePersonnalise">Mot-clé personnalisé (Optionnel)</label>
-        <input type="text" id="codePersonnalise" placeholder="mon-projet (laissez vide pour un code aléatoire)">
+    <div id="loader">
+        <div class="loader-virttech">
+            <img src="/logo.png" alt="Chargement">
+        </div>
     </div>
 
-    <button class="btn-submit" id="btnRaccourcir">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
-        Raccourcir le lien
-    </button>
-
-    <div class="resultat-box" id="resultatBox">
-        <p>Votre lien court est prêt :</p>
-        <span class="lien-court" id="lienCourt"></span>
-        <button class="btn-copier" id="btnCopier">📋 Copier</button>
+    <div class="grille-astuces" id="grilleAstuces" style="display:none;"></div>
+    
+    <div id="loaderFin">
+        <div class="spinner"></div>
     </div>
-
-    <div class="error-msg" id="errorMsg"></div>
 </div>
 
+<button class="btn-add-astuce" onclick="ouvrirSlideForm()" title="Ajouter une astuce">
+    <i class="fa-solid fa-plus"></i>
+</button>
+
+<!-- SLIDE FORMULAIRE -->
+<div class="slide-overlay" id="slideOverlay" onclick="tenterFermerSlide()"></div>
+<div class="slide-panel" id="slidePanel">
+    <div class="slide-header">
+        <h3><i class="fa-solid fa-pen"></i> Nouvelle Astuce</h3>
+        <div class="header-actions">
+            <button class="btn-header btn-annuler" onclick="tenterFermerSlide()"><i class="fa-solid fa-xmark"></i></button>
+            <button class="btn-header btn-run" onclick="tenterPublier()"><i class="fa-solid fa-play"></i></button>
+        </div>
+    </div>
+    <div class="slide-body">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Votre Nom</label>
+                <input type="text" id="inputAuteur" placeholder="Ex: Ivan">
+            </div>
+            <div class="form-group">
+                <label>Titre de l'astuce</label>
+                <input type="text" id="inputTitre" placeholder="Ex: Centrer une div">
+            </div>
+            <div class="form-group full-width">
+                <label>Langage</label>
+                <select id="inputLangage">
+                    <option value="HTML">HTML</option>
+                    <option value="CSS">CSS</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="Python">Python</option>
+                </select>
+            </div>
+            <div class="form-group full-width">
+                <label>L'astuce (Explication)</label>
+                <textarea id="inputContenu" rows="3" placeholder="Expliquez votre astuce..."></textarea>
+            </div>
+            <div class="form-group full-width">
+                <label>Code (Optionnel)</label>
+                <div class="code-editor-wrapper">
+                    <textarea id="inputCode"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OVERLAY UNIQUE POUR TOUTES LES CONFIRMATIONS -->
+<div class="overlay-bg" id="overlayGlobal">
+    <div class="overlay-box">
+        <h3 id="ovTitre">Titre</h3>
+        <p id="ovMessage">Message</p>
+        <div class="overlay-actions" id="ovActions">
+            <!-- Les boutons seront injectés -->
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+
 <script>
-document.getElementById('btnRaccourcir').addEventListener('click', async function() {
-    const url = document.getElementById('urlOriginale').value;
-    const code = document.getElementById('codePersonnalise').value;
-    const btn = this;
-    const resultatBox = document.getElementById('resultatBox');
-    const lienCourt = document.getElementById('lienCourt');
-    const errorMsg = document.getElementById('errorMsg');
-
-    // Réinitialisation
-    resultatBox.classList.remove('visible');
-    errorMsg.innerText = "";
-    lienCourt.innerText = "";
-
-    if (!url) {
-        errorMsg.innerText = "Veuillez entrer un lien long.";
-        return;
+    // --- DONNÉES FICTIVES ---
+    const toutesLesAstuces = [];
+    for (let i = 1; i <= 15; i++) {
+        toutesLesAstuces.push({
+            id: i,
+            titre: "Astuce de pro n°" + i,
+            contenu: "Voici une astuce très utile pour améliorer ton code au quotidien.",
+            auteur: i % 2 === 0 ? "Koudouss" : "Ivan",
+            langage: i % 3 === 0 ? "CSS" : "JavaScript",
+            code: i % 3 === 0 ? "body {\n  display: flex;\n}" : "console.log('Hello');",
+            likes: Math.floor(Math.random() * 20),
+            vues: Math.floor(Math.random() * 100),
+            isMine: i % 4 === 0 
+        });
     }
 
-    // État de chargement
-    btn.disabled = true;
-    btn.innerHTML = "Création en cours...";
+    let currentTab = 'toutes';
+    let pageActuelle = 0;
+    const astucesParPage = 6;
+    let filtreAstuces = [];
+    let editor;
+    let idASupprimer = null;
+    let ongletPrecedent = 'toutes'; // Pour gérer l'annulation
 
-    try {
-        const response = await fetch('/api/shorten', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: url, code: code })
+    // --- INITIALISATION ---
+    document.addEventListener("DOMContentLoaded", () => {
+        editor = CodeMirror.fromTextArea(document.getElementById('inputCode'), {
+            mode: "htmlmixed", theme: "dracula", lineNumbers: true, lineWrapping: true
         });
+        
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('grilleAstuces').style.display = 'grid';
+            chargerPremiereFois();
+        }, 1500);
 
-        const data = await response.json();
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+                if (pageActuelle * astucesParPage < filtreAstuces.length) {
+                    chargerPageSuivante();
+                }
+            }
+        });
+    });
 
-        if (data.succes) {
-            lienCourt.innerText = data.short_url;
-            resultatBox.classList.add('visible');
-        } else {
-            errorMsg.innerText = data.message;
+    function chargerPremiereFois() {
+        pageActuelle = 0;
+        document.getElementById('grilleAstuces').innerHTML = "";
+        filtreAstuces = (currentTab === 'toutes') ? toutesLesAstuces : toutesLesAstuces.filter(a => a.isMine);
+        chargerPageSuivante();
+    }
+
+    // --- CHANGEMENT D'ONGLET ---
+    function changerOnglet(onglet) {
+        currentTab = onglet;
+        document.getElementById('tabToutes').classList.remove('actif');
+        document.getElementById('tabMes').classList.remove('actif');
+        
+        if (onglet === 'toutes') document.getElementById('tabToutes').classList.add('actif');
+        else document.getElementById('tabMes').classList.add('actif');
+
+        document.getElementById('loader').style.display = 'flex';
+        document.getElementById('grilleAstuces').style.display = 'none';
+        
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('grilleAstuces').style.display = 'grid';
+            chargerPremiereFois();
+        }, 800);
+    }
+
+    function chargerPageSuivante() {
+        document.getElementById('loaderFin').style.display = "block";
+
+        setTimeout(() => {
+            const debut = pageActuelle * astucesParPage;
+            const fin = debut + astucesParPage;
+            const astucesDeLaPage = filtreAstuces.slice(debut, fin);
+
+            afficherCartes(astucesDeLaPage);
+            pageActuelle++;
+            document.getElementById('loaderFin').style.display = "none";
+        }, 600);
+    }
+
+    function afficherCartes(astuces) {
+        const grille = document.getElementById('grilleAstuces');
+        
+        astuces.forEach(astuce => {
+            const card = document.createElement('div');
+            card.className = 'card-astuce';
+            
+            let codeHTML = "";
+            if (astuce.code && astuce.code.trim() !== "") {
+                codeHTML = `
+                <div class="code-wrapper">
+                    <div class="code-header">
+                        <span class="code-lang">${astuce.langage}</span>
+                        <button class="btn-copy" onclick="copierCode(this, \`${astuce.code.replace(/`/g, '\\`')}\`)">
+                            <i class="fa-regular fa-copy"></i> Copier
+                        </button>
+                    </div>
+                    <div class="code-content">${escapeHTML(astuce.code)}</div>
+                </div>`;
+            }
+
+            const btnDelete = (currentTab === 'mes' && astuce.isMine) ? `
+                <button class="social-btn delete-btn" onclick="demanderSuppression(${astuce.id})">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            ` : "";
+
+            const isLiked = localStorage.getItem('liked_' + astuce.id) ? 'liked' : '';
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <h3>${escapeHTML(astuce.titre)}</h3>
+                    <span class="tag-langage">${astuce.langage}</span>
+                </div>
+                <div class="card-content">${escapeHTML(astuce.contenu)}</div>
+                ${codeHTML}
+                <div class="card-footer">
+                    <div class="social-actions">
+                        <button class="social-btn ${isLiked}" onclick="toggleLike(this, ${astuce.id})">
+                            <i class="fa-solid fa-heart"></i> <span class="like-count">${astuce.likes}</span>
+                        </button>
+                        <div class="social-btn" style="cursor: default;">
+                            <i class="fa-solid fa-eye"></i> <span>${astuce.vues}</span>
+                        </div>
+                        ${btnDelete}
+                    </div>
+                    <div class="author-info">
+                        <strong>${escapeHTML(astuce.auteur)}</strong>
+                        <span class="time-post">Il y a 2 min</span>
+                    </div>
+                </div>
+            `;
+            grille.appendChild(card);
+        });
+    }
+
+    // --- LE NOUVEAU SYSTÈME D'OVERLAY (Remplace alert et confirm) ---
+    function afficherOverlay(titre, message, actions) {
+        document.getElementById('ovTitre').innerText = titre;
+        document.getElementById('ovMessage').innerText = message;
+        const container = document.getElementById('ovActions');
+        container.innerHTML = "";
+        
+        actions.forEach(action => {
+            const btn = document.createElement('button');
+            btn.className = `btn-ov ${action.class}`;
+            btn.innerText = action.texte;
+            btn.onclick = action.fonction;
+            container.appendChild(btn);
+        });
+        
+        document.getElementById('overlayGlobal').classList.add('ouvert');
+    }
+
+    function fermerOverlay() {
+        document.getElementById('overlayGlobal').classList.remove('ouvert');
+    }
+
+    // --- GESTION DE LA SUPPRESSION ---
+    function demanderSuppression(id) {
+        idASupprimer = id; // On stocke l'ID AVANT
+        afficherOverlay(
+            "Supprimer l'astuce ?",
+            "Cette action est définitive. Voulez-vous vraiment supprimer cette astuce ?",
+            [
+                { texte: "Annuler", class: "btn-ov-annuler", fonction: fermerOverlay },
+                { texte: "OK", class: "btn-ov-confirmer", fonction: confirmerSuppression }
+            ]
+        );
+    }
+
+    function confirmerSuppression() {
+        fermerOverlay();
+        // Simulation de suppression
+        const index = toutesLesAstuces.findIndex(a => a.id === idASupprimer);
+        if(index !== -1) {
+            toutesLesAstuces.splice(index, 1);
+            chargerPremiereFois();
         }
-    } catch (error) {
-        errorMsg.innerText = "Erreur de connexion au serveur.";
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg> Raccourcir le lien`;
+        // Feedback succès via overlay
+        setTimeout(() => {
+            afficherOverlay(
+                "Supprimée !", 
+                "L'astuce a bien été retirée de la base.", 
+                [{ texte: "Fermer", class: "btn-ov-confirmer", fonction: fermerOverlay }]
+            );
+        }, 300);
     }
-});
 
-// Bouton Copier
-document.getElementById('btnCopier').addEventListener('click', function() {
-    const lien = document.getElementById('lienCourt').innerText;
-    if (lien) {
-        navigator.clipboard.writeText(lien).then(() => {
-            this.innerText = "✅ Copié !";
-            setTimeout(() => { this.innerText = "📋 Copier"; }, 2000);
+    // --- GESTION DU FORMULAIRE (Slide) ---
+    function ouvrirSlideForm() {
+        ongletPrecedent = currentTab; // On sauvegarde l'onglet
+        document.getElementById('slideOverlay').classList.add('ouvert');
+        document.getElementById('slidePanel').classList.add('ouvert');
+    }
+
+    function tenterFermerSlide() {
+        // Si le formulaire est vide, on ferme direct. Sinon on demande.
+        const auteur = document.getElementById('inputAuteur').value.trim();
+        const titre = document.getElementById('inputTitre').value.trim();
+        const contenu = document.getElementById('inputContenu').value.trim();
+
+        if (auteur || titre || contenu) {
+            afficherOverlay(
+                "Annuler la rédaction ?",
+                "Vos modifications seront perdues.",
+                [
+                    { texte: "Non", class: "btn-ov-annuler", fonction: fermerOverlay },
+                    { texte: "Oui, quitter", class: "btn-ov-confirmer", fonction: fermerSlideEtOverlay }
+                ]
+            );
+        } else {
+            fermerSlideEtOverlay();
+        }
+    }
+
+    function fermerSlideEtOverlay() {
+        fermerOverlay();
+        document.getElementById('slideOverlay').classList.remove('ouvert');
+        document.getElementById('slidePanel').classList.remove('ouvert');
+        // Reset form
+        document.getElementById('inputAuteur').value = "";
+        document.getElementById('inputTitre').value = "";
+        document.getElementById('inputContenu').value = "";
+        editor.setValue("");
+    }
+
+    function tenterPublier() {
+        const auteur = document.getElementById('inputAuteur').value.trim();
+        const titre = document.getElementById('inputTitre').value.trim();
+        const contenu = document.getElementById('inputContenu').value.trim();
+
+        if (!auteur || !titre || !contenu) {
+            afficherOverlay(
+                "Champs manquants",
+                "Le nom, le titre et le contenu sont obligatoires pour publier.",
+                [{ texte: "OK", class: "btn-ov-confirmer", fonction: fermerOverlay }]
+            );
+            return;
+        }
+
+        afficherOverlay(
+            "Publier l'astuce ?",
+            "Voulez-vous vraiment ajouter cette astuce au site ?",
+            [
+                { texte: "Annuler", class: "btn-ov-annuler", fonction: fermerOverlay },
+                { texte: "Publier", class: "btn-ov-confirmer", fonction: () => {
+                    fermerSlideEtOverlay();
+                    afficherOverlay(
+                        "Publiée !",
+                        "Votre astuce a été ajoutée avec succès.",
+                        [{ texte: "Super", class: "btn-ov-confirmer", fonction: fermerOverlay }]
+                    );
+                }}
+            ]
+        );
+    }
+
+    // --- LOGIQUE DES LIKES ---
+    function toggleLike(btn, id) {
+        const isLiked = btn.classList.contains('liked');
+        const countSpan = btn.querySelector('.like-count');
+        let current = parseInt(countSpan.innerText);
+
+        if (isLiked) {
+            btn.classList.remove('liked');
+            countSpan.innerText = current - 1;
+            localStorage.removeItem('liked_' + id);
+        } else {
+            btn.classList.add('liked');
+            countSpan.innerText = current + 1;
+            localStorage.setItem('liked_' + id, 'true');
+        }
+    }
+
+    // --- UTILITAIRES ---
+    function copierCode(btn, code) {
+        const realCode = code.replace(/\\`/g, '`').replace(/\\n/g, '\n');
+        navigator.clipboard.writeText(realCode).then(() => {
+            const original = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> Copié !`;
+            setTimeout(() => { btn.innerHTML = original; }, 2000);
         });
     }
-});
+
+    function escapeHTML(str) {
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
 </script>
 
 </body>

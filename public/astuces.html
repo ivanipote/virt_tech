@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astuces - VirtTech</title>
+
+<!-- SEO -->
+<meta name="description" content="Découvre et partage des astuces de développement web avec la communauté VirtTech." />
+<link rel="canonical" href="https://virttech.site/astuces">
+
+<!-- Font Awesome & CodeMirror -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+
+<!-- Prism.js pour la coloration syntaxique dans les cartes -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+<!-- Styles globaux -->
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/astuces.css">
+</head>
+<body>
+
+<script src="/js/header.js"></script>
+
+<div class="page-container">
+    <div class="page-header">
+        <h1>Astuces VirtTech</h1>
+        <div class="tabs-container">
+            <button class="tab-btn actif" id="tabToutes" onclick="changerOnglet('toutes')">Toutes les astuces</button>
+            <button class="tab-btn" id="tabMes" onclick="changerOnglet('mes')">Mes astuces</button>
+        </div>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="loader-virttech">
+            <img src="/logo.png" alt="Chargement">
+        </div>
+    </div>
+
+    <!-- Grille -->
+    <div class="grille-astuces" id="grilleAstuces" style="display:none;"></div>
+    
+    <!-- Loader Scroll Infini -->
+    <div id="loaderFin">
+        <div class="spinner"></div>
+    </div>
+</div>
+
+<!-- Bouton Ajouter -->
+<button class="btn-add-astuce" onclick="ouvrirSlideForm()" title="Ajouter une astuce">
+    <i class="fa-solid fa-plus"></i>
+</button>
+
+<!-- SLIDE FORMULAIRE -->
+<div class="slide-overlay" id="slideOverlay" onclick="tenterFermerSlide()"></div>
+<div class="slide-panel" id="slidePanel">
+    <div class="slide-header">
+        <h3><i class="fa-solid fa-pen"></i> Nouvelle Astuce</h3>
+        <div class="header-actions">
+            <button class="btn-header btn-annuler" onclick="tenterFermerSlide()"><i class="fa-solid fa-xmark"></i></button>
+            <button class="btn-header btn-run" onclick="tenterPublier()"><i class="fa-solid fa-play"></i></button>
+        </div>
+    </div>
+    <div class="slide-body">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Votre Nom</label>
+                <input type="text" id="inputAuteur" placeholder="Ex: Ivan">
+            </div>
+            <div class="form-group">
+                <label>Titre de l'astuce</label>
+                <input type="text" id="inputTitre" placeholder="Ex: Centrer une div">
+            </div>
+            <div class="form-group full-width">
+                <label>Langage</label>
+                <select id="inputLangage">
+                    <option value="HTML">HTML</option>
+                    <option value="CSS">CSS</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="Python">Python</option>
+                    <option value="PHP">PHP</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div class="form-group full-width">
+                <label>L'astuce (Explication)</label>
+                <textarea id="inputContenu" rows="3" placeholder="Expliquez votre astuce..."></textarea>
+            </div>
+            <div class="form-group full-width">
+                <label>Code (Optionnel)</label>
+                <div class="code-editor-wrapper">
+                    <textarea id="inputCode"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OVERLAY GLOBAL -->
+<div class="overlay-bg" id="overlayGlobal">
+    <div class="overlay-box">
+        <h3 id="ovTitre">Titre</h3>
+        <p id="ovMessage">Message</p>
+        <div class="overlay-actions" id="ovActions"></div>
+    </div>
+</div>
+
+<!-- Scripts CodeMirror -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+
+<!-- Scripts Prism.js (pour la coloration dans les cartes) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
+
+<!-- Notre script -->
+<script src="/js/astuces.js"></script>
+</body>
+</html>

@@ -38,6 +38,9 @@ morgan.format('virttech', (tokens, req, res) => {
     else if (url.includes('/contact')) url = 'CONTACT';
     else if (url.includes('/api/contact')) url = 'API_CONTACT';
     else if (url.includes('/api/shorten')) url = 'API_SHORTEN';
+    else if (url.includes('/api/astuces')) url = 'API_ASTUCES';
+    else if (url.includes('/astuces')) url = 'PAGE_ASTUCES';
+    else if (url.includes('/transformlink')) url = 'TRANSFORMLINK';
     else url = 'SHORTLINK : ' + url; // Si c'est une redirection
 
     const temps = tokens['response-time'](req, res) + 'ms';
@@ -79,20 +82,22 @@ app.get('/historique', (req, res) => res.sendFile(path.join(__dirname, 'public',
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contact.html')));
 app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator.html')));
 app.get('/transformlink', (req, res) => res.sendFile(path.join(__dirname, 'public', 'transformlink.html')));
-app.get('/paix', (req, res) => res.sendFile(path.join(__dirname, 'public', 'paix.html')));
+
+// NOUVELLE ROUTE : Astuces
+app.get('/astuces', (req, res) => res.sendFile(path.join(__dirname, 'public', 'astuces.html')));
+
+// ==========================================
 // ROUTES API
+// ==========================================
 const contactRoutes = require('./routes/contact');
 app.use('/api/contact', contactRoutes);
 
-// ROUTES DU RACCOURCISSEUR
 const shortenRoutes = require('./routes/shorten');
-app.use('/api/shorten', shortenRoutes); // Route POST pour créer
-app.use('/', shortenRoutes);  
+app.use('/api/shorten', shortenRoutes);
+app.use('/', shortenRoutes);
 
-
-// Routes pour la page Paix
-const paixRoutes = require('./routes/paix');
-app.use('/api/paix', paixRoutes);// Route GET pour rediriger (ex: /test123)
+const astucesRoutes = require('./routes/astuces');
+app.use('/api/astuces', astucesRoutes);
 
 // ==========================================
 // GESTION DES ERREURS 404

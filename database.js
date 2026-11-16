@@ -16,10 +16,11 @@ async function initDB() {
         const schemaPath = path.join(__dirname, 'schema.sql');
         const schema = fs.readFileSync(schemaPath, 'utf8');
         
-        // On l'exécute sur la base de données
+        // On exécute le schéma sur la base de données
         await pool.query(schema);
         
-        console.log("✅ Base de données initialisée. Tables 'links', 'histoires' et 'likes_histoires' prêtes.");
+        console.log("✅ Base de données initialisée avec succès.");
+        console.log("✅ Tables 'links' et 'astuces' prêtes.");
     } catch (err) {
         console.error("❌ Erreur d'initialisation de la base de données :", err);
     }

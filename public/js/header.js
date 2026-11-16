@@ -8,14 +8,14 @@ document.addEventListener("DOMContentLoaded", function() {
     let actifResultats = "";
     let actifVirtEmulator = "";
     let actifTransformLink = "";
-    let actifPaix = "";
+    let actifAstuces = ""; // Nouvel onglet
 
     if (path === "/" || path === "/accueil") { actifAccueil = "actif"; }
     else if (path === "/historique") { actifHistorique = "actif"; }
     else if (path.includes("/virt-dev")) { actifResultats = "actif"; }
     else if (path === "/virtemulator") { actifVirtEmulator = "actif"; }
     else if (path === "/transformlink") { actifTransformLink = "actif"; }
-    else if (path === "/paix") { actifPaix = "actif"; }
+    else if (path === "/astuces") { actifAstuces = "actif"; }
 
     // 2. Injection du header
     const headerHTML = `
@@ -64,11 +64,11 @@ document.addEventListener("DOMContentLoaded", function() {
             </a>
           </li>
           
-          <!-- NOUVEL ONGLET PAIX -->
+          <!-- NOUVEL ONGLET ASTUCES -->
           <li>
-            <a href="/paix" class="${actifPaix}">
-                <span>Journée de la Paix</span>
-                <i class="fa-solid fa-dove"></i>
+            <a href="/astuces" class="${actifAstuces}">
+                <span>Astuces</span>
+                <i class="fa-solid fa-lightbulb"></i>
             </a>
           </li>
 

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loader VirtTech - Couleurs Officielles</title>
+<style>
+    :root {
+        --fond: #CED3D6;
+        --surface: #D9E0E2;
+        --metal: #606A73;       /* Gris métallique */
+        --metal-fonce: #323F48; /* Bleu nuit / Anthracite */
+        --ombre: #161F27;       /* Presque noir */
+        --blanc: #FFFFFF;
+    }
+    * { box-sizing: border-box; }
+    body { 
+        background: var(--fond); 
+        font-family: 'Segoe UI', sans-serif;
+        margin: 0; 
+        padding: 40px 20px; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        height: 100vh;
+    }
+
+    .demo-container {
+        background: var(--blanc);
+        padding: 50px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    /* =========================================
+       LOADER : Anneaux tournants + Logo fixe
+       ========================================= */
+    .loader-virttech {
+        width: 100px; 
+        height: 100px;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    /* L'anneau extérieur (Gris métallique, sens horaire) */
+    .loader-virttech::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-top-color: var(--metal); /* Gris */
+        border-right-color: var(--metal);
+        animation: spin-horaire 1.2s linear infinite;
+    }
+
+    /* L'anneau intérieur (Bleu nuit/Noir, sens anti-horaire) */
+    .loader-virttech::after {
+        content: "";
+        position: absolute;
+        top: 12px; left: 12px;
+        width: calc(100% - 24px); height: calc(100% - 24px);
+        border-radius: 50%;
+        border: 3px solid transparent;
+        border-bottom-color: var(--metal-fonce); /* Anthracite */
+        border-left-color: var(--metal-fonce);
+        animation: spin-anti-horaire 1.5s linear infinite;
+    }
+
+    /* Le LOGO au centre */
+    .loader-virttech img {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px; 
+        height: 50px;
+        object-fit: cover;
+        border-radius: 50%;
+        z-index: 10;
+    }
+
+    @keyframes spin-horaire {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes spin-anti-horaire {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(-360deg); }
+    }
+</style>
+</head>
+<body>
+
+<div class="demo-container">
+    <h3 style="color: var(--metal-fonce); margin-bottom: 30px;">Chargement en cours...</h3>
+    
+    <div class="loader-virttech">
+        <img src="/logo.png" alt="Logo VirtTech">
+    </div>
+    
+    <p style="color: var(--metal); margin-top: 30px; font-size: 0.9rem;">VirtTech prépare vos astuces...</p>
+</div>
+
+</body>
+</html>

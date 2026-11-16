@@ -24,3 +24,17 @@ CREATE TABLE IF NOT EXISTS likes_histoires (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(histoire_id, device_id)
 );
+
+-- Table pour les astuces
+CREATE TABLE IF NOT EXISTS astuces (
+    id SERIAL PRIMARY KEY,
+    auteur VARCHAR(100) NOT NULL,
+    titre VARCHAR(255) NOT NULL,
+    contenu TEXT NOT NULL,
+    langage VARCHAR(50) DEFAULT 'Autre',
+    code TEXT,
+    likes INTEGER DEFAULT 0,
+    vues INTEGER DEFAULT 0,
+    is_mine BOOLEAN DEFAULT FALSE, -- Pour l'instant, on simule "mes astuces"
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
