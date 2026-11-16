@@ -111,3 +111,43 @@
     background: var(--or);
     color: var(--ombre);
 }
+/* --- FOND DE LA PAGE --- */
+body {
+    /* On remplace le fond uni par un dégradé subtil qui rappelle la sidebar */
+    background: linear-gradient(135deg, #CED3D6 0%, #B0BCC2 100%);
+    background-attachment: fixed; /* Le fond ne défile pas avec la page */
+}
+
+/* --- CARTE BANNIÈRE --- */
+.banniere-card {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F0F4F8 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    box-shadow: 0 15px 35px rgba(22, 31, 39, 0.15); /* Ombre plus profonde */
+}
+
+/* --- CARTE ÉVÉNEMENT (LA NOUVELLE CARTE ASTUCE) --- */
+.une {
+    background: linear-gradient(135deg, #2A3540, #161F27); /* Fond sombre comme la sidebar */
+    border-left: 8px solid var(--or);
+    box-shadow: 0 15px 35px rgba(22, 31, 39, 0.25);
+}
+
+/* --- LES BOÎTES "DÉCOUVRIR" ET "COMMENT UTILISER" --- */
+.box {
+    background: #FFFFFF;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 8px 20px rgba(22, 31, 39, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(22, 31, 39, 0.15);
+    border-color: rgba(212, 175, 55, 0.5); /* Bordure dorée au survol */
+}
+
+/* --- TITRES DE SECTION --- */
+h2 {
+    color: var(--ombre);
+    border-bottom: 3px solid var(--or); /* Ligne dorée sous les titres */
+}

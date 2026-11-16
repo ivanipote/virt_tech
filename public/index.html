@@ -7,37 +7,34 @@
 
 <!-- SEO & Réseaux Sociaux -->
 <meta name="google-site-verification" content="KF05X5wvMymfuyAagF5VfoDAfmnx_RYGxfbQBdfnzyQ" />
-<meta name="description" content="VirtTech est la communauté de développement web en Côte d'Ivoire. Formations gratuites, outils de code en ligne (VirtEmulator), raccourcisseur de liens (TransformLink) et événements." />
-<meta name="keywords" content="VirtTech, Virtech, développement web, apprendre à coder, HTML, CSS, JavaScript, débutant, Abidjan, Côte d'Ivoire, VirtEmulator, TransformLink, outils." />
+<meta name="description" content="VirtTech est la communauté qui accompagne et soutient les débutants en web et en Android. Découvre nos outils et partage tes astuces." />
+<meta name="keywords" content="VirtTech, Virtech, développement web, apprendre à coder, HTML, CSS, JavaScript, débutant, Abidjan, astuces, VirtEmulator." />
 <meta property="og:title" content="VirtTech - Apprends, crée, partage." />
-<meta property="og:description" content="Rejoins la communauté de développement web en Côte d'Ivoire. Formations gratuites et outils pour développeurs débutants." />
+<meta property="og:description" content="La communauté qui accompagne et soutient les débutants en web et en Android." />
 <meta property="og:image" content="https://virttech.site/logo.png" />
 <meta property="og:url" content="https://virttech.site/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="VirtTech" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="VirtTech - Apprends, crée, partage." />
-<meta name="twitter:description" content="Formations gratuites en HTML, CSS et JavaScript, outils et défis pour développeurs débutants en Côte d'Ivoire." />
+<meta name="twitter:description" content="Formations gratuites et outils simples pour développeurs débutants." />
 <meta name="twitter:image" content="https://virttech.site/logo.png" />
 
 <!-- FAVICON & CANONIQUE -->
 <link rel="icon" type="image/png" href="https://virttech.site/logo.png">
 <link rel="canonical" href="https://virttech.site/">
 
-<!-- Schema.org -->
+<!-- Données structurées (Schema.org) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "VirtTech",
-  "alternateName": ["Virtech", "Virt Tech", "Virtech Officiel", "VirtTech Site Officiel"],
+  "alternateName": ["Virtech", "Virt Tech", "Virtech Abidjan"],
   "url": "https://virttech.site",
   "logo": "https://virttech.site/logo.png",
   "description": "Communauté et formations gratuites en développement web pour débutants en Côte d'Ivoire.",
-  "sameAs": [
-    "https://chat.whatsapp.com/E0R5J94ianv8fZDJGkkMBG",
-    "https://www.tiktok.com/@virttechdev"
-  ]
+  "sameAs": ["https://chat.whatsapp.com/E0R5J94ianv8fZDJGkkMBG", "https://www.tiktok.com/@virttechdev"]
 }
 </script>
 
@@ -49,7 +46,8 @@
 <body>
 
 <div class="contenu">
-  <!-- BANNIÈRE -->
+
+  <!-- CARTE BANNIÈRE (Logo + Réseaux) -->
   <div class="banniere-card">
     <img src="https://virttech.site/logo.png" alt="Logo VirtTech" class="logo">
     <div class="btns">
@@ -64,77 +62,57 @@
     </div>
   </div>
 
-  <!-- INTRODUCTION -->
+  <!-- EN-TÊTE -->
   <header class="entete">
     <h1>VirtTech</h1>
-    <p>La communauté des développeurs de demain. Apprends le web, utilise nos outils et construis tes premiers projets à ton rythme.</p>
+    <p>Ne manque pas les formations, les astuces et les concours réservés aux débutants. Rejoins la communauté et apprends à coder à ton rythme.</p>
     <div class="barre"></div>
   </header>
 
-  <!-- SECTION NOS OUTILS -->
-  <h2 id="outils" class="reveal">Nos Outils</h2>
-  <div class="outils-grid reveal g">
-      
-      <!-- Carte VirtEmulator -->
-      <div class="outil-card">
-          <div class="outil-icon">💻</div>
-          <h3>VirtEmulator</h3>
-          <p>Teste ton code HTML, CSS et JavaScript directement dans ton navigateur, sans rien installer. Idéal pour les débutants.</p>
-          <a href="/virtemulator" class="btn-outil">Ouvrir l'éditeur</a>
-      </div>
+  <!-- NOUVELLE SECTION : ASTUCES -->
+  <h2 id="astuces" class="reveal">Nouveau : Partage d'Astuces</h2>
+  <article class="une reveal g" style="border-left-color: var(--or);">
+    <span class="etat" style="background: var(--or); color: var(--ombre);">Outil Communautaire</span>
+    <h3 style="color: var(--or);">💡 Astuces VirtTech</h3>
+    <p>Découvre les astuces de la communauté ou partage les tiennes ! Un espace dédié pour échanger des conseils pratiques, du code, et aider les autres à progresser. Tu peux aimer, voir les astuces populaires et gérer tes propres publications.</p>
+    
+    <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px;">
+      <a href="/astuces" class="btn" style="background: var(--or); border-color: var(--or); color: var(--ombre);">Découvrir les astuces</a>
+      <a href="/astuces" class="btn" style="background: transparent; border-color: var(--surface); color: var(--surface);">Publier une astuce</a>
+    </div>
+  </article>
 
-      <!-- Carte TransformLink -->
-      <div class="outil-card">
-          <div class="outil-icon">🔗</div>
-          <h3>TransformLink</h3>
-          <p>Crée des liens courts et personnalisés avec ton propre nom de domaine (virttech.site). Parfait pour partager tes projets GitHub.</p>
-          <a href="/transformlink" class="btn-outil">Raccourcir un lien</a>
-      </div>
-
-      <!-- Carte Paix -->
-      <div class="outil-card">
-          <div class="outil-icon">🕊️</div>
-          <h3>Journée de la Paix</h3>
-          <p>Un espace anonyme pour partager tes histoires, déposer ce qui est lourd et faire la paix avec toi-même.</p>
-          <a href="/paix" class="btn-outil">Lire les histoires</a>
-      </div>
-
-  </div>
-
-  <!-- ACTUALITÉS -->
-  <h2 id="actus" class="reveal">Actualités &amp; mises à jour</h2>
-  <ul class="fil">
-    <li class="reveal g">
-      <time>Novembre 2026</time><span class="tag">Nouveau</span>
-      <h4>Découvrez VirtEmulator et TransformLink</h4>
-      <p>Deux nouveaux outils sont disponibles sur le site pour faciliter ton apprentissage et le partage de tes projets.</p>
-    </li>
-    <li class="reveal g" style="--d:.12s">
-      <time>Novembre 2026</time><span class="tag">Formation</span>
-      <h4>Reprise des cours sur l'arborescence</h4>
-      <p>Apprends à structurer un projet web et à lier tes fichiers CSS et JS correctement.</p>
-    </li>
-    <li class="reveal g" style="--d:.24s">
-      <time>Novembre 2026</time><span class="tag">Événement</span>
-      <h4>Journée de la Paix</h4>
-      <p>Partage ton histoire de pardon ou de résilience en cette journée spéciale.</p>
-    </li>
-  </ul>
-
-  <!-- À PROPOS -->
-  <h2 id="apropos" class="reveal">À propos de VirtTech</h2>
+  <!-- SECTION : EXPLORER LE SITE -->
+  <h2 id="decouvrir" class="reveal">Découvrir le site</h2>
   <div class="grille">
     <div class="box reveal">
-      <h3>Notre mission</h3>
-      <p>Apprendre le développement web (HTML, CSS, JS) aux débutants à travers des formations simples, des défis concrets et des outils gratuits.</p>
+      <h3>💻 VirtEmulator</h3>
+      <p>Teste ton code HTML, CSS et JS directement dans ton navigateur. <a href="/virtemulator" style="color: var(--or);">Ouvrir l'éditeur</a></p>
     </div>
     <div class="box reveal" style="--d:.12s">
-      <h3>Nos projets</h3>
-      <p>Organisation de concours (Virt_Dev), création d'outils pour la communauté (VirtEmulator, TransformLink) et développement de projets web.</p>
+      <h3>🔗 TransformLink</h3>
+      <p>Raccourcis tes liens GitHub ou tes projets pour les partager facilement. <a href="/transformlink" style="color: var(--or);">Créer un lien</a></p>
     </div>
     <div class="box reveal" style="--d:.24s">
-      <h3>Rejoignez-nous</h3>
-      <p>La communauté est ouverte à tous les curieux. Que tu sois débutant ou avancé, il y a toujours quelque chose à apprendre.</p>
+      <h3>📚 Historique</h3>
+      <p>Retrouve toutes les activités, les cours et les événements passés. <a href="/historique" style="color: var(--or);">Lire l'historique</a></p>
+    </div>
+  </div>
+
+  <!-- SECTION : COMMENT UTILISER -->
+  <h2 id="apropos" class="reveal">Comment utiliser VirtTech ?</h2>
+  <div class="grille">
+    <div class="box reveal">
+      <h3>1. Rejoins la communauté</h3>
+      <p>Clique sur le bouton WhatsApp pour intégrer le groupe de discussion et échanger avec les autres membres.</p>
+    </div>
+    <div class="box reveal" style="--d:.12s">
+      <h3>2. Apprends</h3>
+      <p>Consulte la page <a href="/historique" style="color: var(--or);">Historique</a> pour accéder aux cours et formations passés.</p>
+    </div>
+    <div class="box reveal" style="--d:.24s">
+      <h3>3. Pratique et Partage</h3>
+      <p>Utilise <a href="/virtemulator" style="color: var(--or);">VirtEmulator</a> pour coder, et partage tes découvertes dans les <a href="/astuces" style="color: var(--or);">Astuces</a>.</p>
     </div>
   </div>
 
