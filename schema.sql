@@ -90,3 +90,16 @@ CREATE INDEX IF NOT EXISTS idx_astuces_niveau    ON astuces (niveau);
 CREATE INDEX IF NOT EXISTS idx_astuces_owner     ON astuces (owner_token);
 CREATE INDEX IF NOT EXISTS idx_astuces_likes_tok ON astuces_likes (visiteur_token);
 CREATE INDEX IF NOT EXISTS idx_astuces_vues_tok  ON astuces_vues (visiteur_token);
+
+-- =====================================================================
+-- COMPTEUR DE « RUN » (page Historique)
+-- =====================================================================
+-- Une ligne par activité (virtdev, arborescence, erreurs, corriger, balises).
+-- Incrémenté à chaque clic sur le bouton Run.
+CREATE TABLE IF NOT EXISTS activites_clics (
+    slug VARCHAR(40) PRIMARY KEY,
+    clics INTEGER NOT NULL DEFAULT 0,
+    derniere_maj TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT activites_clics_positif CHECK (clics >= 0)
+);

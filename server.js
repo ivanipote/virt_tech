@@ -41,6 +41,7 @@ morgan.format('virttech', (tokens, req, res) => {
     else if (url.includes('/api/contact')) url = 'API_CONTACT';
     else if (url.includes('/api/shorten')) url = 'API_SHORTEN';
     else if (url.includes('/api/astuces')) url = 'API_ASTUCES';
+    else if (url.includes('/api/activites')) url = 'API_ACTIVITES';
     else if (url.includes('/virt-dev')) url = 'RESULTATS';
     else if (url.includes('/historique')) url = 'HISTORIQUE';
     else if (url.includes('/virtemulator')) url = 'VIRTEMULATOR';
@@ -102,6 +103,10 @@ app.use('/api/contact', contactRoutes);
 // (ainsi aucune route générique ne peut intercepter /api/astuces/...)
 const astucesRoutes = require('./routes/astuces');
 app.use('/api/astuces', astucesRoutes);
+
+// Compteur de clics « Run » de la page Historique
+const activitesRoutes = require('./routes/activites');
+app.use('/api/activites', activitesRoutes);
 
 const shortenRoutes = require('./routes/shorten');
 app.use('/api/shorten', shortenRoutes);

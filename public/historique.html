@@ -6,75 +6,134 @@
 <title>Historique - VirtTech</title>
 
 <!-- SEO & Réseaux Sociaux -->
-<meta name="description" content="Retrouvez l'historique de tous les événements, concours et formations réalisés par la communauté de développeurs VirtTech." />
-<meta name="keywords" content="VirtTech, historique, formation, arborescence, concours, développement web" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Historique - VirtTech" />
-<meta name="twitter:description" content="Retrouve tous les événements et projets réalisés par la communauté VirtTech." />
-<meta name="twitter:image" content="https://virttech.site/logo.png" />
-
-<!-- Favicon & Canonique -->
-<link rel="icon" type="image/png" href="https://virttech.site/logo.png">
-<link rel="canonical" href="https://virttech.site/historique">
-
-<!-- Open Graph -->
-<meta property="og:title" content="Historique d'activité - VirtTech" />
-<meta property="og:description" content="Retrouve tous les événements et projets réalisés par la communauté VirtTech." />
+<meta name="description" content="Retrouve l'historique des activités de VirtTech : le concours Virt_Dev, la formation sur l'arborescence, et les cours sur les codes d'erreur du web et les balises HTML." />
+<meta name="keywords" content="VirtTech, historique, formation, arborescence, concours, codes d'erreur, 404, balises HTML, développement web" />
+<meta property="og:title" content="Historique - VirtTech" />
+<meta property="og:description" content="Tous les événements, formations et cours réalisés par la communauté VirtTech." />
 <meta property="og:image" content="https://virttech.site/logo.png" />
 <meta property="og:url" content="https://virttech.site/historique" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="VirtTech" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Historique - VirtTech" />
+<meta name="twitter:description" content="Tous les événements, formations et cours réalisés par la communauté VirtTech." />
+<meta name="twitter:image" content="https://virttech.site/logo.png" />
 
-<!-- Données structurées -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "url": "https://virttech.site/historique",
-  "name": "Historique des activités",
-  "description": "Tous les événements et formations de VirtTech.",
-  "primaryImageOfPage": {
-    "@type": "ImageObject",
-    "url": "https://virttech.site/logo.png"
-  }
-}
-</script>
+<!-- FAVICON & CANONIQUE -->
+<link rel="icon" type="image/png" href="https://virttech.site/logo.png">
+<link rel="canonical" href="https://virttech.site/historique">
 
 <script>document.documentElement.classList.add('js')</script>
+
+<!-- Styles -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Prism.js : coloration syntaxique des blocs de code -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
 <link rel="stylesheet" href="/css/historique.css">
 </head>
 <body>
 
-<div class="contenu">
-    <h1 class="reveal">Historique des Activités</h1>
-    <p class="sous-titre reveal" style="--d:.1s">Retrouvez tous les événements et projets réalisés par la communauté VirtTech.</p>
+<!-- Header injecté par header.js -->
+<script src="/js/header.js"></script>
 
-    <div class="grille-historique">
-        <div class="carte-activite carte-virtdev reveal" style="--d:.2s" onclick="ouvrirSlide('virtdev')">
-            <h3>🏆 Concours Virt_Dev</h3>
-            <p>La première édition du concours de développement web de VirtTech. Découvrez le déroulement, les gagnants et l'analyse du jury.</p>
-            <div class="indice">Cliquez pour lire l'histoire ➔</div>
+<div class="contenu">
+
+    <h1 class="reveal">Historique d'activité</h1>
+    <p class="sous-titre reveal">Retrouve les concours, les formations et les cours de VirtTech.</p>
+
+    <!-- 1 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Concours Virt_Dev</h2>
+            <button class="btn-run" data-slide="virtdev" data-slug="virtdev">
+                <i class="fa-solid fa-play" aria-hidden="true"></i> Run
+                <span class="nb-run" hidden>0</span>
+            </button>
         </div>
-        <div class="carte-activite carte-formation reveal" style="--d:.3s" onclick="ouvrirSlide('formation')">
-            <h3>📚 Formation : Arborescence</h3>
-            <p>Apprendre à structurer un projet web et à lier les fichiers (CSS, JS) correctement.</p>
-            <div class="indice">Cliquez pour lire l'histoire ➔</div>
+        <p>Du <strong>30 octobre</strong> au <strong>4 novembre 2026</strong>, les participants devaient reproduire une page de connexion en HTML et CSS. <strong>Horo David</strong> remporte la 1re place, <strong>Koudouss</strong> la 2e.</p>
+        <a class="lien-plus" href="/virt-dev">Voir les résultats <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </article>
+
+    <!-- 2 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Formation : arborescence et liaison</h2>
+            <button class="btn-run" data-slide="arborescence" data-slug="arborescence">
+                <i class="fa-solid fa-play" aria-hidden="true"></i> Run
+                <span class="nb-run" hidden>0</span>
+            </button>
         </div>
-    </div>
+        <p>Un projet web, ce sont des fichiers rangés dans des dossiers. On a appris à créer une <strong>arborescence claire</strong> et à <strong>lier le CSS et le JS</strong> au HTML.</p>
+    </article>
+
+    <!-- 3 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Cours : les codes d'erreur du web</h2>
+            <button class="btn-run" data-slide="erreurs" data-slug="erreurs">
+                <i class="fa-solid fa-play" aria-hidden="true"></i> Run
+                <span class="nb-run" hidden>0</span>
+            </button>
+        </div>
+        <p><strong>404</strong>, <strong>403</strong>, <strong>500</strong>… Chaque erreur a un numéro et une famille. Savoir les lire, c'est déjà la moitié du diagnostic.</p>
+    </article>
+
+    <!-- 4 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Cours : corriger ces erreurs</h2>
+            <button class="btn-run" data-slide="corriger" data-slug="corriger">
+                <i class="fa-solid fa-play" aria-hidden="true"></i> Run
+                <span class="nb-run" hidden>0</span>
+            </button>
+        </div>
+        <p>Lire le code, comprendre la famille, vérifier le chemin du fichier, regarder la console : une <strong>méthode simple</strong> pour ne plus rester bloqué devant une erreur.</p>
+    </article>
+
+    <!-- 5 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Cours : les balises HTML usuelles</h2>
+            <button class="btn-run" data-slide="balises" data-slug="balises">
+                <i class="fa-solid fa-play" aria-hidden="true"></i> Run
+                <span class="nb-run" hidden>0</span>
+            </button>
+        </div>
+        <p><code>h1</code>, <code>p</code>, <code>a</code>, <code>img</code>… Chaque balise a un <strong>rôle précis</strong>. Voici celles que tu utiliseras tous les jours.</p>
+    </article>
+
+    <!-- 6 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Cours : la structure d'une page web</h2>
+            <button class="btn-run" data-slide="structure" data-slug="structure">
+                <i class="fa-solid fa-play" aria-hidden="true"></i> Run
+                <span class="nb-run" hidden>0</span>
+            </button>
+        </div>
+        <p><code>doctype</code>, <code>head</code>, <code>body</code>… Le squelette qu'on écrit <strong>avant tout le reste</strong>, expliqué partie par partie.</p>
+    </article>
+
 </div>
 
-<div class="slide-overlay" id="slide-overlay" onclick="fermerSlide()"></div>
-<div class="slide-panel" id="slide-panel">
+<!-- ===== SLIDE ===== -->
+<div class="slide-overlay" id="slide-overlay"></div>
+
+<div class="slide-panel" id="slide-panel" role="dialog" aria-modal="true" aria-labelledby="slide-title">
     <div class="slide-header">
-        <h3 id="slide-title">Chargement...</h3>
-        <button class="btn-fermer-slide" onclick="fermerSlide()">✕</button>
+        <h3 id="slide-title">Chargement…</h3>
+        <button class="btn-fermer-slide" id="btn-fermer-slide" aria-label="Fermer le cours">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
     </div>
     <div class="slide-contenu" id="slide-contenu"></div>
 </div>
 
-<script src="/js/header.js"></script>
+<!-- Scripts -->
+<script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="/js/historique.js"></script>
 </body>
 </html>

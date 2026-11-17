@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TransformLink - Raccourcisseur de liens | VirtTech</title>
+<title>Historique - VirtTech</title>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,15 +25,194 @@
     .sous-titre {
         color: var(--metal-fonce);
         font-size: 1rem;
-        margin-bottom: 24px;
-    }
-    h2 {
-        color: var(--ombre);
-        border-bottom-color: var(--or);
-        margin: 34px 0 14px;
+        margin-bottom: 26px;
     }
 
-    code {
+    /* =========================================
+       UNE ACTIVITÉ (sans carte)
+       ========================================= */
+    .activite {
+        padding: 22px 0 24px;
+        border-bottom: 1px solid rgba(22, 31, 39, .12);
+    }
+    .activite:last-of-type {
+        border-bottom: none;
+        padding-bottom: 10px;
+    }
+
+    .activite-tete {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .activite h2 {
+        margin: 0;
+        border-bottom: none;
+        font-size: 1.12rem;
+        min-width: 0;
+    }
+
+    .activite p {
+        margin-top: 10px;
+        font-size: .95rem;
+        line-height: 1.65;
+        color: #3F4C55;
+        max-width: 70ch;
+    }
+
+    /* Mots importants : gras + surlignage doré */
+    .activite strong {
+        font-weight: 800;
+        color: var(--ombre);
+        background: linear-gradient(180deg, transparent 55%, rgba(212,175,55,.5) 55%);
+        padding: 0 2px;
+    }
+
+    .lien-plus {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 10px;
+        font-size: .85rem;
+        font-weight: 800;
+        color: var(--metal-fonce);
+        text-decoration: none;
+        border-bottom: 2px solid var(--or);
+        padding-bottom: 2px;
+    }
+    .lien-plus i { color: var(--or); font-size: .75rem; }
+    .lien-plus:hover { color: var(--ombre); }
+
+    /* =========================================
+       BOUTON RUN
+       ========================================= */
+    .btn-run {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 17px;
+        border-radius: 30px;
+        border: 2px solid var(--or);
+        background: transparent;
+        color: var(--metal-fonce);
+        font-weight: 800;
+        font-size: .78rem;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background .3s, color .3s, transform .3s;
+    }
+    .btn-run i { color: var(--or); font-size: .75rem; transition: color .3s; }
+    .btn-run:hover,
+    .btn-run:focus-visible {
+        background: var(--or);
+        color: var(--ombre);
+        transform: translateY(-2px);
+    }
+    .btn-run:hover i,
+    .btn-run:focus-visible i { color: var(--ombre); }
+
+    /* =========================================
+       LE SLIDE
+       ========================================= */
+    .slide-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(22, 31, 39, .7);
+        backdrop-filter: blur(3px);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .3s, visibility 0s .3s;
+    }
+    .slide-overlay.ouvert {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity .3s;
+    }
+
+    .slide-panel {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 88vh;
+        max-height: 88vh;
+        background: var(--blanc);
+        border-radius: 25px 25px 0 0;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, .5);
+        z-index: 1001;
+        transform: translateY(100%);
+        visibility: hidden;
+        transition: transform .4s cubic-bezier(.22, .8, .3, 1), visibility 0s .4s;
+        display: flex;
+        flex-direction: column;
+    }
+    .slide-panel.ouvert {
+        transform: none;
+        visibility: visible;
+        transition: transform .4s cubic-bezier(.22, .8, .3, 1);
+    }
+
+    .slide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 20px;
+        background: var(--metal-fonce);
+        color: var(--blanc);
+        border-bottom: 3px solid var(--or);
+        border-radius: 25px 25px 0 0;
+        flex-shrink: 0;
+    }
+    .slide-header h3 {
+        font-size: 1.05rem;
+        margin: 0;
+    }
+    .btn-fermer-slide {
+        flex: none;
+        background: none;
+        border: none;
+        color: var(--blanc);
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: color .2s, transform .2s;
+    }
+    .btn-fermer-slide:hover { color: #ffb3b3; transform: scale(1.1); }
+
+    .slide-contenu {
+        padding: 22px 20px 32px;
+        overflow-y: auto;
+        flex: 1;
+    }
+    .slide-contenu p {
+        color: #3F4C55;
+        font-size: .95rem;
+        line-height: 1.7;
+        margin-bottom: 14px;
+    }
+    .slide-contenu h4 {
+        color: var(--metal-fonce);
+        font-size: 1rem;
+        margin: 22px 0 8px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid var(--surface);
+    }
+    .slide-contenu ul,
+    .slide-contenu ol {
+        margin: 0 0 14px 20px;
+        color: #3F4C55;
+        font-size: .95rem;
+        line-height: 1.7;
+    }
+    .slide-contenu li { margin-bottom: 4px; }
+    .slide-contenu strong { color: var(--ombre); }
+    .slide-contenu code {
         font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
         background: var(--surface);
         padding: 1px 5px;
@@ -41,324 +220,16 @@
         font-size: .88em;
         color: var(--metal-fonce);
     }
-
-    /* --- Texte d'intro --- */
-    .intro {
-        font-size: .98rem;
-        line-height: 1.7;
-        color: #3F4C55;
-        max-width: 70ch;
-        margin-bottom: 6px;
-    }
-
-    /* Mots importants : gras + surlignage doré */
-    .intro strong,
-    .liste-points strong {
-        font-weight: 800;
-        color: var(--ombre);
-        background: linear-gradient(180deg, transparent 55%, rgba(212,175,55,.5) 55%);
-        padding: 0 2px;
-    }
-
-    /* --- Liste des fonctions (sans carte) --- */
-    .liste-points {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-        max-width: 70ch;
-    }
-    .liste-points li {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-        font-size: .95rem;
-        line-height: 1.6;
-        color: #3F4C55;
-    }
-    .liste-points i {
-        color: var(--or);
-        font-size: 1rem;
-        margin-top: 4px;
-        flex: none;
-        width: 18px;
-        text-align: center;
-    }
-
-    /* --- Étapes --- */
-    .etapes {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        max-width: 70ch;
-        counter-reset: etape;
-    }
-    .etapes li {
-        counter-increment: etape;
-        display: flex;
-        gap: 12px;
-        align-items: baseline;
-        font-size: .95rem;
-        line-height: 1.6;
-        color: #3F4C55;
-    }
-    .etapes li::before {
-        content: counter(etape);
-        flex: none;
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background: var(--metal-fonce);
-        color: #fff;
-        font-size: .72rem;
-        font-weight: 800;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* --- Zone outil (centrée, largeur maîtrisée) --- */
-    .zone-outil {
-        max-width: 640px;
-        margin: 0 auto;
-    }
-
-    /* --- Le cadre de l'outil --- */
-    .cadre {
-        border: 1px solid #d9e0e4;
-        border-radius: 16px;
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 10px 30px rgba(22,31,39,.12);
-    }
-    .cadre-barre {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        padding: 9px 12px;
-        background: #eef2f4;
-        border-bottom: 1px solid #e1e7ea;
-    }
-    .cadre-barre i { width: 7px; height: 7px; border-radius: 50%; background: #c3ccd2; flex: none; }
-    .cadre-barre em {
-        margin-left: 6px;
-        font-style: normal;
-        font-size: .72rem;
-        color: #7b8891;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .cadre-corps {
-        padding: 18px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .cadre-corps label {
-        font-weight: 700;
-        font-size: .85rem;
+    .slide-contenu a {
         color: var(--metal-fonce);
-        margin: 10px 0 6px;
-    }
-    .cadre-corps label:first-child { margin-top: 0; }
-
-    .cadre-corps input {
-        width: 100%;
-        padding: 14px;
-        border: 2px solid #dbe2e6;
-        border-radius: 12px;
-        font-size: 16px; /* évite le zoom auto sur iOS */
-        background: #fbfcfd;
-        color: var(--ombre);
-        transition: border-color .3s, box-shadow .3s;
-    }
-    .cadre-corps input:focus {
-        outline: none;
-        border-color: var(--or);
-        box-shadow: 0 0 0 4px rgba(212,175,55,.18);
-    }
-
-    .btn-principal {
-        margin-top: 16px;
-        width: 100%;
-        padding: 15px;
-        background: var(--metal-fonce);
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        font-size: 1rem;
         font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        cursor: pointer;
-        transition: background .3s, color .3s, transform .3s;
-    }
-    .btn-principal:hover { background: var(--or); color: var(--ombre); }
-    .btn-principal:disabled { opacity: .65; cursor: not-allowed; transform: none; }
-
-    /* --- Résultat --- */
-    .resultat {
-        display: none;
-        margin-top: 16px;
-        padding: 14px;
-        background: #f3f7f4;
-        border: 1px solid #cfe8d8;
-        border-radius: 12px;
-    }
-    .resultat.visible { display: block; }
-    .resultat > span {
-        display: block;
-        font-size: .8rem;
-        color: #4a6a56;
-        margin-bottom: 6px;
-    }
-    .resultat .lien {
-        display: block;
-        font-weight: 800;
-        color: #245c3c;
-        word-break: break-all;
-        margin-bottom: 12px;
+        border-bottom: 2px solid var(--or);
         text-decoration: none;
     }
-    .resultat .lien:hover { text-decoration: underline; }
 
-    .btn-copier {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 14px;
-        background: #fff;
-        color: var(--metal-fonce);
-        border: 1px solid #cfe8d8;
-        border-radius: 9px;
-        font-weight: 700;
-        font-size: .82rem;
-        cursor: pointer;
-        transition: background .3s, color .3s;
-    }
-    .btn-copier:hover { background: #245c3c; color: #fff; border-color: #245c3c; }
-
-    /* --- Erreur --- */
-    .erreur {
-        display: none;
-        margin-top: 12px;
-        padding: 10px 12px;
-        background: rgba(198,40,40,.08);
-        border: 1px solid rgba(198,40,40,.25);
-        border-radius: 10px;
-        color: #a02020;
-        font-size: .85rem;
-        font-weight: 600;
-    }
-    .erreur.visible { display: block; }
-
-    /* --- Bouton "Voir mes liens" --- */
-    .btn-mes-liens {
-        margin-top: 26px;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 14px;
-        border-radius: 30px;
-        border: 2px solid var(--metal-fonce);
-        background: transparent;
-        color: var(--metal-fonce);
-        font-weight: 800;
-        font-size: .92rem;
-        cursor: pointer;
-        transition: background .3s, color .3s;
-    }
-    .btn-mes-liens:hover { background: var(--metal-fonce); color: #fff; }
-    .btn-mes-liens i { color: var(--or); }
-    .btn-mes-liens:hover i { color: var(--or); }
-    .btn-mes-liens span { font-weight: 700; opacity: .8; }
-
-    /* --- Liste des liens --- */
-    .liste-liens {
-        margin-top: 18px;
-        border-top: 1px solid rgba(22,31,39,.12);
-    }
-    .liste-liens[hidden] { display: none; }
-
-    .liens-entete {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        padding: 14px 0 8px;
-        font-size: .78rem;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        color: #7b8891;
-        font-weight: 700;
-    }
-    .liens-vider {
-        background: none;
-        border: none;
-        padding: 0;
-        color: #a02020;
-        font-size: .78rem;
-        font-weight: 700;
-        text-decoration: underline;
-        cursor: pointer;
-    }
-    .liens-vider[hidden] { display: none; }
-
-    .lien-item {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 4px 12px;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(22,31,39,.08);
-    }
-    .lien-item a {
-        font-weight: 800;
-        color: #8a6d1a;
-        text-decoration: none;
-        word-break: break-all;
-    }
-    .lien-item a:hover { text-decoration: underline; }
-    .lien-source {
-        flex: 1 1 100%;
-        font-size: .76rem;
-        color: #8b969d;
-        word-break: break-all;
-    }
-    .lien-item time {
-        font-size: .74rem;
-        color: #95a1a9;
-    }
-    .btn-copier-lien {
-        margin-left: auto;
-        background: #f1f4f6;
-        border: 1px solid #dfe5e9;
-        border-radius: 8px;
-        padding: 6px 9px;
-        color: var(--metal-fonce);
-        cursor: pointer;
-        transition: background .3s, color .3s;
-    }
-    .btn-copier-lien:hover { background: var(--metal-fonce); color: #fff; }
-
-    .liens-vide {
-        padding: 18px 0;
-        color: #7b8891;
-        font-size: .85rem;
-        text-align: center;
-    }
-
-    /* --- Animations --- */
+    /* =========================================
+       ANIMATIONS
+       ========================================= */
     .js .reveal {
         opacity: 0;
         transform: translateY(28px);
@@ -375,12 +246,15 @@
        DESKTOP
        ========================================= */
     @media (min-width: 768px) {
-        h1 { font-size: 2.6rem; }
+        h1 { font-size: 2.5rem; }
         .sous-titre { font-size: 1.1rem; }
-        .intro { font-size: 1.05rem; }
-        .liste-points li, .etapes li { font-size: 1rem; }
-        .cadre-corps { padding: 26px; }
-        .cadre-barre { padding: 10px 14px; }
+        .activite { padding: 28px 0 30px; }
+        .activite h2 { font-size: 1.25rem; }
+        .activite p { font-size: 1rem; }
+        .slide-panel { height: 80vh; max-height: 80vh; }
+        .slide-header { padding: 20px 26px; }
+        .slide-contenu { padding: 26px 26px 40px; }
+        .slide-header h3 { font-size: 1.2rem; }
     }
 </style>
 
@@ -393,334 +267,189 @@
 
 <div class="contenu">
 
-    <h1 class="reveal">TransformLink</h1>
-    <p class="sous-titre reveal">Le raccourcisseur de liens de VirtTech.</p>
+    <h1 class="reveal">Historique d'activité</h1>
+    <p class="sous-titre reveal">Retrouve les concours, les formations et les cours de VirtTech.</p>
 
-    <p class="intro reveal">
-        Un lien GitHub de 90 caractères, c'est illisible dans une conversation WhatsApp.
-        TransformLink le transforme en <strong>lien court</strong> et <strong>personnalisé</strong> :
-        <code>virttech.site/mon-projet</code>. Plus propre, plus facile à retenir, plus pro à partager.
-    </p>
-
-    <h2 class="reveal">Ce que tu peux faire</h2>
-    <ul class="liste-points reveal">
-        <li>
-            <i class="fa-solid fa-scissors" aria-hidden="true"></i>
-            <span><strong>Raccourcir</strong> n'importe quel lien : projet GitHub, portfolio, site en ligne.</span>
-        </li>
-        <li>
-            <i class="fa-solid fa-tag" aria-hidden="true"></i>
-            <span><strong>Choisir le nom</strong> de ton lien (<code>mon-projet</code>) ou laisser VirtTech en générer un au hasard.</span>
-        </li>
-        <li>
-            <i class="fa-solid fa-copy" aria-hidden="true"></i>
-            <span><strong>Copier</strong> le résultat en un clic pour le coller dans une bio, un message ou un CV.</span>
-        </li>
-        <li>
-            <i class="fa-solid fa-server" aria-hidden="true"></i>
-            <span>Comprendre ce qu'un <strong>serveur</strong> fait pour toi : il stocke le lien et redirige les visiteurs.</span>
-        </li>
-    </ul>
-
-    <h2 class="reveal">Comment ça marche</h2>
-    <ol class="etapes reveal">
-        <li>Colle ton lien long dans le champ.</li>
-        <li>Choisis un mot-clé (ou laisse vide).</li>
-        <li>Clique sur « Créer le lien ».</li>
-        <li>Copie et partage.</li>
-    </ol>
-
-    <!-- ===== L'OUTIL, DANS SON CADRE ===== -->
-    <div class="zone-outil">
-        <h2 class="reveal">Essaie maintenant</h2>
-
-        <section class="cadre reveal" aria-label="Outil de raccourcissement de liens">
-            <div class="cadre-barre" aria-hidden="true"><i></i><i></i><i></i><em>virttech.site/transformlink</em></div>
-
-            <form class="cadre-corps" id="formLien" novalidate>
-                <label for="urlOriginale">Lien long (URL)</label>
-                <input type="url" id="urlOriginale" name="url" placeholder="https://github.com/ton-profil/mon-projet" autocomplete="url" required>
-
-                <label for="codePersonnalise">Mot-clé (optionnel)</label>
-                <input type="text" id="codePersonnalise" name="code" placeholder="mon-projet" maxlength="20" autocomplete="off">
-
-                <button type="submit" id="btnRaccourcir" class="btn-principal">
-                    <i class="fa-solid fa-scissors" aria-hidden="true"></i> Créer le lien
-                </button>
-
-                <div class="resultat" id="resultatBox">
-                    <span>Ton lien court est prêt :</span>
-                    <a class="lien" id="lienCourt" href="#" target="_blank" rel="noopener"></a>
-                    <button type="button" class="btn-copier" id="btnCopier">
-                        <i class="fa-solid fa-copy" aria-hidden="true"></i> Copier
-                    </button>
-                </div>
-
-                <p class="erreur" id="errorMsg" role="alert"></p>
-            </form>
-        </section>
-
-        <!-- ===== MES LIENS (localStorage) ===== -->
-        <button type="button" class="btn-mes-liens" id="btnMesLiens" aria-expanded="false" aria-controls="listeLiens">
-            <i class="fa-solid fa-list" aria-hidden="true"></i>
-            Voir mes liens raccourcis <span id="nbLiens">(0)</span>
-        </button>
-
-        <div class="liste-liens" id="listeLiens" hidden>
-            <div class="liens-entete">
-                <span>Mes liens</span>
-                <button type="button" id="btnVider" class="liens-vider" hidden>Tout effacer</button>
-            </div>
-            <div id="listeItems"></div>
+    <!-- 1 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Concours Virt_Dev</h2>
+            <button class="btn-run" data-slide="virtdev"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
         </div>
-    </div>
+        <p>Du <strong>30 octobre</strong> au <strong>4 novembre 2026</strong>, les participants devaient reproduire une page de connexion en HTML et CSS. <strong>Horo David</strong> remporte la 1re place, <strong>Koudouss</strong> la 2e.</p>
+        <a class="lien-plus" href="/virt-dev">Voir les résultats <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </article>
 
+    <!-- 2 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Formation : arborescence et liaison</h2>
+            <button class="btn-run" data-slide="arborescence"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
+        </div>
+        <p>Un projet web, ce sont des fichiers rangés dans des dossiers. On a appris à créer une <strong>arborescence claire</strong> et à <strong>lier le CSS et le JS</strong> au HTML.</p>
+    </article>
+
+    <!-- 3 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Cours : les codes d'erreur du web</h2>
+            <button class="btn-run" data-slide="erreurs"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
+        </div>
+        <p><strong>404</strong>, <strong>403</strong>, <strong>500</strong>… Chaque erreur a un numéro et une famille. Savoir les lire, c'est déjà la moitié du diagnostic.</p>
+    </article>
+
+    <!-- 4 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Cours : corriger ces erreurs</h2>
+            <button class="btn-run" data-slide="corriger"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
+        </div>
+        <p>Lire le code, comprendre la famille, vérifier le chemin du fichier, regarder la console : une <strong>méthode simple</strong> pour ne plus rester bloqué devant une erreur.</p>
+    </article>
+
+    <!-- 5 -->
+    <article class="activite reveal">
+        <div class="activite-tete">
+            <h2>Cours : les balises HTML usuelles</h2>
+            <button class="btn-run" data-slide="balises"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
+        </div>
+        <p><code>h1</code>, <code>p</code>, <code>a</code>, <code>img</code>… Chaque balise a un <strong>rôle précis</strong>. Voici celles que tu utiliseras tous les jours.</p>
+    </article>
+
+</div>
+
+<!-- ===== SLIDE ===== -->
+<div class="slide-overlay" id="slide-overlay"></div>
+
+<div class="slide-panel" id="slide-panel" role="dialog" aria-modal="true" aria-labelledby="slide-title">
+    <div class="slide-header">
+        <h3 id="slide-title">Chargement…</h3>
+        <button class="btn-fermer-slide" id="btn-fermer-slide" aria-label="Fermer le cours">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+    </div>
+    <div class="slide-contenu" id="slide-contenu"></div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
     // ---------------------------------------------------------------
-    // Stockage local de l'historique
+    // Contenu minimal des cours (démo)
     // ---------------------------------------------------------------
-    const CLE = "virttech_liens";
-
-    function lireLiens() {
-        try {
-            const v = JSON.parse(localStorage.getItem(CLE) || "[]");
-            return Array.isArray(v) ? v : [];
-        } catch (e) {
-            return [];
+    const cours = {
+        virtdev: {
+            titre: "Concours Virt_Dev",
+            contenu: `
+                <p><strong>30 octobre → 4 novembre 2026.</strong> Les participants devaient reproduire une page de connexion en HTML et CSS. L'IA était autorisée.</p>
+                <h4>Podium</h4>
+                <ul>
+                    <li><strong>1re place :</strong> Horo David — 2 000 F CFA</li>
+                    <li><strong>2e place :</strong> Koudouss — 1 000 F CFA</li>
+                </ul>
+                <p><a href="/virt-dev">Voir la page des résultats <i class="fa-solid fa-arrow-right"></i></a></p>
+            `
+        },
+        arborescence: {
+            titre: "Formation : arborescence et liaison",
+            contenu: `
+                <p>Un projet web, c'est des fichiers rangés dans des dossiers :</p>
+                <ul>
+                    <li><code>index.html</code> — la page</li>
+                    <li><code>css/style.css</code> — le style</li>
+                    <li><code>js/script.js</code> — les interactions</li>
+                </ul>
+                <p>La règle : on met le <strong>nom du dossier</strong>, puis un slash, jusqu'au fichier.</p>
+            `
+        },
+        erreurs: {
+            titre: "Cours : les codes d'erreur du web",
+            contenu: `
+                <p>Chaque erreur a un numéro. La famille indique qui est en cause :</p>
+                <ul>
+                    <li><strong>4xx</strong> — le visiteur (mauvaise adresse, accès refusé…)</li>
+                    <li><strong>5xx</strong> — le serveur (bug, panne…)</li>
+                </ul>
+                <h4>Les plus courantes</h4>
+                <p><strong>404</strong> page introuvable · <strong>403</strong> accès refusé · <strong>500</strong> erreur du serveur · <strong>503</strong> service indisponible.</p>
+            `
+        },
+        corriger: {
+            titre: "Cours : corriger ces erreurs",
+            contenu: `
+                <p>La méthode en 4 temps :</p>
+                <ol>
+                    <li>Lire le code (404, 403, 500…).</li>
+                    <li>Comprendre la famille : 4xx = toi, 5xx = le serveur.</li>
+                    <li>Vérifier le chemin et le nom du fichier.</li>
+                    <li>Regarder la console (F12) et les logs.</li>
+                </ol>
+            `
+        },
+        balises: {
+            titre: "Cours : les balises HTML usuelles",
+            contenu: `
+                <p>Quelques balises et leur rôle :</p>
+                <ul>
+                    <li><code>h1</code> — le titre principal</li>
+                    <li><code>p</code> — un paragraphe</li>
+                    <li><code>a</code> — un lien</li>
+                    <li><code>img</code> — une image</li>
+                    <li><code>ul</code> / <code>li</code> — une liste</li>
+                </ul>
+            `
         }
-    }
-
-    function ecrireLiens(liens) {
-        try {
-            localStorage.setItem(CLE, JSON.stringify(liens.slice(0, 50)));
-        } catch (e) { /* stockage plein ou bloqué */ }
-    }
+    };
 
     // ---------------------------------------------------------------
-    // Éléments de la page
+    // Ouverture / fermeture du slide
     // ---------------------------------------------------------------
-    const form = document.getElementById("formLien");
-    const urlInput = document.getElementById("urlOriginale");
-    const codeInput = document.getElementById("codePersonnalise");
-    const btn = document.getElementById("btnRaccourcir");
-    const resultat = document.getElementById("resultatBox");
-    const lienCourt = document.getElementById("lienCourt");
-    const btnCopier = document.getElementById("btnCopier");
-    const erreur = document.getElementById("errorMsg");
+    const overlay = document.getElementById("slide-overlay");
+    const panel = document.getElementById("slide-panel");
+    const titre = document.getElementById("slide-title");
+    const contenu = document.getElementById("slide-contenu");
+    const fermer = document.getElementById("btn-fermer-slide");
 
-    const btnMesLiens = document.getElementById("btnMesLiens");
-    const nbLiens = document.getElementById("nbLiens");
-    const liste = document.getElementById("listeLiens");
-    const listeItems = document.getElementById("listeItems");
-    const btnVider = document.getElementById("btnVider");
+    let dernierFocus = null;
 
-    // ---------------------------------------------------------------
-    // Utilitaires
-    // ---------------------------------------------------------------
-    function afficherErreur(message) {
-        erreur.textContent = message;
-        erreur.classList.add("visible");
+    function ouvrirSlide(id, declencheur) {
+        const data = cours[id];
+        if (!data) return;
+
+        titre.textContent = data.titre;
+        contenu.innerHTML = data.contenu;
+        contenu.scrollTop = 0;
+        dernierFocus = declencheur || document.activeElement;
+
+        overlay.classList.add("ouvert");
+        panel.classList.add("ouvert");
+        document.body.style.overflow = "hidden";
+        fermer.focus();
     }
 
-    function cacherErreur() {
-        erreur.textContent = "";
-        erreur.classList.remove("visible");
+    function fermerSlide() {
+        overlay.classList.remove("ouvert");
+        panel.classList.remove("ouvert");
+        document.body.style.overflow = "";
+        if (dernierFocus) dernierFocus.focus();
     }
 
-    function codeAleatoire() {
-        const caracteres = "abcdefghijkmnpqrstuvwxyz23456789";
-        let code = "";
-        for (let i = 0; i < 6; i++) {
-            code += caracteres[Math.floor(Math.random() * caracteres.length)];
-        }
-        return code;
-    }
-
-    async function copier(texte, bouton, contenuRepos) {
-        try {
-            await navigator.clipboard.writeText(texte);
-            bouton.innerHTML = '<i class="fa-solid fa-check"></i> Copié';
-            setTimeout(function () { bouton.innerHTML = contenuRepos; }, 1800);
-        } catch (e) {
-            afficherErreur("Impossible de copier automatiquement. Sélectionne le lien à la main.");
-        }
-    }
-
-    // ---------------------------------------------------------------
-    // Liste : affichage
-    // ---------------------------------------------------------------
-    function afficherListe() {
-        const liens = lireLiens();
-
-        nbLiens.textContent = "(" + liens.length + ")";
-        btnVider.hidden = liens.length === 0;
-        listeItems.innerHTML = "";
-
-        if (liens.length === 0) {
-            const vide = document.createElement("p");
-            vide.className = "liens-vide";
-            vide.textContent = "Tu n'as pas encore créé de lien. Ton premier lien apparaîtra ici.";
-            listeItems.appendChild(vide);
-            return;
-        }
-
-        liens.forEach(function (l) {
-            const ligne = document.createElement("div");
-            ligne.className = "lien-item";
-
-            const lien = document.createElement("a");
-            lien.href = l.short;
-            lien.target = "_blank";
-            lien.rel = "noopener";
-            lien.textContent = String(l.short).replace(/^https?:\/\//, "");
-
-            const source = document.createElement("span");
-            source.className = "lien-source";
-            source.textContent = l.url;
-
-            const date = document.createElement("time");
-            date.textContent = new Date(l.date).toLocaleDateString("fr-FR", {
-                day: "2-digit", month: "short", year: "numeric"
-            });
-
-            const copierBtn = document.createElement("button");
-            copierBtn.type = "button";
-            copierBtn.className = "btn-copier-lien";
-            copierBtn.dataset.lien = l.short;
-            copierBtn.setAttribute("aria-label", "Copier " + l.short);
-            copierBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
-
-            ligne.append(lien, source, date, copierBtn);
-            listeItems.appendChild(ligne);
+    document.querySelectorAll(".btn-run").forEach(function (bouton) {
+        bouton.addEventListener("click", function () {
+            ouvrirSlide(bouton.dataset.slide, bouton);
         });
-    }
+    });
 
-    // ---------------------------------------------------------------
-    // Création d'un lien
-    // ---------------------------------------------------------------
-    form.addEventListener("submit", async function (e) {
-        e.preventDefault();
-        cacherErreur();
-        resultat.classList.remove("visible");
+    overlay.addEventListener("click", fermerSlide);
+    fermer.addEventListener("click", fermerSlide);
 
-        const urlBrute = urlInput.value.trim();
-        if (!urlBrute) {
-            afficherErreur("Colle d'abord un lien à raccourcir.");
-            urlInput.focus();
-            return;
-        }
-
-        let adresse;
-        try {
-            adresse = new URL(urlBrute);
-        } catch (err) {
-            afficherErreur("Ce lien n'est pas valide. Exemple : https://github.com/ton-profil/mon-projet");
-            urlInput.focus();
-            return;
-        }
-
-        if (adresse.protocol !== "http:" && adresse.protocol !== "https:") {
-            afficherErreur("Le lien doit commencer par http:// ou https://");
-            urlInput.focus();
-            return;
-        }
-
-        let code = codeInput.value.trim().toLowerCase();
-
-        if (code && !/^[a-z0-9-]{1,20}$/.test(code)) {
-            afficherErreur("Le mot-clé doit contenir uniquement des lettres, des chiffres ou des tirets (20 caractères max).");
-            codeInput.focus();
-            return;
-        }
-
-        const codeFinal = code || codeAleatoire();
-
-        btn.disabled = true;
-        const contenuBouton = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Création…';
-
-        try {
-            const reponse = await fetch("/api/shorten", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ url: urlBrute, code: codeFinal })
-            });
-
-            const data = await reponse.json();
-
-            if (!data.succes) {
-                afficherErreur(data.message || "Ce lien n'a pas pu être créé.");
-                return;
-            }
-
-            lienCourt.textContent = data.short_url;
-            lienCourt.href = data.short_url;
-            resultat.classList.add("visible");
-
-            const liens = lireLiens();
-            liens.unshift({
-                url: data.original_url || urlBrute,
-                short: data.short_url,
-                date: new Date().toISOString()
-            });
-            ecrireLiens(liens);
-            afficherListe();
-
-            urlInput.value = "";
-            codeInput.value = "";
-        } catch (err) {
-            afficherErreur("Erreur de connexion au serveur. Réessaie dans un instant.");
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = contenuBouton;
-        }
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && panel.classList.contains("ouvert")) fermerSlide();
     });
 
     // ---------------------------------------------------------------
-    // Copier le dernier lien créé
-    // ---------------------------------------------------------------
-    btnCopier.addEventListener("click", function () {
-        copier(lienCourt.textContent, btnCopier, '<i class="fa-solid fa-copy"></i> Copier');
-    });
-
-    // ---------------------------------------------------------------
-    // Copier un lien de la liste (délégation)
-    // ---------------------------------------------------------------
-    listeItems.addEventListener("click", function (e) {
-        const bouton = e.target.closest("button[data-lien]");
-        if (!bouton) return;
-        copier(bouton.dataset.lien, bouton, '<i class="fa-solid fa-copy"></i>');
-    });
-
-    // ---------------------------------------------------------------
-    // Afficher / masquer la liste
-    // ---------------------------------------------------------------
-    btnMesLiens.addEventListener("click", function () {
-        const ouvert = !liste.hidden;
-        liste.hidden = ouvert;
-        btnMesLiens.setAttribute("aria-expanded", String(!ouvert));
-        if (!ouvert) liste.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    });
-
-    // ---------------------------------------------------------------
-    // Tout effacer
-    // ---------------------------------------------------------------
-    btnVider.addEventListener("click", function () {
-        if (!confirm("Effacer la liste ? Les liens raccourcis continueront de fonctionner.")) return;
-        localStorage.removeItem(CLE);
-        afficherListe();
-    });
-
-    // ---------------------------------------------------------------
-    // Démarrage
-    // ---------------------------------------------------------------
-    afficherListe();
-
     // Animations d'apparition
+    // ---------------------------------------------------------------
     var els = document.querySelectorAll(".reveal");
     if ("IntersectionObserver" in window) {
         var io = new IntersectionObserver(function (entries) {
