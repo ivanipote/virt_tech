@@ -3,411 +3,384 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modèle 4 - Mobile First</title>
+<title>TransformLink - Raccourcisseur de liens | VirtTech</title>
 
-<!-- Font Awesome (icônes de la bannière, des compétences et des outils) -->
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Styles du site : variables, header/menu, bannière -->
+<!-- Styles du site -->
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
-<link rel="stylesheet" href="/css/index.css">
 
 <style>
-    :root {
-        --fond: #CED3D6;
-        --blanc: #FFFFFF;
-        --metal-fonce: #323F48;
-        --ombre: #161F27;
-        --or: #D4AF37;
-    }
-
     /* =========================================
-       LE Z-PATTERN (Garder la même structure)
+       BASE MOBILE FIRST
        ========================================= */
-    .z-pattern-container {
-        max-width: 900px;
-        width: 100%;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 15px; /* Espace réduit sur mobile */
-    }
-
-    .z-row { 
-        display: flex; 
-        align-items: center; /* Centre verticalement */
-        gap: 15px; 
-        background: var(--blanc);
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(22,31,39,0.08);
-        border: 1px solid #e0e0e0;
-    }
-    
-    /* Inversion des lignes paires */
-    .z-row.reverse { 
-        flex-direction: row-reverse; 
-    }
-
-    /* --- L'ICÔNE --- */
-    .z-icon { 
-        flex: 0 0 50px; /* Taille réduite sur mobile */
-        height: 50px; 
-        background: linear-gradient(135deg, var(--metal-fonce), var(--ombre));
-        border-radius: 12px; 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        font-size: 1.3rem; 
-        color: var(--or); 
-    }
-
-    /* --- LE CONTENU (Titre + Texte) --- */
-    .z-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* Titre surligné */
-    .z-content h3 { 
-        margin: 0 0 5px 0; 
-        color: var(--metal-fonce); 
-        font-size: 1.1rem; /* Plus petit sur mobile */
-        display: inline-block;
-        background: linear-gradient(180deg, transparent 50%, rgba(212, 175, 55, 0.3) 50%);
-        padding: 0 5px;
-    }
-
-    .z-content p { 
-        margin: 0; 
-        color: #4A5A66; 
-        line-height: 1.5; 
-        font-size: 0.85rem; /* Texte plus petit */
-    }
-
-    /* =========================================
-       VERSION ORDINATEUR (Agrandir les éléments)
-       ========================================= */
-    @media (min-width: 768px) {
-        .z-pattern-container { gap: 25px; }
-        .z-row { gap: 25px; padding: 30px; }
-        .z-icon { flex: 0 0 70px; height: 70px; font-size: 1.8rem; }
-        .z-content h3 { font-size: 1.3rem; margin-bottom: 10px; }
-        .z-content p { font-size: 0.95rem; line-height: 1.7; }
-    }
-
-    /* =========================================
-       NOS OUTILS (sans carte : l'info vit dans la page)
-       ========================================= */
-    .intro-outils {
-        color: var(--metal-fonce);
-        font-size: .95rem;
-        max-width: 640px;
-        margin: -6px 0 26px;
-    }
-
-    .outils-liste {
-        max-width: 820px;
-        display: flex;
-        flex-direction: column;
-        gap: 34px;
-    }
-
-    .outil h3 {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 1.15rem;
+    h1 {
+        font-size: 1.9rem;
+        line-height: 1.15;
         color: var(--ombre);
+        margin-bottom: 6px;
     }
-    .outil h3 i { color: var(--or); font-size: 1.05rem; }
+    .sous-titre {
+        color: var(--metal-fonce);
+        font-size: 1rem;
+        margin-bottom: 24px;
+    }
+    h2 {
+        color: var(--ombre);
+        border-bottom-color: var(--or);
+        margin: 34px 0 14px;
+    }
 
-    .outil-accroche {
-        margin: 6px 0 4px;
-        font-size: .95rem;
-        font-weight: 700;
+    code {
+        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+        background: var(--surface);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: .88em;
         color: var(--metal-fonce);
     }
 
-    .outil-desc {
-        margin: 0 0 14px;
-        font-size: .93rem;
-        line-height: 1.6;
+    /* --- Texte d'intro --- */
+    .intro {
+        font-size: .98rem;
+        line-height: 1.7;
         color: #3F4C55;
         max-width: 70ch;
+        margin-bottom: 6px;
     }
 
-    /* Les mots importants : gras + surlignage doré */
-    .outil-desc strong {
+    /* Mots importants : gras + surlignage doré */
+    .intro strong,
+    .liste-points strong {
         font-weight: 800;
         color: var(--ombre);
-        background: linear-gradient(180deg, transparent 55%, rgba(212, 175, 55, .5) 55%);
+        background: linear-gradient(180deg, transparent 55%, rgba(212,175,55,.5) 55%);
         padding: 0 2px;
     }
 
-    /* --- Le cadre d'aperçu (cliquable) --- */
-    .apercu {
-        display: block;
-        max-width: 100%;
+    /* --- Liste des fonctions (sans carte) --- */
+    .liste-points {
+        list-style: none;
+        padding: 0;
         margin: 0;
-        text-decoration: none;
-        border: 1px solid #d9e0e4;
-        border-radius: 14px;
-        overflow: hidden;
-        background: #fff;
-        box-shadow: 0 2px 6px rgba(22,31,39,.05);
-        transition: border-color .3s, transform .3s, box-shadow .3s;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-width: 70ch;
     }
-    .apercu:hover, .apercu:focus-visible {
-        border-color: var(--or);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 22px rgba(22,31,39,.16);
+    .liste-points li {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        font-size: .95rem;
+        line-height: 1.6;
+        color: #3F4C55;
+    }
+    .liste-points i {
+        color: var(--or);
+        font-size: 1rem;
+        margin-top: 4px;
+        flex: none;
+        width: 18px;
+        text-align: center;
     }
 
-    .apercu-barre {
+    /* --- Étapes --- */
+    .etapes {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-width: 70ch;
+        counter-reset: etape;
+    }
+    .etapes li {
+        counter-increment: etape;
+        display: flex;
+        gap: 12px;
+        align-items: baseline;
+        font-size: .95rem;
+        line-height: 1.6;
+        color: #3F4C55;
+    }
+    .etapes li::before {
+        content: counter(etape);
+        flex: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--metal-fonce);
+        color: #fff;
+        font-size: .72rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* --- Zone outil (centrée, largeur maîtrisée) --- */
+    .zone-outil {
+        max-width: 640px;
+        margin: 0 auto;
+    }
+
+    /* --- Le cadre de l'outil --- */
+    .cadre {
+        border: 1px solid #d9e0e4;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(22,31,39,.12);
+    }
+    .cadre-barre {
         display: flex;
         align-items: center;
-        gap: 4px;
-        padding: 6px 8px;
+        gap: 5px;
+        padding: 9px 12px;
         background: #eef2f4;
         border-bottom: 1px solid #e1e7ea;
     }
-    .apercu-barre i { width: 6px; height: 6px; border-radius: 50%; background: #c3ccd2; flex: none; }
-    .apercu-barre em {
-        margin-left: 4px;
+    .cadre-barre i { width: 7px; height: 7px; border-radius: 50%; background: #c3ccd2; flex: none; }
+    .cadre-barre em {
+        margin-left: 6px;
         font-style: normal;
-        font-size: 7px;
+        font-size: .72rem;
         color: #7b8891;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
-    .apercu-ecran {
-        display: block;
-        height: clamp(118px, 16vw, 185px);
-        padding: 8px;
-        background: linear-gradient(180deg, #f8fafb, #eef2f4);
-        overflow: hidden;
-    }
-
-    .apercu-cta {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        padding: 8px 10px;
-        font-size: .8rem;
-        font-weight: 800;
-        color: var(--metal-fonce);
-        border-top: 1px solid #eef2f4;
-    }
-    .apercu-cta b { color: var(--or); transition: transform .3s; }
-    .apercu:hover .apercu-cta b { transform: translateX(4px); }
-
-    /* --- Mini-éditeur (VirtEmulator) --- */
-    .mock-onglets { display: flex; gap: 3px; margin-bottom: 5px; }
-    .mock-onglets span {
-        background: #dfe6ea;
-        color: #5b6873;
-        border-radius: 4px 4px 0 0;
-        padding: 1px 6px;
-        font-size: 6.5px;
-        font-weight: 700;
-    }
-    .mock-onglets .on { background: var(--metal-fonce); color: #fff; }
-
-    .mock-code {
+    .cadre-corps {
+        padding: 18px;
         display: flex;
         flex-direction: column;
-        gap: 3px;
-        background: #1e2a33;
-        border-radius: 5px;
-        padding: 6px;
     }
-    .mock-code i { display: block; height: 3px; border-radius: 2px; }
-    .mock-code i:nth-child(1) { width: 62%; background: #7fd1a6; }
-    .mock-code i:nth-child(2) { width: 38%; background: #f2c46b; }
-    .mock-code i:nth-child(3) { width: 74%; background: #8fb8ff; }
-    .mock-code i:nth-child(4) { width: 30%; background: #cfd8de; }
 
-    .mock-pied { display: flex; align-items: center; gap: 5px; margin-top: 6px; }
-    .mock-run {
-        background: var(--or);
-        color: var(--ombre);
-        border-radius: 4px;
-        padding: 2px 6px;
-        font-size: 6.5px;
-        font-weight: 800;
-    }
-    .mock-run i { font-size: 5.5px; margin-right: 2px; }
-    .mock-rendu {
-        flex: 1;
-        background: #fff;
-        border: 1px solid #dbe2e6;
-        border-radius: 4px;
-        padding: 2px 6px;
-        font-size: 6.5px;
+    .cadre-corps label {
         font-weight: 700;
-        color: var(--metal-fonce);
-    }
-
-    /* --- Mini-raccourcisseur (TransformLink) --- */
-    .mock-champ {
-        display: block;
-        background: #fff;
-        border: 1px solid #d5dde2;
-        border-radius: 5px;
-        padding: 4px 5px;
-        font-size: 6.5px;
-        color: #7b8891;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .mock-bouton {
-        display: inline-block;
-        background: var(--metal-fonce);
-        color: #fff;
-        border-radius: 5px;
-        padding: 3px 7px;
-        font-size: 6.5px;
-        font-weight: 800;
-        margin: 6px 0;
-    }
-    .mock-bouton i { font-size: 5.5px; margin-right: 2px; }
-    .mock-resultat {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        background: #fff;
-        border: 1px solid #cfe8d8;
-        border-radius: 5px;
-        padding: 4px 5px;
-        font-size: 6.5px;
-        font-weight: 700;
-        color: #245c3c;
-    }
-    .mock-resultat i { font-size: 5.5px; }
-    .mock-resultat b {
-        margin-left: auto;
-        background: #eaf6ef;
-        border: 1px solid #cfe8d8;
-        border-radius: 4px;
-        padding: 1px 4px;
-    }
-
-    /* --- Mini-astuce (Astuces) --- */
-    .mock-entete {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-size: 6.5px;
-        color: var(--metal-fonce);
-    }
-    .mock-entete span {
-        background: #f6ead0;
-        color: #8a6d1a;
-        border-radius: 10px;
-        padding: 1px 5px;
-        font-weight: 800;
-    }
-    .mock-titre-astuce {
-        display: block;
-        font-size: 8px;
-        font-weight: 800;
-        color: var(--ombre);
-        margin: 5px 0 4px;
-    }
-    .mock-stats {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 6.5px;
-        color: #7b8891;
-        margin-top: 5px;
-    }
-    .mock-stats i { font-size: 6px; }
-
-    /* --- Et aussi --- */
-    .outils-plus {
-        margin-top: 20px;
         font-size: .85rem;
         color: var(--metal-fonce);
+        margin: 10px 0 6px;
     }
-    .outils-plus a {
-        color: var(--metal-fonce);
+    .cadre-corps label:first-child { margin-top: 0; }
+
+    .cadre-corps input {
+        width: 100%;
+        padding: 14px;
+        border: 2px solid #dbe2e6;
+        border-radius: 12px;
+        font-size: 16px; /* évite le zoom auto sur iOS */
+        background: #fbfcfd;
+        color: var(--ombre);
+        transition: border-color .3s, box-shadow .3s;
+    }
+    .cadre-corps input:focus {
+        outline: none;
+        border-color: var(--or);
+        box-shadow: 0 0 0 4px rgba(212,175,55,.18);
+    }
+
+    .btn-principal {
+        margin-top: 16px;
+        width: 100%;
+        padding: 15px;
+        background: var(--metal-fonce);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
         font-weight: 800;
-        text-decoration: underline;
-        text-decoration-color: var(--or);
-        text-underline-offset: 3px;
-    }
-    .outils-plus i { color: var(--or); margin-right: 4px; }
-
-    /* =========================================
-       ENCOURAGEMENT (clôture)
-       ========================================= */
-    .encouragement {
-        text-align: center;
-        max-width: 720px;
-        margin: 52px auto 0;
-        padding-top: 34px;
-        border-top: 1px solid rgba(22, 31, 39, .14);
-    }
-    .encouragement h2 {
-        margin-top: 0;
-        border-bottom-color: var(--or);
-    }
-    .encouragement p {
-        max-width: 58ch;
-        margin: 0 auto 6px;
-        font-size: .95rem;
-        line-height: 1.65;
-        color: #3F4C55;
-    }
-
-    .encouragement-actions {
         display: flex;
-        flex-wrap: wrap;
+        align-items: center;
         justify-content: center;
-        gap: 12px;
-        margin-top: 22px;
+        gap: 10px;
+        cursor: pointer;
+        transition: background .3s, color .3s, transform .3s;
     }
-    .encouragement-actions a {
+    .btn-principal:hover { background: var(--or); color: var(--ombre); }
+    .btn-principal:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+
+    /* --- Résultat --- */
+    .resultat {
+        display: none;
+        margin-top: 16px;
+        padding: 14px;
+        background: #f3f7f4;
+        border: 1px solid #cfe8d8;
+        border-radius: 12px;
+    }
+    .resultat.visible { display: block; }
+    .resultat > span {
+        display: block;
+        font-size: .8rem;
+        color: #4a6a56;
+        margin-bottom: 6px;
+    }
+    .resultat .lien {
+        display: block;
+        font-weight: 800;
+        color: #245c3c;
+        word-break: break-all;
+        margin-bottom: 12px;
+        text-decoration: none;
+    }
+    .resultat .lien:hover { text-decoration: underline; }
+
+    .btn-copier {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 12px 22px;
+        padding: 9px 14px;
+        background: #fff;
+        color: var(--metal-fonce);
+        border: 1px solid #cfe8d8;
+        border-radius: 9px;
+        font-weight: 700;
+        font-size: .82rem;
+        cursor: pointer;
+        transition: background .3s, color .3s;
+    }
+    .btn-copier:hover { background: #245c3c; color: #fff; border-color: #245c3c; }
+
+    /* --- Erreur --- */
+    .erreur {
+        display: none;
+        margin-top: 12px;
+        padding: 10px 12px;
+        background: rgba(198,40,40,.08);
+        border: 1px solid rgba(198,40,40,.25);
+        border-radius: 10px;
+        color: #a02020;
+        font-size: .85rem;
+        font-weight: 600;
+    }
+    .erreur.visible { display: block; }
+
+    /* --- Bouton "Voir mes liens" --- */
+    .btn-mes-liens {
+        margin-top: 26px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px;
         border-radius: 30px;
-        font-size: .9rem;
-        font-weight: 800;
-        text-decoration: none;
-        transition: background .3s, color .3s, transform .3s;
-    }
-
-    .btn-contact {
-        background: var(--metal-fonce);
-        color: #fff;
         border: 2px solid var(--metal-fonce);
-    }
-    .btn-contact:hover, .btn-contact:focus-visible {
-        background: var(--or);
-        border-color: var(--or);
-        color: var(--ombre);
-        transform: translateY(-3px);
-    }
-
-    .btn-historique {
         background: transparent;
         color: var(--metal-fonce);
-        border: 2px solid var(--metal-fonce);
+        font-weight: 800;
+        font-size: .92rem;
+        cursor: pointer;
+        transition: background .3s, color .3s;
     }
-    .btn-historique:hover, .btn-historique:focus-visible {
-        background: var(--metal-fonce);
-        color: #fff;
-        transform: translateY(-3px);
+    .btn-mes-liens:hover { background: var(--metal-fonce); color: #fff; }
+    .btn-mes-liens i { color: var(--or); }
+    .btn-mes-liens:hover i { color: var(--or); }
+    .btn-mes-liens span { font-weight: 700; opacity: .8; }
+
+    /* --- Liste des liens --- */
+    .liste-liens {
+        margin-top: 18px;
+        border-top: 1px solid rgba(22,31,39,.12);
+    }
+    .liste-liens[hidden] { display: none; }
+
+    .liens-entete {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 0 8px;
+        font-size: .78rem;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        color: #7b8891;
+        font-weight: 700;
+    }
+    .liens-vider {
+        background: none;
+        border: none;
+        padding: 0;
+        color: #a02020;
+        font-size: .78rem;
+        font-weight: 700;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .liens-vider[hidden] { display: none; }
+
+    .lien-item {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(22,31,39,.08);
+    }
+    .lien-item a {
+        font-weight: 800;
+        color: #8a6d1a;
+        text-decoration: none;
+        word-break: break-all;
+    }
+    .lien-item a:hover { text-decoration: underline; }
+    .lien-source {
+        flex: 1 1 100%;
+        font-size: .76rem;
+        color: #8b969d;
+        word-break: break-all;
+    }
+    .lien-item time {
+        font-size: .74rem;
+        color: #95a1a9;
+    }
+    .btn-copier-lien {
+        margin-left: auto;
+        background: #f1f4f6;
+        border: 1px solid #dfe5e9;
+        border-radius: 8px;
+        padding: 6px 9px;
+        color: var(--metal-fonce);
+        cursor: pointer;
+        transition: background .3s, color .3s;
+    }
+    .btn-copier-lien:hover { background: var(--metal-fonce); color: #fff; }
+
+    .liens-vide {
+        padding: 18px 0;
+        color: #7b8891;
+        font-size: .85rem;
+        text-align: center;
+    }
+
+    /* --- Animations --- */
+    .js .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity .7s var(--ease) var(--d,0s), transform .7s var(--ease) var(--d,0s);
+    }
+    .js .reveal.vu { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+        .js .reveal { opacity: 1; transform: none; }
+    }
+
+    /* =========================================
+       DESKTOP
+       ========================================= */
+    @media (min-width: 768px) {
+        h1 { font-size: 2.6rem; }
+        .sous-titre { font-size: 1.1rem; }
+        .intro { font-size: 1.05rem; }
+        .liste-points li, .etapes li { font-size: 1rem; }
+        .cadre-corps { padding: 26px; }
+        .cadre-barre { padding: 10px 14px; }
     }
 </style>
 
@@ -415,156 +388,355 @@
 </head>
 <body>
 
+<!-- Header injecté par header.js -->
+<script src="/js/header.js"></script>
+
 <div class="contenu">
 
-  <!-- ===== PREMIÈRE BANNIÈRE ===== -->
-  <div class="banniere-canva reveal">
-    <div class="banniere-bg"></div>
-    <div class="banniere-overlay"></div>
+    <h1 class="reveal">TransformLink</h1>
+    <p class="sous-titre reveal">Le raccourcisseur de liens de VirtTech.</p>
 
-    <div class="banniere-content">
-      <h1 class="txt-virttech" id="titreAnim"></h1>
-      <div class="banniere-btns">
-        <a href="https://chat.whatsapp.com/E0R5J94ianv8fZDJGkkMBG" target="_blank" rel="noopener" class="btn-reseau btn-wa">
-          <i class="fa-brands fa-whatsapp"></i> WhatsApp
-        </a>
-        <a href="https://www.tiktok.com/@virttechdev" target="_blank" rel="noopener" class="btn-reseau btn-tt">
-          <i class="fa-brands fa-tiktok"></i> TikTok
-        </a>
-      </div>
-    </div>
-  </div>
+    <p class="intro reveal">
+        Un lien GitHub de 90 caractères, c'est illisible dans une conversation WhatsApp.
+        TransformLink le transforme en <strong>lien court</strong> et <strong>personnalisé</strong> :
+        <code>virttech.site/mon-projet</code>. Plus propre, plus facile à retenir, plus pro à partager.
+    </p>
 
-  <!-- ===== NOS COMPÉTENCES (contenu de la démo, inchangé) ===== -->
-  <div class="z-pattern-container reveal">
+    <h2 class="reveal">Ce que tu peux faire</h2>
+    <ul class="liste-points reveal">
+        <li>
+            <i class="fa-solid fa-scissors" aria-hidden="true"></i>
+            <span><strong>Raccourcir</strong> n'importe quel lien : projet GitHub, portfolio, site en ligne.</span>
+        </li>
+        <li>
+            <i class="fa-solid fa-tag" aria-hidden="true"></i>
+            <span><strong>Choisir le nom</strong> de ton lien (<code>mon-projet</code>) ou laisser VirtTech en générer un au hasard.</span>
+        </li>
+        <li>
+            <i class="fa-solid fa-copy" aria-hidden="true"></i>
+            <span><strong>Copier</strong> le résultat en un clic pour le coller dans une bio, un message ou un CV.</span>
+        </li>
+        <li>
+            <i class="fa-solid fa-server" aria-hidden="true"></i>
+            <span>Comprendre ce qu'un <strong>serveur</strong> fait pour toi : il stocke le lien et redirige les visiteurs.</span>
+        </li>
+    </ul>
 
-    <!-- 1 -->
-    <div class="z-row">
-        <div class="z-icon"><i class="fa-solid fa-rocket"></i></div>
-        <div class="z-content">
-            <h3>Structure d'accompagnement</h3>
-            <p>VirtTech est une entité indépendante. Nous formons les débutants en informatique et les accompagnons dans leurs projets de développement d'applications web et mobiles.</p>
+    <h2 class="reveal">Comment ça marche</h2>
+    <ol class="etapes reveal">
+        <li>Colle ton lien long dans le champ.</li>
+        <li>Choisis un mot-clé (ou laisse vide).</li>
+        <li>Clique sur « Créer le lien ».</li>
+        <li>Copie et partage.</li>
+    </ol>
+
+    <!-- ===== L'OUTIL, DANS SON CADRE ===== -->
+    <div class="zone-outil">
+        <h2 class="reveal">Essaie maintenant</h2>
+
+        <section class="cadre reveal" aria-label="Outil de raccourcissement de liens">
+            <div class="cadre-barre" aria-hidden="true"><i></i><i></i><i></i><em>virttech.site/transformlink</em></div>
+
+            <form class="cadre-corps" id="formLien" novalidate>
+                <label for="urlOriginale">Lien long (URL)</label>
+                <input type="url" id="urlOriginale" name="url" placeholder="https://github.com/ton-profil/mon-projet" autocomplete="url" required>
+
+                <label for="codePersonnalise">Mot-clé (optionnel)</label>
+                <input type="text" id="codePersonnalise" name="code" placeholder="mon-projet" maxlength="20" autocomplete="off">
+
+                <button type="submit" id="btnRaccourcir" class="btn-principal">
+                    <i class="fa-solid fa-scissors" aria-hidden="true"></i> Créer le lien
+                </button>
+
+                <div class="resultat" id="resultatBox">
+                    <span>Ton lien court est prêt :</span>
+                    <a class="lien" id="lienCourt" href="#" target="_blank" rel="noopener"></a>
+                    <button type="button" class="btn-copier" id="btnCopier">
+                        <i class="fa-solid fa-copy" aria-hidden="true"></i> Copier
+                    </button>
+                </div>
+
+                <p class="erreur" id="errorMsg" role="alert"></p>
+            </form>
+        </section>
+
+        <!-- ===== MES LIENS (localStorage) ===== -->
+        <button type="button" class="btn-mes-liens" id="btnMesLiens" aria-expanded="false" aria-controls="listeLiens">
+            <i class="fa-solid fa-list" aria-hidden="true"></i>
+            Voir mes liens raccourcis <span id="nbLiens">(0)</span>
+        </button>
+
+        <div class="liste-liens" id="listeLiens" hidden>
+            <div class="liens-entete">
+                <span>Mes liens</span>
+                <button type="button" id="btnVider" class="liens-vider" hidden>Tout effacer</button>
+            </div>
+            <div id="listeItems"></div>
         </div>
     </div>
-
-    <!-- 2 -->
-    <div class="z-row reverse">
-        <div class="z-icon"><i class="fa-solid fa-credit-card"></i></div>
-        <div class="z-content">
-            <h3>API de Paiement & Cartes</h3>
-            <p>Nous vous apprenons à utiliser les outils professionnels : intégration des API de paiement (Wave, Jeko, Stripe) et utilisation des API de cartographie (Maps).</p>
-        </div>
-    </div>
-
-    <!-- 3 -->
-    <div class="z-row">
-        <div class="z-icon"><i class="fa-solid fa-server"></i></div>
-        <div class="z-content">
-            <h3>Hébergement & Backend</h3>
-            <p>Devenez autonome en apprenant à déployer vos projets sur des serveurs (Render, OVH) et à gérer des bases de données avec Node.js et Python.</p>
-        </div>
-    </div>
-
-    <!-- 4 -->
-    <div class="z-row reverse">
-        <div class="z-icon"><i class="fa-solid fa-brain"></i></div>
-        <div class="z-content">
-            <h3>Bonnes pratiques de l'IA</h3>
-            <p>Apprenez à utiliser l'Intelligence Artificielle de manière éthique. Maîtrisez le "Prompt Engineering" et utilisez l'IA pour apprendre plus vite.</p>
-        </div>
-    </div>
-
-    <!-- 5 -->
-    <div class="z-row">
-        <div class="z-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-        <div class="z-content">
-            <h3>Assistance en Développement</h3>
-            <p>Bloqué sur un code ? Nous vous aidons à corriger vos erreurs (Debugging) et nous vous guidons pas à pas quand vous êtes bloqués.</p>
-        </div>
-    </div>
-
-  </div>
-
-  <!-- ===== NOS OUTILS ===== -->
-  <h2 id="outils" class="reveal">Quels outils possède VirtTech ?</h2>
-  <p class="intro-outils reveal">VirtTech, ce n'est pas seulement des formations. Voici les outils gratuits que tu peux utiliser dès maintenant, sans rien installer.</p>
-
-  <div class="outils-liste reveal">
-
-    <!-- Outil 1 : VirtEmulator -->
-    <article class="outil">
-      <h3><i class="fa-solid fa-code" aria-hidden="true"></i> VirtEmulator</h3>
-      <p class="outil-accroche">Ton éditeur de code, directement dans le navigateur.</p>
-      <p class="outil-desc">Écris du <strong>HTML</strong>, du <strong>CSS</strong> et du <strong>JavaScript</strong>, clique sur Exécuter et vois le résultat immédiatement. Pas d'installation, pas de configuration.</p>
-
-      <a class="apercu" href="/virtemulator">
-        <span class="apercu-barre" aria-hidden="true"><i></i><i></i><i></i><em>virttech.site/virtemulator</em></span>
-        <span class="apercu-ecran" aria-hidden="true">
-          <span class="mock-onglets"><span class="on">HTML</span><span>CSS</span><span>JS</span></span>
-          <span class="mock-code"><i></i><i></i><i></i><i></i></span>
-          <span class="mock-pied">
-            <span class="mock-run"><i class="fa-solid fa-play"></i> Exécuter</span>
-            <span class="mock-rendu">Bonjour !</span>
-          </span>
-        </span>
-        <span class="apercu-cta">Ouvrir l'éditeur <b>→</b></span>
-      </a>
-    </article>
-
-    <!-- Outil 2 : TransformLink -->
-    <article class="outil">
-      <h3><i class="fa-solid fa-link" aria-hidden="true"></i> TransformLink</h3>
-      <p class="outil-accroche">Rends tes liens longs courts et propres.</p>
-      <p class="outil-desc">Colle l'adresse de ton projet <strong>GitHub</strong> ou de ton site, et récupère un <strong>lien court</strong> à partager sur <strong>WhatsApp</strong>, <strong>TikTok</strong> ou en classe. Tu peux même <strong>choisir le nom</strong> du lien.</p>
-
-      <a class="apercu" href="/transformlink">
-        <span class="apercu-barre" aria-hidden="true"><i></i><i></i><i></i><em>virttech.site/transformlink</em></span>
-        <span class="apercu-ecran" aria-hidden="true">
-          <span class="mock-champ">github.com/ivanipote/virt_tech</span>
-          <span class="mock-bouton"><i class="fa-solid fa-scissors"></i> Raccourcir le lien</span>
-          <span class="mock-resultat"><i class="fa-solid fa-check"></i> virttech.site/mon-projet <b>Copier</b></span>
-        </span>
-        <span class="apercu-cta">Créer un lien <b>→</b></span>
-      </a>
-    </article>
-
-    <!-- Outil 3 : Astuces -->
-    <article class="outil">
-      <h3><i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Astuces VirtTech</h3>
-      <p class="outil-accroche">La bibliothèque de la communauté.</p>
-      <p class="outil-desc">Publie une astuce avec un <strong>bout de code</strong>, découvre celles des autres et garde les meilleures sous la main. Tu peux <strong>aimer</strong> chaque astuce une seule fois, filtrer par <strong>langage</strong> et <strong>niveau</strong>, et gérer tes propres publications.</p>
-
-      <a class="apercu" href="/astuces">
-        <span class="apercu-barre" aria-hidden="true"><i></i><i></i><i></i><em>virttech.site/astuces</em></span>
-        <span class="apercu-ecran" aria-hidden="true">
-          <span class="mock-entete"><b>Dydy</b><span>HTML</span></span>
-          <span class="mock-titre-astuce">Mettre un label sans for</span>
-          <span class="mock-code"><i></i><i></i></span>
-          <span class="mock-stats"><i class="fa-solid fa-heart"></i> 1 <i class="fa-solid fa-eye"></i> 1</span>
-        </span>
-        <span class="apercu-cta">Voir les astuces <b>→</b></span>
-      </a>
-    </article>
-
-  </div>
-
-  <p class="outils-plus reveal"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>Et aussi : <a href="/historique">l'Historique</a> — retrouve les concours, les formations et les événements passés.</p>
-
-  <!-- ===== ENCOURAGEMENT ===== -->
-  <div class="encouragement reveal">
-    <h2>À toi de jouer.</h2>
-    <p>Tu n'as pas besoin d'être expert pour commencer. Une ligne de code aujourd'hui, une compétence de plus demain : c'est comme ça que les meilleurs ont commencé.</p>
-    <p>Pose tes questions, partage ce que tu apprends et avance à ton rythme avec la communauté. Que tu sois au lycée, à la fac ou en train d'apprendre seul, il y a une place pour toi chez VirtTech.</p>
-
-    <div class="encouragement-actions">
-      <a class="btn-contact" href="/contact"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Nous écrire</a>
-      <a class="btn-historique" href="/historique"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Voir l'historique</a>
-    </div>
-  </div>
 
 </div>
 
-<script src="/js/header.js"></script>
-<script src="/js/index.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ---------------------------------------------------------------
+    // Stockage local de l'historique
+    // ---------------------------------------------------------------
+    const CLE = "virttech_liens";
+
+    function lireLiens() {
+        try {
+            const v = JSON.parse(localStorage.getItem(CLE) || "[]");
+            return Array.isArray(v) ? v : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function ecrireLiens(liens) {
+        try {
+            localStorage.setItem(CLE, JSON.stringify(liens.slice(0, 50)));
+        } catch (e) { /* stockage plein ou bloqué */ }
+    }
+
+    // ---------------------------------------------------------------
+    // Éléments de la page
+    // ---------------------------------------------------------------
+    const form = document.getElementById("formLien");
+    const urlInput = document.getElementById("urlOriginale");
+    const codeInput = document.getElementById("codePersonnalise");
+    const btn = document.getElementById("btnRaccourcir");
+    const resultat = document.getElementById("resultatBox");
+    const lienCourt = document.getElementById("lienCourt");
+    const btnCopier = document.getElementById("btnCopier");
+    const erreur = document.getElementById("errorMsg");
+
+    const btnMesLiens = document.getElementById("btnMesLiens");
+    const nbLiens = document.getElementById("nbLiens");
+    const liste = document.getElementById("listeLiens");
+    const listeItems = document.getElementById("listeItems");
+    const btnVider = document.getElementById("btnVider");
+
+    // ---------------------------------------------------------------
+    // Utilitaires
+    // ---------------------------------------------------------------
+    function afficherErreur(message) {
+        erreur.textContent = message;
+        erreur.classList.add("visible");
+    }
+
+    function cacherErreur() {
+        erreur.textContent = "";
+        erreur.classList.remove("visible");
+    }
+
+    function codeAleatoire() {
+        const caracteres = "abcdefghijkmnpqrstuvwxyz23456789";
+        let code = "";
+        for (let i = 0; i < 6; i++) {
+            code += caracteres[Math.floor(Math.random() * caracteres.length)];
+        }
+        return code;
+    }
+
+    async function copier(texte, bouton, contenuRepos) {
+        try {
+            await navigator.clipboard.writeText(texte);
+            bouton.innerHTML = '<i class="fa-solid fa-check"></i> Copié';
+            setTimeout(function () { bouton.innerHTML = contenuRepos; }, 1800);
+        } catch (e) {
+            afficherErreur("Impossible de copier automatiquement. Sélectionne le lien à la main.");
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Liste : affichage
+    // ---------------------------------------------------------------
+    function afficherListe() {
+        const liens = lireLiens();
+
+        nbLiens.textContent = "(" + liens.length + ")";
+        btnVider.hidden = liens.length === 0;
+        listeItems.innerHTML = "";
+
+        if (liens.length === 0) {
+            const vide = document.createElement("p");
+            vide.className = "liens-vide";
+            vide.textContent = "Tu n'as pas encore créé de lien. Ton premier lien apparaîtra ici.";
+            listeItems.appendChild(vide);
+            return;
+        }
+
+        liens.forEach(function (l) {
+            const ligne = document.createElement("div");
+            ligne.className = "lien-item";
+
+            const lien = document.createElement("a");
+            lien.href = l.short;
+            lien.target = "_blank";
+            lien.rel = "noopener";
+            lien.textContent = String(l.short).replace(/^https?:\/\//, "");
+
+            const source = document.createElement("span");
+            source.className = "lien-source";
+            source.textContent = l.url;
+
+            const date = document.createElement("time");
+            date.textContent = new Date(l.date).toLocaleDateString("fr-FR", {
+                day: "2-digit", month: "short", year: "numeric"
+            });
+
+            const copierBtn = document.createElement("button");
+            copierBtn.type = "button";
+            copierBtn.className = "btn-copier-lien";
+            copierBtn.dataset.lien = l.short;
+            copierBtn.setAttribute("aria-label", "Copier " + l.short);
+            copierBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+
+            ligne.append(lien, source, date, copierBtn);
+            listeItems.appendChild(ligne);
+        });
+    }
+
+    // ---------------------------------------------------------------
+    // Création d'un lien
+    // ---------------------------------------------------------------
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        cacherErreur();
+        resultat.classList.remove("visible");
+
+        const urlBrute = urlInput.value.trim();
+        if (!urlBrute) {
+            afficherErreur("Colle d'abord un lien à raccourcir.");
+            urlInput.focus();
+            return;
+        }
+
+        let adresse;
+        try {
+            adresse = new URL(urlBrute);
+        } catch (err) {
+            afficherErreur("Ce lien n'est pas valide. Exemple : https://github.com/ton-profil/mon-projet");
+            urlInput.focus();
+            return;
+        }
+
+        if (adresse.protocol !== "http:" && adresse.protocol !== "https:") {
+            afficherErreur("Le lien doit commencer par http:// ou https://");
+            urlInput.focus();
+            return;
+        }
+
+        let code = codeInput.value.trim().toLowerCase();
+
+        if (code && !/^[a-z0-9-]{1,20}$/.test(code)) {
+            afficherErreur("Le mot-clé doit contenir uniquement des lettres, des chiffres ou des tirets (20 caractères max).");
+            codeInput.focus();
+            return;
+        }
+
+        const codeFinal = code || codeAleatoire();
+
+        btn.disabled = true;
+        const contenuBouton = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Création…';
+
+        try {
+            const reponse = await fetch("/api/shorten", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: urlBrute, code: codeFinal })
+            });
+
+            const data = await reponse.json();
+
+            if (!data.succes) {
+                afficherErreur(data.message || "Ce lien n'a pas pu être créé.");
+                return;
+            }
+
+            lienCourt.textContent = data.short_url;
+            lienCourt.href = data.short_url;
+            resultat.classList.add("visible");
+
+            const liens = lireLiens();
+            liens.unshift({
+                url: data.original_url || urlBrute,
+                short: data.short_url,
+                date: new Date().toISOString()
+            });
+            ecrireLiens(liens);
+            afficherListe();
+
+            urlInput.value = "";
+            codeInput.value = "";
+        } catch (err) {
+            afficherErreur("Erreur de connexion au serveur. Réessaie dans un instant.");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = contenuBouton;
+        }
+    });
+
+    // ---------------------------------------------------------------
+    // Copier le dernier lien créé
+    // ---------------------------------------------------------------
+    btnCopier.addEventListener("click", function () {
+        copier(lienCourt.textContent, btnCopier, '<i class="fa-solid fa-copy"></i> Copier');
+    });
+
+    // ---------------------------------------------------------------
+    // Copier un lien de la liste (délégation)
+    // ---------------------------------------------------------------
+    listeItems.addEventListener("click", function (e) {
+        const bouton = e.target.closest("button[data-lien]");
+        if (!bouton) return;
+        copier(bouton.dataset.lien, bouton, '<i class="fa-solid fa-copy"></i>');
+    });
+
+    // ---------------------------------------------------------------
+    // Afficher / masquer la liste
+    // ---------------------------------------------------------------
+    btnMesLiens.addEventListener("click", function () {
+        const ouvert = !liste.hidden;
+        liste.hidden = ouvert;
+        btnMesLiens.setAttribute("aria-expanded", String(!ouvert));
+        if (!ouvert) liste.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    // ---------------------------------------------------------------
+    // Tout effacer
+    // ---------------------------------------------------------------
+    btnVider.addEventListener("click", function () {
+        if (!confirm("Effacer la liste ? Les liens raccourcis continueront de fonctionner.")) return;
+        localStorage.removeItem(CLE);
+        afficherListe();
+    });
+
+    // ---------------------------------------------------------------
+    // Démarrage
+    // ---------------------------------------------------------------
+    afficherListe();
+
+    // Animations d'apparition
+    var els = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("vu");
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        els.forEach(function (el) { io.observe(el); });
+    } else {
+        els.forEach(function (el) { el.classList.add("vu"); });
+    }
+});
+</script>
+
 </body>
 </html>

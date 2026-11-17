@@ -26,76 +26,100 @@
 <script>document.documentElement.classList.add('js')</script>
 
 <!-- Styles -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
 <link rel="stylesheet" href="/css/transformlink.css">
 </head>
 <body>
 
-<!-- Header injecté par JS -->
+<!-- Header injecté par header.js -->
 <script src="/js/header.js"></script>
 
 <div class="contenu">
+
     <h1 class="reveal">TransformLink</h1>
-    <p class="sous-titre reveal" style="--d:.1s">Bienvenue sur l'outil officiel de VirtTech pour transformer vos liens.</p>
+    <p class="sous-titre reveal">Le raccourcisseur de liens de VirtTech.</p>
 
-    <!-- INTRODUCTION -->
-    <div class="intro-box reveal" style="--d:.2s">
-        <p>Vous avez un lien GitHub, un portfolio, ou un projet en ligne ? Collez-le ci-dessous. Notre outil génère un <strong>lien court et personnalisé</strong> avec le domaine de VirtTech (<code>virttech.site/votre-lien</code>). C'est plus propre, plus rapide à partager, et ça donne une image professionnelle à vos projets.</p>
-    </div>
+    <p class="intro reveal">
+        Un lien GitHub de 90 caractères, c'est illisible dans une conversation WhatsApp.
+        TransformLink le transforme en <strong>lien court</strong> et <strong>personnalisé</strong> :
+        <code>virttech.site/mon-projet</code>. Plus propre, plus facile à retenir, plus pro à partager.
+    </p>
 
-    <!-- FORMULAIRE -->
-    <div class="form-container reveal z" style="--d:.3s">
-        <div class="form-group">
-            <label for="urlOriginale">Lien long (URL)</label>
-            <input type="url" id="urlOriginale" placeholder="https://github.com/votre-profil/mon-projet" required>
-        </div>
+    <h2 class="reveal">Ce que tu peux faire</h2>
+    <ul class="liste-points reveal">
+        <li>
+            <i class="fa-solid fa-scissors" aria-hidden="true"></i>
+            <span><strong>Raccourcir</strong> n'importe quel lien : projet GitHub, portfolio, site en ligne.</span>
+        </li>
+        <li>
+            <i class="fa-solid fa-tag" aria-hidden="true"></i>
+            <span><strong>Choisir le nom</strong> de ton lien (<code>mon-projet</code>) ou laisser VirtTech en générer un au hasard.</span>
+        </li>
+        <li>
+            <i class="fa-solid fa-copy" aria-hidden="true"></i>
+            <span><strong>Copier</strong> le résultat en un clic pour le coller dans une bio, un message ou un CV.</span>
+        </li>
+        <li>
+            <i class="fa-solid fa-server" aria-hidden="true"></i>
+            <span>Comprendre ce qu'un <strong>serveur</strong> fait pour toi : il stocke le lien et redirige les visiteurs.</span>
+        </li>
+    </ul>
 
-        <div class="form-group">
-            <label for="codePersonnalise">Mot-clé personnalisé (Optionnel)</label>
-            <input type="text" id="codePersonnalise" placeholder="mon-projet (laissez vide pour un code aléatoire)">
-        </div>
+    <h2 class="reveal">Comment ça marche</h2>
+    <ol class="etapes reveal">
+        <li>Colle ton lien long dans le champ.</li>
+        <li>Choisis un mot-clé (ou laisse vide).</li>
+        <li>Clique sur « Créer le lien ».</li>
+        <li>Copie et partage.</li>
+    </ol>
 
-        <button class="btn-envoyer" id="btnRaccourcir">
-            <span>Créer le lien</span>
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+    <!-- ===== L'OUTIL, DANS SON CADRE ===== -->
+    <div class="zone-outil">
+        <h2 class="reveal">Essaie maintenant</h2>
+
+        <section class="cadre reveal" aria-label="Outil de raccourcissement de liens">
+            <div class="cadre-barre" aria-hidden="true"><i></i><i></i><i></i><em>virttech.site/transformlink</em></div>
+
+            <form class="cadre-corps" id="formLien" novalidate>
+                <label for="urlOriginale">Lien long (URL)</label>
+                <input type="url" id="urlOriginale" name="url" placeholder="https://github.com/ton-profil/mon-projet" autocomplete="url" required>
+
+                <label for="codePersonnalise">Mot-clé (optionnel)</label>
+                <input type="text" id="codePersonnalise" name="code" placeholder="mon-projet" maxlength="20" autocomplete="off">
+
+                <button type="submit" id="btnRaccourcir" class="btn-principal">
+                    <i class="fa-solid fa-scissors" aria-hidden="true"></i> Créer le lien
+                </button>
+
+                <div class="resultat" id="resultatBox">
+                    <span>Ton lien court est prêt :</span>
+                    <a class="lien" id="lienCourt" href="#" target="_blank" rel="noopener"></a>
+                    <button type="button" class="btn-copier" id="btnCopier">
+                        <i class="fa-solid fa-copy" aria-hidden="true"></i> Copier
+                    </button>
+                </div>
+
+                <p class="erreur" id="errorMsg" role="alert"></p>
+            </form>
+        </section>
+
+        <!-- ===== MES LIENS (localStorage) ===== -->
+        <button type="button" class="btn-mes-liens" id="btnMesLiens" aria-expanded="false" aria-controls="listeLiens">
+            <i class="fa-solid fa-list" aria-hidden="true"></i>
+            Voir mes liens raccourcis <span id="nbLiens">(0)</span>
         </button>
 
-        <div class="resultat-box" id="resultatBox">
-            <p>Votre lien court est prêt :</p>
-            <span class="lien-court" id="lienCourt"></span>
-            <button class="btn-copier" id="btnCopier">📋 Copier</button>
-        </div>
-
-        <div class="error-msg" id="errorMsg"></div>
-    </div>
-
-    <!-- POURQUOI UTILISER CET OUTIL ? -->
-    <div class="info-grid reveal" style="--d:.4s">
-        <div class="info-card">
-            <h3>🔗 Partage simplifié</h3>
-            <p>Plus besoin d'envoyer un lien de 100 caractères sur WhatsApp. Un lien court est plus lisible et plus facile à retenir.</p>
-        </div>
-        <div class="info-card">
-            <h3>💼 Image professionnelle</h3>
-            <p>Un lien <code>virttech.site/mon-projet</code> inspire confiance. C'est comme avoir sa propre carte de visite numérique.</p>
-        </div>
-        <div class="info-card">
-            <h3>🧠 Apprentissage</h3>
-            <p>En utilisant cet outil, vous expérimentez le rôle d'un serveur : il stocke les liens et les redirige pour vous.</p>
+        <div class="liste-liens" id="listeLiens" hidden>
+            <div class="liens-entete">
+                <span>Mes liens</span>
+                <button type="button" id="btnVider" class="liens-vider" hidden>Tout effacer</button>
+            </div>
+            <div id="listeItems"></div>
         </div>
     </div>
 
-    <!-- COMMENT ÇA MARCHE ? -->
-    <div class="etapes reveal" style="--d:.5s">
-        <h3>Comment ça marche ?</h3>
-        <ol>
-            <li>Collez votre lien long dans le premier champ.</li>
-            <li>Choisissez un mot-clé (par exemple <code>mon-projet</code>) ou laissez vide pour un code aléatoire.</li>
-            <li>Cliquez sur "Créer le lien".</li>
-            <li>Copiez le lien court et partagez-le !</li>
-        </ol>
-    </div>
 </div>
 
 <!-- Scripts -->
