@@ -1,8 +1,24 @@
 // header.js
 document.addEventListener("DOMContentLoaded", function() {
-    const path = window.location.pathname;
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
 
-    // 1. Détermination de l'onglet actif
+    // 1. Nom + icône de la page affichés dans le header et la sidebar
+    const PAGES = {
+        '/':                    { nom: 'Accueil',      icone: 'fa-house' },
+        '/accueil':             { nom: 'Accueil',      icone: 'fa-house' },
+        '/historique':          { nom: 'Historique',   icone: 'fa-clock-rotate-left' },
+        '/virtemulator':        { nom: 'VirtEmulator', icone: 'fa-code' },
+        '/transformlink':       { nom: 'TransformLink', icone: 'fa-link' },
+        '/astuces':             { nom: 'Astuces',      icone: 'fa-lightbulb' },
+        '/virt-dev':            { nom: 'Virt_Dev',     icone: 'fa-trophy' },
+        '/virt-dev/resultat':   { nom: 'Virt_Dev',     icone: 'fa-trophy' },
+        '/contact':             { nom: 'Contact',      icone: 'fa-envelope' },
+        '/demo.html':           { nom: 'Démo',         icone: 'fa-flask' }
+    };
+    const page = PAGES[path] || { nom: 'VirtTech', icone: 'fa-code' };
+    const entetePage = `<span class="page-courante"><i class="fa-solid ${page.icone}" aria-hidden="true"></i><span>${page.nom}</span></span>`;
+
+    // 2. Détermination de l'onglet actif
     let actifAccueil = "";
     let actifHistorique = "";
     let actifResultats = "";
@@ -17,13 +33,13 @@ document.addEventListener("DOMContentLoaded", function() {
     else if (path === "/transformlink") { actifTransformLink = "actif"; }
     else if (path === "/astuces") { actifAstuces = "actif"; }
 
-    // 2. Injection du header
+    // 3. Injection du header
     const headerHTML = `
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <header class="top">
       <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="side"><i></i>Menu</button>
-      <a href="/" class="brand">VIRT<span>TECH</span></a>
+      ${entetePage}
     </header>
 
     <div class="voile" id="voile"></div>
@@ -32,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <div class="side-tete">
         <div class="side-id">
           <div class="mini"><img src="/logo.png" alt="Logo VirtTech"></div>
-          <a href="/" class="brand">VIRT<span>TECH</span></a>
+          ${entetePage}
         </div>
         <button class="fermer" id="fermer" aria-label="Fermer le menu"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -76,12 +92,6 @@ document.addEventListener("DOMContentLoaded", function() {
             </a>
           </li>
           <li>
-            <a href="/#actus">
-                <span>Actualités</span>
-                <i class="fa-solid fa-newspaper"></i>
-            </a>
-          </li>
-          <li>
             <a href="/#apropos">
                 <span>À propos</span>
                 <i class="fa-solid fa-circle-info"></i>
@@ -107,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.body.insertAdjacentHTML('afterbegin', headerHTML);
 
-    // 3. Gestion de l'ouverture / fermeture du menu
+    // 4. Gestion de l'ouverture / fermeture du menu
     const b = document.getElementById('burger');
     const sd = document.getElementById('side');
     const v = document.getElementById('voile');
