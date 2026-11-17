@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", function() {
         '/astuces':             { nom: 'Astuces',      icone: 'fa-lightbulb' },
         '/virt-dev':            { nom: 'Virt_Dev',     icone: 'fa-trophy' },
         '/virt-dev/resultat':   { nom: 'Virt_Dev',     icone: 'fa-trophy' },
+        '/actualites':          { nom: 'Actualités',   icone: 'fa-newspaper' },
+        '/apropos':             { nom: 'À propos',     icone: 'fa-circle-info' },
         '/contact':             { nom: 'Contact',      icone: 'fa-envelope' },
         '/demo.html':           { nom: 'Démo',         icone: 'fa-flask' }
     };
@@ -32,6 +34,11 @@ document.addEventListener("DOMContentLoaded", function() {
     else if (path === "/virtemulator") { actifVirtEmulator = "actif"; }
     else if (path === "/transformlink") { actifTransformLink = "actif"; }
     else if (path === "/astuces") { actifAstuces = "actif"; }
+
+    // Onglets secondaires (boutons du bas)
+    const actifActualites = path === "/actualites" ? "actif" : "";
+    const actifApropos = path === "/apropos" ? "actif" : "";
+    const actifContact = path === "/contact" ? "actif" : "";
 
     // 3. Injection du header
     const headerHTML = `
@@ -91,25 +98,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 <i class="fa-solid fa-trophy"></i>
             </a>
           </li>
-          <li>
-            <a href="/#apropos">
-                <span>À propos</span>
-                <i class="fa-solid fa-circle-info"></i>
-            </a>
-          </li>
-          <li>
-            <a href="/#contact">
-                <span>Contact</span>
-                <i class="fa-solid fa-envelope"></i>
-            </a>
-          </li>
         </ul>
       </nav>
       
       <div class="side-footer">
-          <a href="/contact" class="btn-side-contact">
-              <i class="fa-solid fa-paper-plane"></i> Laissez-nous un mail
-          </a>
+          <nav class="side-raccourcis" aria-label="Pages secondaires">
+            <a href="/actualites" class="${actifActualites}" aria-label="Actualités" title="Actualités"><i class="fa-solid fa-newspaper" aria-hidden="true"></i></a>
+            <a href="/apropos" class="${actifApropos}" aria-label="À propos" title="À propos"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></a>
+            <a href="/contact" class="${actifContact}" aria-label="Contact" title="Contact"><i class="fa-solid fa-envelope" aria-hidden="true"></i></a>
+          </nav>
           <small>En transition vers le domaine .com</small>
       </div>
     </aside>

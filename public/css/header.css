@@ -279,34 +279,35 @@
     gap: 12px;
 }
 
-.btn-side-contact {
+/* Boutons secondaires (icônes seules, alignés horizontalement) */
+.side-raccourcis {
+    display: flex;
+    gap: 8px;
+}
+.side-raccourcis a {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    background: linear-gradient(135deg, var(--metal-fonce), #1a2530);
-    color: var(--blanc);
-    border: 1px solid var(--or);
-    border-radius: 16px;
-    padding: 14px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-.btn-side-contact i {
+    height: 46px;
+    border-radius: 14px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--or);
-    font-size: 1.1rem;
-    transition: 0.3s;
+    font-size: 1.05rem;
+    text-decoration: none;
+    transition: background .3s, color .3s, border-color .3s, transform .3s;
 }
-.btn-side-contact:hover {
+.side-raccourcis a:hover,
+.side-raccourcis a:focus-visible {
     background: var(--or);
+    border-color: var(--or);
     color: var(--ombre);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+    transform: translateY(-2px);
 }
-.btn-side-contact:hover i {
+.side-raccourcis a.actif {
+    background: var(--or);
+    border-color: var(--or);
     color: var(--ombre);
 }
 
