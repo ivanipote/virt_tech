@@ -11,8 +11,13 @@ const PORT = process.env.PORT || 3000;
 
 let compteurVisitesAccueil = 0;
 
+// Derrière un proxy (Render, Heroku...) : req.ip = vraie IP du visiteur
+// (nécessaire pour les limiteurs anti-abus des astuces)
+app.set('trust proxy', 1);
+app.disable('x-powered-by');
+
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '50kb' })); // assez pour 10 000 caractères de code
 app.use(express.urlencoded({ extended: true }));
 
 // ==========================================
@@ -32,13 +37,14 @@ morgan.format('virttech', (tokens, req, res) => {
 
     let url = req.originalUrl;
     if (url === '/') url = 'ACCUEIL';
+    // Les routes API sont testées AVANT les pages (sinon '/api/contact' était vu comme 'CONTACT')
+    else if (url.includes('/api/contact')) url = 'API_CONTACT';
+    else if (url.includes('/api/shorten')) url = 'API_SHORTEN';
+    else if (url.includes('/api/astuces')) url = 'API_ASTUCES';
     else if (url.includes('/virt-dev')) url = 'RESULTATS';
     else if (url.includes('/historique')) url = 'HISTORIQUE';
     else if (url.includes('/virtemulator')) url = 'VIRTEMULATOR';
     else if (url.includes('/contact')) url = 'CONTACT';
-    else if (url.includes('/api/contact')) url = 'API_CONTACT';
-    else if (url.includes('/api/shorten')) url = 'API_SHORTEN';
-    else if (url.includes('/api/astuces')) url = 'API_ASTUCES';
     else if (url.includes('/astuces')) url = 'PAGE_ASTUCES';
     else if (url.includes('/transformlink')) url = 'TRANSFORMLINK';
     else url = 'SHORTLINK : ' + url; // Si c'est une redirection
@@ -83,7 +89,7 @@ app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public', 'c
 app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator.html')));
 app.get('/transformlink', (req, res) => res.sendFile(path.join(__dirname, 'public', 'transformlink.html')));
 
-// NOUVELLE ROUTE : Astuces
+// Page Astuces
 app.get('/astuces', (req, res) => res.sendFile(path.join(__dirname, 'public', 'astuces.html')));
 
 // ==========================================
@@ -92,18 +98,34 @@ app.get('/astuces', (req, res) => res.sendFile(path.join(__dirname, 'public', 'a
 const contactRoutes = require('./routes/contact');
 app.use('/api/contact', contactRoutes);
 
+// Astuces AVANT le routeur de liens raccourcis monté sur '/'
+// (ainsi aucune route générique ne peut intercepter /api/astuces/...)
+const astucesRoutes = require('./routes/astuces');
+app.use('/api/astuces', astucesRoutes);
+
 const shortenRoutes = require('./routes/shorten');
 app.use('/api/shorten', shortenRoutes);
 app.use('/', shortenRoutes);
-
-const astucesRoutes = require('./routes/astuces');
-app.use('/api/astuces', astucesRoutes);
 
 // ==========================================
 // GESTION DES ERREURS 404
 // ==========================================
 app.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
+
+// ==========================================
+// GESTION DES ERREURS (JSON invalide, corps trop gros, imprévus)
+// ==========================================
+app.use((err, req, res, next) => {
+    if (err.type === 'entity.too.large') {
+        return res.status(413).json({ succes: false, message: "Contenu trop volumineux." });
+    }
+    if (err.type === 'entity.parse.failed') {
+        return res.status(400).json({ succes: false, message: "Requête invalide." });
+    }
+    console.error('❌ Erreur non gérée :', err);
+    res.status(500).json({ succes: false, message: "Erreur serveur." });
 });
 
 // ==========================================

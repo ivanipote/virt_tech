@@ -25,16 +25,68 @@ CREATE TABLE IF NOT EXISTS likes_histoires (
     UNIQUE(histoire_id, device_id)
 );
 
--- Table pour les astuces (Mise à jour avec owner_token)
+-- =====================================================================
+-- ASTUCES VIRTTECH (version riche)
+-- =====================================================================
+-- ⚠️ À exécuter UNE SEULE FOIS pour supprimer l'ancienne table, puis
+-- remets la ligne en commentaire (sinon elle effacerait tes astuces
+-- à chaque redémarrage si ce fichier est rejoué au lancement du serveur) :
+--
+-- DROP TABLE IF EXISTS astuces CASCADE;
+-- =====================================================================
+
+-- Table principale des astuces
 CREATE TABLE IF NOT EXISTS astuces (
     id SERIAL PRIMARY KEY,
-    auteur VARCHAR(100) NOT NULL,
-    titre VARCHAR(255) NOT NULL,
-    contenu TEXT NOT NULL,
-    langage VARCHAR(50) DEFAULT 'Autre',
-    code TEXT,
-    likes INTEGER DEFAULT 0,
-    vues INTEGER DEFAULT 0,
-    owner_token VARCHAR(255) NOT NULL, -- Le jeton unique de l'utilisateur
-    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    auteur VARCHAR(50) NOT NULL,
+    titre VARCHAR(120) NOT NULL,
+    contenu TEXT NOT NULL,                       -- Explication de l'astuce
+    langage VARCHAR(30) NOT NULL DEFAULT 'Autre',
+    niveau VARCHAR(20) NOT NULL DEFAULT 'Débutant',
+    code TEXT,                                   -- Code optionnel
+    likes INTEGER NOT NULL DEFAULT 0,            -- Compteur (mis à jour via astuces_likes)
+    vues INTEGER NOT NULL DEFAULT 0,             -- Compteur (mis à jour via astuces_vues)
+    owner_token VARCHAR(255) NOT NULL,           -- Jeton privé du propriétaire (ne JAMAIS l'envoyer au client)
+    date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_modification TIMESTAMP,                 -- Rempli quand l'auteur modifie son astuce
+
+    CONSTRAINT astuces_auteur_len   CHECK (char_length(trim(auteur)) BETWEEN 2 AND 50),
+    CONSTRAINT astuces_titre_len    CHECK (char_length(trim(titre)) BETWEEN 3 AND 120),
+    CONSTRAINT astuces_contenu_len  CHECK (char_length(trim(contenu)) BETWEEN 5 AND 2000),
+    CONSTRAINT astuces_code_len     CHECK (code IS NULL OR char_length(code) <= 10000),
+    CONSTRAINT astuces_likes_pos    CHECK (likes >= 0),
+    CONSTRAINT astuces_vues_pos     CHECK (vues >= 0),
+    CONSTRAINT astuces_langage_ok   CHECK (langage IN (
+        'HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'Node.js',
+        'Python', 'PHP', 'SQL', 'Bash', 'Autre'
+    )),
+    CONSTRAINT astuces_niveau_ok    CHECK (niveau IN ('Débutant', 'Intermédiaire', 'Avancé'))
 );
+
+-- Un appareil ne peut liker une astuce qu'une seule fois (anti-triche côté serveur)
+CREATE TABLE IF NOT EXISTS astuces_likes (
+    id SERIAL PRIMARY KEY,
+    astuce_id INTEGER NOT NULL REFERENCES astuces(id) ON DELETE CASCADE,
+    visiteur_token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (astuce_id, visiteur_token)
+);
+
+-- Un appareil ne compte qu'une seule vue par astuce (anti-triche côté serveur)
+CREATE TABLE IF NOT EXISTS astuces_vues (
+    id SERIAL PRIMARY KEY,
+    astuce_id INTEGER NOT NULL REFERENCES astuces(id) ON DELETE CASCADE,
+    visiteur_token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (astuce_id, visiteur_token)
+);
+
+-- Index pour les filtres, le tri et "Mes astuces"
+CREATE INDEX IF NOT EXISTS idx_astuces_date      ON astuces (date_creation DESC);
+CREATE INDEX IF NOT EXISTS idx_astuces_likes     ON astuces (likes DESC);
+CREATE INDEX IF NOT EXISTS idx_astuces_vues      ON astuces (vues DESC);
+CREATE INDEX IF NOT EXISTS idx_astuces_langage   ON astuces (langage);
+CREATE INDEX IF NOT EXISTS idx_astuces_niveau    ON astuces (niveau);
+CREATE INDEX IF NOT EXISTS idx_astuces_owner     ON astuces (owner_token);
+CREATE INDEX IF NOT EXISTS idx_astuces_likes_tok ON astuces_likes (visiteur_token);
+CREATE INDEX IF NOT EXISTS idx_astuces_vues_tok  ON astuces_vues (visiteur_token);

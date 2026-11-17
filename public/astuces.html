@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 
-<!-- Prism.js -->
+<!-- Prism.js (coloration du code dans les cartes) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 
 <!-- Styles globaux -->
@@ -26,13 +26,38 @@
 
 <script src="/js/header.js"></script>
 
-<div class="page-container">
+<main class="page-container">
     <div class="page-header">
         <h1>Astuces VirtTech</h1>
-        <div class="tabs-container">
-            <button class="tab-btn actif" id="tabToutes" onclick="changerOnglet('toutes')">Toutes les astuces</button>
-            <button class="tab-btn" id="tabMes" onclick="changerOnglet('mes')">Mes astuces</button>
+        <p class="stats" id="stats" aria-live="polite"></p>
+    </div>
+
+    <!-- Astuce du jour : la première astuce publiée depuis 00h00 -->
+    <div id="duJourZone" hidden></div>
+
+    <!-- Onglets -->
+    <div class="tabs-container" role="tablist" aria-label="Affichage">
+        <button class="tab-btn actif" id="tabToutes" role="tab" aria-selected="true" data-onglet="toutes">Toutes les astuces</button>
+        <button class="tab-btn" id="tabMes" role="tab" aria-selected="false" data-onglet="mes">Mes astuces</button>
+    </div>
+
+    <!-- Recherche, filtres, tri (traités par le serveur) -->
+    <div class="outils">
+        <div class="champ-recherche">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="search" id="fRecherche" placeholder="Rechercher un titre, un mot, du code…" maxlength="100" aria-label="Rechercher">
         </div>
+        <select id="fLangage" aria-label="Langage"></select>
+        <select id="fNiveau" aria-label="Niveau"></select>
+        <select id="fTri" aria-label="Trier par">
+            <option value="recentes">Plus récentes</option>
+            <option value="populaires">Plus aimées</option>
+            <option value="vues">Plus vues</option>
+        </select>
+    </div>
+    <div class="sous-outils">
+        <span id="compteur" aria-live="polite"></span>
+        <button class="btn-reset" id="btnReset" type="button" hidden>Réinitialiser les filtres</button>
     </div>
 
     <!-- Loader -->
@@ -43,66 +68,77 @@
     </div>
 
     <!-- Grille -->
-    <div class="grille-astuces" id="grilleAstuces" style="display:none;"></div>
-    
-    <!-- Loader Scroll Infini -->
-    <div id="loaderFin">
-        <div class="spinner"></div>
-    </div>
-</div>
+    <div class="grille-astuces" id="grilleAstuces" hidden></div>
+
+    <!-- Chargement progressif -->
+    <div class="plus" id="plus" hidden><button class="btn-plus" id="btnPlus" type="button">Afficher plus d'astuces</button></div>
+    <div class="plus" id="loaderFin" hidden><div class="spinner" role="status" aria-label="Chargement"></div></div>
+    <div class="fin-liste" id="finListe" hidden></div>
+    <div id="sentinelle" aria-hidden="true"></div>
+</main>
 
 <!-- Bouton Ajouter -->
-<button class="btn-add-astuce" onclick="ouvrirSlideForm()" title="Ajouter une astuce">
-    <i class="fa-solid fa-plus"></i>
+<button class="btn-add-astuce" id="btnAjouter" title="Ajouter une astuce" aria-label="Ajouter une astuce">
+    <i class="fa-solid fa-plus" aria-hidden="true"></i>
 </button>
 
-<!-- SLIDE FORMULAIRE -->
-<div class="slide-overlay" id="slideOverlay" onclick="tenterFermerSlide()"></div>
-<div class="slide-panel" id="slidePanel">
+<!-- FORMULAIRE (création et modification) -->
+<div class="slide-overlay" id="slideOverlay"></div>
+<div class="slide-panel" id="slidePanel" role="dialog" aria-modal="true" aria-labelledby="formTitre">
     <div class="slide-header">
-        <h3><i class="fa-solid fa-pen"></i> Nouvelle Astuce</h3>
+        <h3 id="formTitre"><i class="fa-solid fa-pen" aria-hidden="true"></i> <span id="formTitreTexte">Nouvelle astuce</span></h3>
         <div class="header-actions">
-            <button class="btn-header btn-annuler" onclick="tenterFermerSlide()"><i class="fa-solid fa-xmark"></i></button>
-            <button class="btn-header btn-run" onclick="tenterPublier()"><i class="fa-solid fa-play"></i></button>
+            <button class="btn-header" id="btnFormFermer" type="button" aria-label="Fermer le formulaire"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+            <button class="btn-header btn-run" id="btnPublier" type="button"><i class="fa-solid fa-check" aria-hidden="true"></i><span id="btnPublierTexte">Publier</span></button>
         </div>
     </div>
     <div class="slide-body">
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Votre Nom</label>
-                <input type="text" id="inputAuteur" placeholder="Ex: Ivan">
+        <p class="form-note" id="formNote"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Soyez la première personne à publier après minuit : votre astuce devient l'astuce du jour.</p>
+        <form class="form-grid" id="formAstuce" novalidate>
+            <div class="form-group" data-champ="auteur">
+                <label for="inputAuteur">Votre nom <small id="cptAuteur">0/50</small></label>
+                <input type="text" id="inputAuteur" placeholder="Ex : Ivan" maxlength="50" autocomplete="nickname">
+                <div class="msg-erreur" data-err="auteur"></div>
+            </div>
+            <div class="form-group" data-champ="titre">
+                <label for="inputTitre">Titre <small id="cptTitre">0/120</small></label>
+                <input type="text" id="inputTitre" placeholder="Ex : Centrer une div" maxlength="120">
+                <div class="msg-erreur" data-err="titre"></div>
             </div>
             <div class="form-group">
-                <label>Titre de l'astuce</label>
-                <input type="text" id="inputTitre" placeholder="Ex: Centrer une div">
+                <label for="inputLangage">Langage</label>
+                <select id="inputLangage"></select>
             </div>
-            <div class="form-group full-width">
-                <label>Langage</label>
-                <select id="inputLangage">
-                    <option value="HTML">HTML</option>
-                    <option value="CSS">CSS</option>
-                    <option value="JavaScript">JavaScript</option>
-                    <option value="Python">Python</option>
-                    <option value="PHP">PHP</option>
-                    <option value="Autre">Autre</option>
-                </select>
+            <div class="form-group">
+                <label id="lblNiveau">Niveau</label>
+                <div class="niveau-choix" role="radiogroup" aria-labelledby="lblNiveau" id="niveauChoix"></div>
             </div>
-            <div class="form-group full-width">
-                <label>L'astuce (Explication)</label>
-                <textarea id="inputContenu" rows="3" placeholder="Expliquez votre astuce..."></textarea>
+            <div class="form-group full-width" data-champ="contenu">
+                <label for="inputContenu">L'astuce, en quelques phrases <small id="cptContenu">0/2000</small></label>
+                <textarea id="inputContenu" rows="4" placeholder="Expliquez ce que fait l'astuce et quand l'utiliser…" maxlength="2000"></textarea>
+                <div class="msg-erreur" data-err="contenu"></div>
             </div>
-            <div class="form-group full-width">
-                <label>Code (Optionnel)</label>
+            <div class="form-group full-width" data-champ="code">
+                <label for="inputCode">Code, facultatif <small id="cptCode">0/10000</small></label>
                 <div class="code-editor-wrapper">
-                    <textarea id="inputCode"></textarea>
+                    <textarea id="inputCode" spellcheck="false"></textarea>
                 </div>
+                <div class="msg-erreur" data-err="code"></div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
-<!-- OVERLAY GLOBAL -->
-<div class="overlay-bg" id="overlayGlobal">
+<!-- DÉTAIL D'UNE ASTUCE -->
+<div class="overlay-bg detail-bg" id="detailBg" role="dialog" aria-modal="true" aria-label="Détail de l'astuce">
+    <div class="detail-box">
+        <button class="detail-fermer" id="detailFermer" type="button" aria-label="Fermer"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        <div id="detailCorps"></div>
+    </div>
+</div>
+
+<!-- CONFIRMATION -->
+<div class="overlay-bg" id="overlayGlobal" role="alertdialog" aria-modal="true" aria-labelledby="ovTitre" aria-describedby="ovMessage">
     <div class="overlay-box">
         <h3 id="ovTitre">Titre</h3>
         <p id="ovMessage">Message</p>
@@ -110,20 +146,32 @@
     </div>
 </div>
 
-<!-- Scripts CodeMirror -->
+<!-- Messages courts -->
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<!-- Scripts CodeMirror (éditeur du formulaire) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/shell/shell.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/jsx/jsx.min.js"></script>
 
-<!-- Scripts Prism.js -->
+<!-- Scripts Prism.js (coloration du code dans les cartes) : "manual" car le JS colore les cartes lui-même -->
+<script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
 
 <!-- Notre script -->
 <script src="/js/astuces.js"></script>
