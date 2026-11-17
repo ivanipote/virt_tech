@@ -7,7 +7,7 @@
 
 <!-- SEO & Réseaux Sociaux -->
 <meta name="google-site-verification" content="KF05X5wvMymfuyAagF5VfoDAfmnx_RYGxfbQBdfnzyQ" />
-<meta name="description" content="VirtTech est la communauté qui accompagne et soutient les débutants en web et en Android. Découvre nos outils et partage tes astuces." />
+<meta name="description" content="VirtTech est la communauté qui accompagne et soutient les débutants en web et en Android. Découvre nos outils gratuits et partage tes astuces." />
 <meta name="keywords" content="VirtTech, Virtech, développement web, apprendre à coder, HTML, CSS, JavaScript, débutant, Abidjan, astuces, VirtEmulator." />
 <meta property="og:title" content="VirtTech - Apprends, crée, partage." />
 <meta property="og:description" content="La communauté qui accompagne et soutient les débutants en web et en Android." />
@@ -24,7 +24,7 @@
 <link rel="icon" type="image/png" href="https://virttech.site/logo.png">
 <link rel="canonical" href="https://virttech.site/">
 
-<!-- Données structurées (Schema.org) -->
+<!-- Données structurées -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -39,6 +39,7 @@
 </script>
 
 <script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
 <link rel="stylesheet" href="/css/index.css">
@@ -47,76 +48,152 @@
 
 <div class="contenu">
 
-  <!-- CARTE BANNIÈRE (Logo + Réseaux) -->
-  <div class="banniere-card">
-    <img src="https://virttech.site/logo.png" alt="Logo VirtTech" class="logo">
-    <div class="btns">
-      <a href="https://chat.whatsapp.com/E0R5J94ianv8fZDJGkkMBG" target="_blank" rel="noopener" class="btn-social btn-whatsapp">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        WhatsApp
+  <!-- ===== PREMIÈRE BANNIÈRE ===== -->
+  <div class="banniere-canva reveal">
+    <div class="banniere-bg"></div>
+    <div class="banniere-overlay"></div>
+
+    <div class="banniere-content">
+      <h1 class="txt-virttech" id="titreAnim">VirtTech</h1>
+      <div class="banniere-btns">
+        <a href="https://chat.whatsapp.com/E0R5J94ianv8fZDJGkkMBG" target="_blank" rel="noopener" class="btn-reseau btn-wa">
+          <i class="fa-brands fa-whatsapp"></i> WhatsApp
+        </a>
+        <a href="https://www.tiktok.com/@virttechdev" target="_blank" rel="noopener" class="btn-reseau btn-tt">
+          <i class="fa-brands fa-tiktok"></i> TikTok
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== NOS COMPÉTENCES ===== -->
+  <div class="z-pattern-container reveal" id="apropos">
+
+    <!-- 1 -->
+    <div class="z-row">
+        <div class="z-icon"><i class="fa-solid fa-rocket"></i></div>
+        <div class="z-content">
+            <h3>Structure d'accompagnement</h3>
+            <p>VirtTech est une entité indépendante. Nous formons les débutants en informatique et les accompagnons dans leurs projets de développement d'applications web et mobiles.</p>
+        </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="z-row reverse">
+        <div class="z-icon"><i class="fa-solid fa-credit-card"></i></div>
+        <div class="z-content">
+            <h3>API de Paiement & Cartes</h3>
+            <p>Nous vous apprenons à utiliser les outils professionnels : intégration des API de paiement (Wave, Jeko, Stripe) et utilisation des API de cartographie (Maps).</p>
+        </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="z-row">
+        <div class="z-icon"><i class="fa-solid fa-server"></i></div>
+        <div class="z-content">
+            <h3>Hébergement & Backend</h3>
+            <p>Devenez autonome en apprenant à déployer vos projets sur des serveurs (Render, OVH) et à gérer des bases de données avec Node.js et Python.</p>
+        </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="z-row reverse">
+        <div class="z-icon"><i class="fa-solid fa-brain"></i></div>
+        <div class="z-content">
+            <h3>Bonnes pratiques de l'IA</h3>
+            <p>Apprenez à utiliser l'Intelligence Artificielle de manière éthique. Maîtrisez le "Prompt Engineering" et utilisez l'IA pour apprendre plus vite.</p>
+        </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="z-row">
+        <div class="z-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+        <div class="z-content">
+            <h3>Assistance en Développement</h3>
+            <p>Bloqué sur un code ? Nous vous aidons à corriger vos erreurs (Debugging) et nous vous guidons pas à pas quand vous êtes bloqués.</p>
+        </div>
+    </div>
+
+  </div>
+
+  <!-- ===== NOS OUTILS ===== -->
+  <h2 id="outils" class="reveal">Quels outils possède VirtTech ?</h2>
+  <p class="intro-outils reveal">VirtTech, ce n'est pas seulement des formations. Voici les outils gratuits que tu peux utiliser dès maintenant, sans rien installer.</p>
+
+  <div class="outils-liste reveal">
+
+    <!-- Outil 1 : VirtEmulator -->
+    <article class="outil">
+      <h3><i class="fa-solid fa-code" aria-hidden="true"></i> VirtEmulator</h3>
+      <p class="outil-accroche">Ton éditeur de code, directement dans le navigateur.</p>
+      <p class="outil-desc">Écris du <strong>HTML</strong>, du <strong>CSS</strong> et du <strong>JavaScript</strong>, clique sur Exécuter et vois le résultat immédiatement. Pas d'installation, pas de configuration.</p>
+
+      <a class="apercu" href="/virtemulator">
+        <span class="apercu-barre" aria-hidden="true"><i></i><i></i><i></i><em>virttech.site/virtemulator</em></span>
+        <span class="apercu-ecran" aria-hidden="true">
+          <span class="mock-onglets"><span class="on">HTML</span><span>CSS</span><span>JS</span></span>
+          <span class="mock-code"><i></i><i></i><i></i><i></i></span>
+          <span class="mock-pied">
+            <span class="mock-run"><i class="fa-solid fa-play"></i> Exécuter</span>
+            <span class="mock-rendu">Bonjour !</span>
+          </span>
+        </span>
+        <span class="apercu-cta">Ouvrir l'éditeur <b>→</b></span>
       </a>
-      <a href="https://www.tiktok.com/@virttechdev" target="_blank" rel="noopener" class="btn-social btn-tiktok" style="background: var(--blanc); color: var(--ombre); border: 2px solid var(--metal); cursor: pointer; opacity: 1;">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-        TikTok
+    </article>
+
+    <!-- Outil 2 : TransformLink -->
+    <article class="outil">
+      <h3><i class="fa-solid fa-link" aria-hidden="true"></i> TransformLink</h3>
+      <p class="outil-accroche">Rends tes liens longs courts et propres.</p>
+      <p class="outil-desc">Colle l'adresse de ton projet <strong>GitHub</strong> ou de ton site, et récupère un <strong>lien court</strong> à partager sur <strong>WhatsApp</strong>, <strong>TikTok</strong> ou en classe. Tu peux même <strong>choisir le nom</strong> du lien.</p>
+
+      <a class="apercu" href="/transformlink">
+        <span class="apercu-barre" aria-hidden="true"><i></i><i></i><i></i><em>virttech.site/transformlink</em></span>
+        <span class="apercu-ecran" aria-hidden="true">
+          <span class="mock-champ">github.com/ivanipote/virt_tech</span>
+          <span class="mock-bouton"><i class="fa-solid fa-scissors"></i> Raccourcir le lien</span>
+          <span class="mock-resultat"><i class="fa-solid fa-check"></i> virttech.site/mon-projet <b>Copier</b></span>
+        </span>
+        <span class="apercu-cta">Créer un lien <b>→</b></span>
       </a>
+    </article>
+
+    <!-- Outil 3 : Astuces -->
+    <article class="outil">
+      <h3><i class="fa-solid fa-lightbulb" aria-hidden="true"></i> Astuces VirtTech</h3>
+      <p class="outil-accroche">La bibliothèque de la communauté.</p>
+      <p class="outil-desc">Publie une astuce avec un <strong>bout de code</strong>, découvre celles des autres et garde les meilleures sous la main. Tu peux <strong>aimer</strong> chaque astuce une seule fois, filtrer par <strong>langage</strong> et <strong>niveau</strong>, et gérer tes propres publications.</p>
+
+      <a class="apercu" href="/astuces">
+        <span class="apercu-barre" aria-hidden="true"><i></i><i></i><i></i><em>virttech.site/astuces</em></span>
+        <span class="apercu-ecran" aria-hidden="true">
+          <span class="mock-entete"><b>Dydy</b><span>HTML</span></span>
+          <span class="mock-titre-astuce">Mettre un label sans for</span>
+          <span class="mock-code"><i></i><i></i></span>
+          <span class="mock-stats"><i class="fa-solid fa-heart"></i> 1 <i class="fa-solid fa-eye"></i> 1</span>
+        </span>
+        <span class="apercu-cta">Voir les astuces <b>→</b></span>
+      </a>
+    </article>
+
+  </div>
+
+  <p class="outils-plus reveal"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>Et aussi : <a href="/historique">l'Historique</a> — retrouve les concours, les formations et les événements passés.</p>
+
+  <!-- ===== ENCOURAGEMENT ===== -->
+  <div class="encouragement reveal">
+    <h2>À toi de jouer.</h2>
+    <p>Tu n'as pas besoin d'être expert pour commencer. Une ligne de code aujourd'hui, une compétence de plus demain : c'est comme ça que les meilleurs ont commencé.</p>
+    <p>Pose tes questions, partage ce que tu apprends et avance à ton rythme avec la communauté. Que tu sois au lycée, à la fac ou en train d'apprendre seul, il y a une place pour toi chez VirtTech.</p>
+
+    <div class="encouragement-actions">
+      <a class="btn-contact" href="/contact"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Nous écrire</a>
+      <a class="btn-historique" href="/historique"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Voir l'historique</a>
     </div>
   </div>
 
-  <!-- EN-TÊTE -->
-  <header class="entete">
-    <h1>VirtTech</h1>
-    <p>Ne manque pas les formations, les astuces et les concours réservés aux débutants. Rejoins la communauté et apprends à coder à ton rythme.</p>
-    <div class="barre"></div>
-  </header>
-
-  <!-- NOUVELLE SECTION : ASTUCES -->
-  <h2 id="astuces" class="reveal">Nouveau : Partage d'Astuces</h2>
-  <article class="une reveal g" style="border-left-color: var(--or);">
-    <span class="etat" style="background: var(--or); color: var(--ombre);">Outil Communautaire</span>
-    <h3 style="color: var(--or);">💡 Astuces VirtTech</h3>
-    <p>Découvre les astuces de la communauté ou partage les tiennes ! Un espace dédié pour échanger des conseils pratiques, du code, et aider les autres à progresser. Tu peux aimer, voir les astuces populaires et gérer tes propres publications.</p>
-    
-    <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px;">
-      <a href="/astuces" class="btn" style="background: var(--or); border-color: var(--or); color: var(--ombre);">Découvrir les astuces</a>
-      <a href="/astuces" class="btn" style="background: transparent; border-color: var(--surface); color: var(--surface);">Publier une astuce</a>
-    </div>
-  </article>
-
-  <!-- SECTION : EXPLORER LE SITE -->
-  <h2 id="decouvrir" class="reveal">Découvrir le site</h2>
-  <div class="grille">
-    <div class="box reveal">
-      <h3>💻 VirtEmulator</h3>
-      <p>Teste ton code HTML, CSS et JS directement dans ton navigateur. <a href="/virtemulator" style="color: var(--or);">Ouvrir l'éditeur</a></p>
-    </div>
-    <div class="box reveal" style="--d:.12s">
-      <h3>🔗 TransformLink</h3>
-      <p>Raccourcis tes liens GitHub ou tes projets pour les partager facilement. <a href="/transformlink" style="color: var(--or);">Créer un lien</a></p>
-    </div>
-    <div class="box reveal" style="--d:.24s">
-      <h3>📚 Historique</h3>
-      <p>Retrouve toutes les activités, les cours et les événements passés. <a href="/historique" style="color: var(--or);">Lire l'historique</a></p>
-    </div>
-  </div>
-
-  <!-- SECTION : COMMENT UTILISER -->
-  <h2 id="apropos" class="reveal">Comment utiliser VirtTech ?</h2>
-  <div class="grille">
-    <div class="box reveal">
-      <h3>1. Rejoins la communauté</h3>
-      <p>Clique sur le bouton WhatsApp pour intégrer le groupe de discussion et échanger avec les autres membres.</p>
-    </div>
-    <div class="box reveal" style="--d:.12s">
-      <h3>2. Apprends</h3>
-      <p>Consulte la page <a href="/historique" style="color: var(--or);">Historique</a> pour accéder aux cours et formations passés.</p>
-    </div>
-    <div class="box reveal" style="--d:.24s">
-      <h3>3. Pratique et Partage</h3>
-      <p>Utilise <a href="/virtemulator" style="color: var(--or);">VirtEmulator</a> pour coder, et partage tes découvertes dans les <a href="/astuces" style="color: var(--or);">Astuces</a>.</p>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
+  <!-- ===== FOOTER ===== -->
   <footer id="contact" class="reveal z">
     <h3>Contactez-nous</h3>
     <div class="contacts">

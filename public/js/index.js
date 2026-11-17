@@ -1,25 +1,49 @@
 // --- index.js : Scripts spécifiques à la page d'accueil ---
 
 document.addEventListener("DOMContentLoaded", function() {
-    // On sélectionne tous les éléments qui ont la classe "reveal"
+
+    // 1. ANIMATION DU TITRE "VIRTTECH" (lettre par lettre)
+    // Le texte est déjà écrit dans le HTML (bon pour le SEO et si le JS ne charge pas) :
+    // on le découpe simplement en lettres pour l'animation.
+    function animerTexte() {
+        const container = document.getElementById('titreAnim');
+        if (!container) return;
+
+        // On respecte le réglage système "réduire les animations"
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
+
+        const texteComplet = (container.textContent || '').trim() || 'VirtTech';
+        container.innerHTML = '';
+
+        for (let i = 0; i < texteComplet.length; i++) {
+            const span = document.createElement('span');
+            span.classList.add('lettre');
+            span.textContent = texteComplet[i];
+            span.style.animationDelay = (i * 0.15) + 's';
+            container.appendChild(span);
+        }
+    }
+
+    animerTexte();
+
+    // 2. ANIMATIONS AU DÉFILEMENT (IntersectionObserver)
     var els = document.querySelectorAll('.reveal');
-    
-    // On vérifie si le navigateur supporte l'IntersectionObserver (API moderne pour détecter le défilement)
-    if('IntersectionObserver' in window){
-        var io = new IntersectionObserver(function(entries){
-            entries.forEach(function(entry){
-                if(entry.isIntersecting){
-                    // Si l'élément est visible à l'écran, on ajoute la classe "vu" (qui le rend visible avec l'animation CSS)
+
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
                     entry.target.classList.add('vu');
-                    // On arrête d'observer cet élément (il n'a plus besoin d'être animé)
                     io.unobserve(entry.target);
                 }
             });
-        }, {threshold: .12}); // Se déclenche quand 12% de l'élément est visible
-        
-        els.forEach(function(e){ io.observe(e); });
+        }, { threshold: .12 });
+
+        els.forEach(function(e) { io.observe(e); });
     } else {
-        // Si le navigateur est ancien (ne supporte pas IntersectionObserver), on affiche tout directement
-        els.forEach(function(e){ e.classList.add('vu'); });
+        // Navigateur ancien : on affiche tout directement
+        els.forEach(function(e) { e.classList.add('vu'); });
     }
 });
