@@ -1,54 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
   <!-- Page d'accueil -->
   <url>
     <loc>https://virttech.site/</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://virttech.site/logo.png</image:loc>
-      <image:title>Logo VirtTech</image:title>
-    </image:image>
-  </url>
-  
-  <!-- Page des résultats -->
-  <url>
-    <loc>https://virttech.site/virt-dev</loc>
-    <lastmod>2026-11-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://virttech.site/logo.png</image:loc>
-      <image:title>Résultats Virt_Dev</image:title>
+      <image:title>Logo VirtTech by Ipote</image:title>
     </image:image>
   </url>
 
-  <!-- Page historique -->
+  <!-- Astuces -->
   <url>
-    <loc>https://virttech.site/historique</loc>
-    <lastmod>2026-11-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://virttech.site/logo.png</image:loc>
-      <image:title>Historique VirtTech</image:title>
-    </image:image>
-  </url>
-
-  <!-- Page de contact -->
-  <url>
-    <loc>https://virttech.site/contact</loc>
-    <lastmod>2026-11-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <loc>https://virttech.site/astuces</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
   </url>
 
   <!-- VirtEmulator -->
   <url>
     <loc>https://virttech.site/virtemulator</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -60,7 +37,7 @@
   <!-- TransformLink -->
   <url>
     <loc>https://virttech.site/transformlink</loc>
-    <lastmod>2026-11-14</lastmod>
+    <lastmod>2026-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <image:image>
@@ -68,4 +45,37 @@
       <image:title>TransformLink - Raccourcisseur de liens</image:title>
     </image:image>
   </url>
+
+  <!-- Historique -->
+  <url>
+    <loc>https://virttech.site/historique</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://virttech.site/logo.png</image:loc>
+      <image:title>Historique VirtTech</image:title>
+    </image:image>
+  </url>
+
+  <!-- Résultats Virt_Dev -->
+  <url>
+    <loc>https://virttech.site/virt-dev</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://virttech.site/logo.png</image:loc>
+      <image:title>Résultats Virt_Dev</image:title>
+    </image:image>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://virttech.site/contact</loc>
+    <lastmod>2026-11-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
 </urlset>

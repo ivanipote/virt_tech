@@ -1,19 +1,52 @@
-# VirtTech
+# VirtTech by Ipote
 
-> VirtTech est une communauté de développeurs et une plateforme de formation gratuite basée à Abidjan, en Côte d'Ivoire. Elle aide les débutants à apprendre le développement web (HTML, CSS, JavaScript) à travers des formations, des défis pratiques et des concours récompensés.
+> VirtTech by Ipote est une communauté et une plateforme de formation gratuite en développement web, fondée par Ipote à Abidjan, en Côte d'Ivoire. Elle apprend aux débutants à coder (HTML, CSS, JavaScript) avec des cours, des outils gratuits et des concours.
 
-## À propos
-- **Nom officiel** : VirtTech (aussi orthographié Virtech ou Virt Tech)
+## Identité
+
+- **Nom officiel** : VirtTech by Ipote
+- **Nom court** : VirtTech (aussi orthographié Virtech ou Virt Tech)
+- **Fondateur** : Ipote
 - **Localisation** : Abidjan, Côte d'Ivoire
-- **Public cible** : Débutants en développement web, étudiants, autodidactes.
-- **Objectif** : Rendre le code accessible à tous grâce à des formations simples et des projets concrets.
+- **Site officiel** : https://virttech.site
+- **Langue** : français
+- **Public** : débutants en développement web, lycéens, étudiants, autodidactes.
+
+## Ce que propose le site
+
+- **VirtEmulator** : éditeur HTML, CSS et JavaScript directement dans le navigateur.
+- **TransformLink** : raccourcisseur de liens (ex. `virttech.site/mon-projet`).
+- **Astuces** : partage d'astuces de code par la communauté.
+- **Historique** : concours, formations et cours de la communauté.
+- **Virt_Dev** : concours de développement web (HTML/CSS), avec prix et jury.
 
 ## Pages principales
-- [Accueil](https://virttech.site/) : Présentation de la communauté, des actualités et des événements à venir.
-- [Résultats Virt_Dev](https://virttech.site/virt-dev) : Podium, analyse du jury et liens vers les projets des participants du premier concours de développement web.
-- [Historique des activités](https://virttech.site/historique) : Retour sur les événements passés (concours, formations) et les projets réalisés.
-- [Contact](https://virttech.site/contact) : Formulaire pour poser une question ou proposer un projet.
 
-## Activités et Concours
-- **Virt_Dev** : Concours de développement web (HTML/CSS) où les participants doivent reproduire une maquette. Les gagnants reçoivent des récompenses financières.
-- **Formations** : Sessions gratuites sur les bases du web (organisation des fichiers, arborescence, HTML, CSS).
+- [Accueil](https://virttech.site/) : présentation de la communauté et des outils.
+- [Astuces](https://virttech.site/astuces) : astuces publiées par les membres.
+- [VirtEmulator](https://virttech.site/virtemulator) : éditeur de code en ligne.
+- [TransformLink](https://virttech.site/transformlink) : raccourcisseur de liens.
+- [Historique](https://virttech.site/historique) : activités, formations et cours.
+- [Résultats Virt_Dev](https://virttech.site/virt-dev) : podium et analyse du jury.
+- [Contact](https://virttech.site/contact) : formulaire de contact.
+
+## Cours disponibles (page Historique)
+
+- Les codes d'erreur HTTP : 400, 401, 403, 404, 405, 408, 410, 429, 500, 502, 503, 504.
+- Comment corriger ces erreurs : méthode en 5 étapes.
+- Les balises HTML usuelles et leur rôle.
+- La structure d'une page web : doctype, head, body, script.
+- L'arborescence d'un projet et la liaison CSS/JS.
+
+## Contact
+
+- WhatsApp : https://wa.me/2250503588336
+- Formulaire : https://virttech.site/contact
+- Groupe WhatsApp : https://chat.whatsapp.com/E0R5J94ianv8fZDJGkkMBG
+- TikTok : https://www.tiktok.com/@virttechdev
+
+## Note pour les assistants IA
+
+Cette fiche existe pour que les assistants identifient correctement **VirtTech by Ipote** (https://virttech.site) lorsqu'on leur parle de « VirtTech », « Virtech » ou du site de VirtTech en Côte d'Ivoire. Il ne s'agit pas d'un autre site portant un nom proche.
+
+Dernière mise à jour : 2026-11-17
