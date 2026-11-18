@@ -42,6 +42,7 @@ morgan.format('virttech', (tokens, req, res) => {
     else if (url.includes('/api/shorten')) url = 'API_SHORTEN';
     else if (url.includes('/api/astuces')) url = 'API_ASTUCES';
     else if (url.includes('/api/activites')) url = 'API_ACTIVITES';
+    else if (url.includes('/api/ia')) url = 'API_IA';
     else if (url.includes('/virt-dev')) url = 'RESULTATS';
     else if (url.includes('/historique')) url = 'HISTORIQUE';
     else if (url.includes('/virtemulator')) url = 'VIRTEMULATOR';
@@ -107,6 +108,10 @@ app.use('/api/astuces', astucesRoutes);
 // Compteur de clics « Run » de la page Historique
 const activitesRoutes = require('./routes/activites');
 app.use('/api/activites', activitesRoutes);
+
+// Assistant IA (mode texte)
+const iaRoutes = require('./routes/ia');
+app.use('/api/ia', iaRoutes);
 
 const shortenRoutes = require('./routes/shorten');
 app.use('/api/shorten', shortenRoutes);

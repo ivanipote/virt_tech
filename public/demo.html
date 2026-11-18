@@ -300,6 +300,97 @@
         padding: 0 2px;
     }
 
+    /* Listes */
+    .ia-reponse ul,
+    .ia-reponse ol {
+        margin: 0 0 10px;
+        padding-left: 22px;
+    }
+    .ia-reponse li {
+        margin-bottom: 4px;
+        font-size: .93rem;
+        line-height: 1.6;
+        color: #3F4C55;
+    }
+    .ia-reponse ul li::marker { color: var(--or); }
+    .ia-reponse ol li::marker { color: var(--or); font-weight: 800; }
+
+    .ia-reponse strong { color: var(--ombre); font-weight: 800; }
+
+    .ia-reponse .code-inline {
+        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+        background: var(--surface);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: .88em;
+        color: var(--metal-fonce);
+    }
+
+    /* Tableaux */
+    .tableau-scroll {
+        overflow-x: auto;
+        margin: 12px 0;
+        border: 1px solid #e0e6ea;
+        border-radius: 10px;
+    }
+    .ia-reponse table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 320px;
+        font-size: .88rem;
+    }
+    .ia-reponse th,
+    .ia-reponse td {
+        padding: 8px 10px;
+        text-align: left;
+        border-bottom: 1px solid #eef2f4;
+    }
+    .ia-reponse th {
+        background: #f1f4f6;
+        color: var(--metal-fonce);
+        font-weight: 800;
+    }
+    .ia-reponse tr:last-child td { border-bottom: none; }
+
+    /* État d'erreur */
+    .ia-message.erreur {
+        align-self: stretch;
+        max-width: 100%;
+        padding: 12px 14px;
+        background: #fdf3f2;
+        border: 1px solid #f0c9c4;
+        border-radius: 12px;
+        color: #8c2f27;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .erreur-tete {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: .85rem;
+        line-height: 1.5;
+    }
+    .erreur-tete i { color: #c0392b; margin-top: 2px; }
+    .erreur-tete p { margin: 0; }
+    .btn-reessayer {
+        align-self: flex-start;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid #e0b4ae;
+        background: #fff;
+        color: #8c2f27;
+        font-size: .78rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .btn-reessayer:hover {
+        background: #8c2f27;
+        border-color: #8c2f27;
+        color: #fff;
+    }
+
     /* Apparition mot par mot */
     .mot {
         opacity: 0;
@@ -548,8 +639,8 @@
 
     <p class="note-demo reveal">
         Clique sur <strong>IA</strong> pour ouvrir l'assistant.
-        <em>Démo sans API : les réponses sont simulées.</em><br>
-        Essaie « génère-moi une page HTML » ou « c'est quoi une erreur 404 ? ».
+        <em>Démo connectée à l'IA.</em><br>
+        Essaie « génère-moi une page HTML », « c'est quoi une erreur 404 ? » ou « fais un tableau des codes 4xx et 5xx ».
     </p>
 
 </div>
@@ -563,7 +654,7 @@
             <span class="ia-avatar"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
             <div>
                 <h3 id="ia-titre">Assistant VirtTech</h3>
-                <small>Mode démo</small>
+                <small>Démo connectée</small>
             </div>
         </div>
         <button type="button" class="ia-fermer" id="ia-fermer" aria-label="Fermer l'assistant">
@@ -659,6 +750,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const MOTIF = new RegExp(
         "(https?:\\/\\/[^\\s]+|virttech\\.site\\/[^\\s]*)" +
+        "|(\\*\\*[^*]+\\*\\*)" +
+        "|(`[^`]+`)" +
         "|(\\b(?:" + MOTS_CLES.join("|").replace(/\./g, "\\.") + ")\\b)",
         "gi"
     );
@@ -684,10 +777,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const reste = m[1].slice(url.length);
                 if (reste) cible.appendChild(document.createTextNode(reste));
+            } else if (m[2]) {
+                const fort = document.createElement("strong");
+                remplir(fort, m[2].slice(2, -2));
+                cible.appendChild(fort);
+            } else if (m[3]) {
+                const code = document.createElement("code");
+                code.className = "code-inline";
+                code.textContent = m[3].slice(1, -1);
+                cible.appendChild(code);
             } else {
                 const mark = document.createElement("mark");
                 mark.className = "mot-cle";
-                mark.textContent = m[2];
+                mark.textContent = m[4];
                 cible.appendChild(mark);
             }
 
@@ -739,13 +841,50 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function ajouterParagraphes(conteneur, texte) {
-        String(texte).split(/\n{2,}/).forEach(function (para) {
-            if (!para.trim()) return;
-            const p = document.createElement("p");
-            remplir(p, para.trim());
-            conteneur.appendChild(p);
+    function construireTableau(lignesTableau) {
+        function cellules(ligne) {
+            return ligne.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(function (c) {
+                return c.trim();
+            });
+        }
+
+        const entetes = cellules(lignesTableau[0]);
+        let debut = 1;
+
+        // Ligne de séparation Markdown : |---|---|
+        if (lignesTableau[1] && /^[\s|:-]+$/.test(lignesTableau[1]) && lignesTableau[1].indexOf("-") !== -1) {
+            debut = 2;
+        }
+
+        const scroll = document.createElement("div");
+        scroll.className = "tableau-scroll";
+
+        const table = document.createElement("table");
+
+        const thead = document.createElement("thead");
+        const trh = document.createElement("tr");
+        entetes.forEach(function (c) {
+            const th = document.createElement("th");
+            remplir(th, c);
+            trh.appendChild(th);
         });
+        thead.appendChild(trh);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        for (let k = debut; k < lignesTableau.length; k++) {
+            const tr = document.createElement("tr");
+            cellules(lignesTableau[k]).forEach(function (c) {
+                const td = document.createElement("td");
+                remplir(td, c);
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+        scroll.appendChild(table);
+
+        return scroll;
     }
 
     function normaliserLangage(langage) {
@@ -815,18 +954,82 @@ document.addEventListener("DOMContentLoaded", function () {
         const conteneur = document.createElement("div");
         conteneur.className = "ia-reponse";
 
-        // Découpe le texte et les blocs de code (```langage ... ```)
-        const motif = /```([a-z0-9+#-]*)\n([\s\S]*?)```/gi;
-        let dernier = 0;
-        let m;
+        const lignes = String(texte).replace(/\r\n/g, "\n").split("\n");
+        let i = 0;
 
-        while ((m = motif.exec(texte)) !== null) {
-            ajouterParagraphes(conteneur, texte.slice(dernier, m.index));
-            conteneur.appendChild(construireCode(m[2].replace(/\n$/, ""), m[1]));
-            dernier = m.index + m[0].length;
+        while (i < lignes.length) {
+            const ligne = lignes[i];
+
+            // --- Bloc de code ---
+            if (/^```/.test(ligne.trim())) {
+                const langage = ligne.trim().slice(3).trim();
+                i++;
+                const code = [];
+                while (i < lignes.length && !/^```/.test(lignes[i].trim())) {
+                    code.push(lignes[i]);
+                    i++;
+                }
+                i++;
+                conteneur.appendChild(construireCode(code.join("\n"), langage));
+                continue;
+            }
+
+            // --- Tableau ---
+            if (/^\s*\|/.test(ligne)) {
+                const lignesTableau = [];
+                while (i < lignes.length && /^\s*\|/.test(lignes[i])) {
+                    lignesTableau.push(lignes[i]);
+                    i++;
+                }
+                conteneur.appendChild(construireTableau(lignesTableau));
+                continue;
+            }
+
+            // --- Liste à puces ---
+            if (/^\s*[-*]\s+/.test(ligne)) {
+                const ul = document.createElement("ul");
+                while (i < lignes.length && /^\s*[-*]\s+/.test(lignes[i])) {
+                    const li = document.createElement("li");
+                    remplir(li, lignes[i].replace(/^\s*[-*]\s+/, ""));
+                    ul.appendChild(li);
+                    i++;
+                }
+                conteneur.appendChild(ul);
+                continue;
+            }
+
+            // --- Liste numérotée ---
+            if (/^\s*\d+[.)]\s+/.test(ligne)) {
+                const ol = document.createElement("ol");
+                while (i < lignes.length && /^\s*\d+[.)]\s+/.test(lignes[i])) {
+                    const li = document.createElement("li");
+                    remplir(li, lignes[i].replace(/^\s*\d+[.)]\s+/, ""));
+                    ol.appendChild(li);
+                    i++;
+                }
+                conteneur.appendChild(ol);
+                continue;
+            }
+
+            // --- Paragraphe ---
+            const para = [];
+            while (i < lignes.length && lignes[i].trim() !== "" &&
+                   !/^```/.test(lignes[i].trim()) &&
+                   !/^\s*\|/.test(lignes[i]) &&
+                   !/^\s*[-*]\s+/.test(lignes[i]) &&
+                   !/^\s*\d+[.)]\s+/.test(lignes[i])) {
+                para.push(lignes[i]);
+                i++;
+            }
+
+            if (para.length) {
+                const p = document.createElement("p");
+                remplir(p, para.join(" ").trim());
+                conteneur.appendChild(p);
+            } else {
+                i++;
+            }
         }
-
-        ajouterParagraphes(conteneur, texte.slice(dernier));
 
         bulle.appendChild(conteneur);
         messages.appendChild(bulle);
@@ -844,9 +1047,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ---------------------------------------------------------------
-    // Envoi (démo sans API : réponses simulées)
+    // Envoi à l'IA
     // ---------------------------------------------------------------
     const envoyer = form.querySelector(".ia-envoyer");
+    const historique = [];
 
     // Le champ grandit avec le texte (1 à 4 lignes environ)
     function ajusterHauteur() {
@@ -858,51 +1062,64 @@ document.addEventListener("DOMContentLoaded", function () {
     // Empêche le bouton de prendre le focus : le clavier mobile reste ouvert
     envoyer.addEventListener("mousedown", function (e) { e.preventDefault(); });
 
-    function reponseDemo(question) {
-        const q = question.toLowerCase();
+    function ajouterErreur(message, question) {
+        const bulle = document.createElement("div");
+        bulle.className = "ia-message erreur";
 
-        if (q.includes("code") || q.includes("génère") || q.includes("genere") || q.includes("page html")) {
-            const exemple = [
-                "<!DOCTYPE html>",
-                "<html lang=\"fr\">",
-                "<head>",
-                "    <meta charset=\"UTF-8\">",
-                "    <title>Ma page</title>",
-                "</head>",
-                "<body>",
-                "    <h1>Bonjour VirtTech</h1>",
-                "    <p>Ma première page.</p>",
-                "</body>",
-                "</html>"
-            ].join("\n");
+        const tete = document.createElement("div");
+        tete.className = "erreur-tete";
 
-            return "Voici un exemple de page HTML complète :\n\n" +
-                "```html\n" + exemple + "\n```\n\n" +
-                "Ce code crée une page avec un titre et un paragraphe. Tu peux le coller dans VirtEmulator pour le tester : https://virttech.site/virtemulator";
+        const icone = document.createElement("i");
+        icone.className = "fa-solid fa-triangle-exclamation";
+        icone.setAttribute("aria-hidden", "true");
+
+        const p = document.createElement("p");
+        p.textContent = message;
+
+        tete.append(icone, p);
+
+        const bouton = document.createElement("button");
+        bouton.type = "button";
+        bouton.className = "btn-reessayer";
+        bouton.textContent = "Réessayer";
+        bouton.dataset.question = question;
+
+        bulle.append(tete, bouton);
+        messages.appendChild(bulle);
+        defilerEnBas();
+    }
+
+    async function demanderIA(texte) {
+        const ecriture = afficherEcriture();
+        envoyer.disabled = true;
+
+        try {
+            const reponse = await fetch("/api/ia", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: texte,
+                    historique: historique.slice(-8)
+                })
+            });
+
+            const data = await reponse.json();
+            ecriture.remove();
+
+            if (!data.succes) {
+                ajouterErreur(data.message || "Je n'ai pas pu répondre. Réessaie dans un instant.", texte);
+                return;
+            }
+
+            ajouterReponse(data.reponse);
+            historique.push({ role: "assistant", content: data.reponse });
+        } catch (err) {
+            ecriture.remove();
+            ajouterErreur("Connexion impossible. Vérifie ta connexion et réessaie.", texte);
+        } finally {
+            envoyer.disabled = false;
+            input.focus({ preventScroll: true });
         }
-
-        if (q.includes("404") || q.includes("erreur")) {
-            return "Le code 404 veut dire « page introuvable » : l'adresse demandée ne correspond à aucun fichier sur le serveur.\n\n" +
-                "Les causes les plus fréquentes : un fichier renommé, un chemin mal écrit (css/style.css au lieu de style.css), ou une page supprimée.\n\n" +
-                "Pour les autres codes (403, 500…) et la méthode de correction, ouvre le cours dans l'historique : https://virttech.site/historique\n\n" +
-                "Le réflexe : lire le code, vérifier le chemin, puis regarder la console du navigateur.";
-        }
-
-        if (q.includes("html") || q.includes("balise")) {
-            return "Une balise HTML indique au navigateur ce que représente le contenu. Elle s'écrit entre chevrons : <p> pour un paragraphe, <h1> pour un titre, <a> pour un lien.\n\n" +
-                "La plupart vont par paire : une balise ouvrante et une balise fermante. Le texte entre les deux est ce que le navigateur affiche.\n\n" +
-                "Tu peux tester tout de suite dans VirtEmulator : https://virttech.site/virtemulator";
-        }
-
-        if (q.includes("virttech") || q.includes("qui") || q.includes("quoi")) {
-            return "Je suis l'assistant de VirtTech by Ipote, la communauté de développement web d'Abidjan.\n\n" +
-                "Le site propose trois outils gratuits : VirtEmulator pour coder dans le navigateur, TransformLink pour raccourcir tes liens, et Astuces pour partager ce que tu apprends.\n\n" +
-                "Tu peux aussi suivre les cours dans l'historique : https://virttech.site/historique";
-        }
-
-        return "Mode démo : l'IA n'est pas connectée pour l'instant, mais la structure de réponse est prête.\n\n" +
-            "Bientôt, je répondrai à toutes tes questions sur le HTML, le CSS, le JavaScript et les outils de VirtTech.\n\n" +
-            "Essaie par exemple : « c'est quoi une erreur 404 ? » ou « explique-moi les balises HTML ».";
     }
 
     form.addEventListener("submit", function (e) {
@@ -915,29 +1132,33 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         ajouterMessage("moi", texte);
+        historique.push({ role: "user", content: texte });
+
         input.value = "";
         ajusterHauteur();
         input.focus({ preventScroll: true });
-        envoyer.disabled = true;
 
-        const ecriture = afficherEcriture();
-
-        setTimeout(function () {
-            ecriture.remove();
-            ajouterReponse(reponseDemo(texte));
-            envoyer.disabled = false;
-            input.focus({ preventScroll: true });
-        }, 700);
+        demanderIA(texte);
     });
 
     // ---------------------------------------------------------------
     // Copier un bloc de code
     // ---------------------------------------------------------------
     messages.addEventListener("mousedown", function (e) {
-        if (e.target.closest && e.target.closest(".code-copier")) e.preventDefault();
+        if (e.target.closest && (e.target.closest(".code-copier") || e.target.closest(".btn-reessayer"))) {
+            e.preventDefault();
+        }
     });
 
     messages.addEventListener("click", function (e) {
+        const reessayer = e.target.closest ? e.target.closest(".btn-reessayer") : null;
+        if (reessayer) {
+            const bulle = reessayer.closest(".ia-message");
+            if (bulle) bulle.remove();
+            demanderIA(reessayer.dataset.question);
+            return;
+        }
+
         const bouton = e.target.closest ? e.target.closest(".code-copier") : null;
         if (!bouton) return;
 
