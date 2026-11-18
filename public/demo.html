@@ -14,6 +14,16 @@
 
 <style>
     /* =========================================
+       MOBILE : pas de surbrillance bleue au toucher
+       ========================================= */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+    button, a, .btn-ia, .ia-envoyer {
+        touch-action: manipulation;
+    }
+
+    /* =========================================
        BASE MOBILE FIRST
        ========================================= */
     h1 {
@@ -327,25 +337,31 @@
     /* Pied : saisie + envoyer */
     .ia-pied {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         gap: 10px;
         padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
         border-top: 1px solid #e6ebee;
         background: #fff;
         flex: none;
     }
-    .ia-pied input {
+    .ia-pied textarea {
         flex: 1;
         min-width: 0;
+        min-height: 48px;
+        max-height: 120px;
         padding: 13px 16px;
         border: 2px solid #dbe2e6;
-        border-radius: 24px;
+        border-radius: 22px;
+        font-family: inherit;
         font-size: 16px;
+        line-height: 1.4;
         color: var(--ombre);
         background: #fbfcfd;
+        resize: none;
+        overflow-y: auto;
         transition: border-color .3s, box-shadow .3s;
     }
-    .ia-pied input:focus {
+    .ia-pied textarea:focus {
         outline: none;
         border-color: var(--or);
         box-shadow: 0 0 0 4px rgba(212, 175, 55, .15);
@@ -473,7 +489,7 @@
     </div>
 
     <form class="ia-pied" id="ia-form">
-        <input type="text" id="ia-input" placeholder="Écris ton message…" autocomplete="off" aria-label="Ton message">
+        <textarea id="ia-input" rows="1" placeholder="Écris ton message…" autocomplete="off" aria-label="Ton message"></textarea>
         <button type="submit" class="ia-envoyer" aria-label="Envoyer le message">
             <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
         </button>
@@ -659,6 +675,16 @@ document.addEventListener("DOMContentLoaded", function () {
     // ---------------------------------------------------------------
     const envoyer = form.querySelector(".ia-envoyer");
 
+    // Le champ grandit avec le texte (1 à 4 lignes environ)
+    function ajusterHauteur() {
+        input.style.height = "auto";
+        input.style.height = Math.min(input.scrollHeight, 120) + "px";
+    }
+    input.addEventListener("input", ajusterHauteur);
+
+    // Empêche le bouton de prendre le focus : le clavier mobile reste ouvert
+    envoyer.addEventListener("mousedown", function (e) { e.preventDefault(); });
+
     function reponseDemo(question) {
         const q = question.toLowerCase();
 
@@ -697,6 +723,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         ajouterMessage("moi", texte);
         input.value = "";
+        ajusterHauteur();
+        input.focus({ preventScroll: true });
         envoyer.disabled = true;
 
         const ecriture = afficherEcriture();
@@ -705,7 +733,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ecriture.remove();
             ajouterReponse(reponseDemo(texte));
             envoyer.disabled = false;
-            input.focus();
+            input.focus({ preventScroll: true });
         }, 700);
     });
 
