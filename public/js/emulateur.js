@@ -67,6 +67,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const dossiersFermes = new Set();   // dossiers repliés dans le slide
     const mediasUrls = new Map();       // chemin -> URL blob (images / vidéos)
     let activeFile = "index.html";
+
+    // API lecture seule pour VirtIA
+    window.VirtProjet = {
+        fichiers: function () { return files; },
+        actif: function () { return activeFile; },
+        arbre: function () { return construireArbre(); },
+        resoudre: function (base, href) { return resoudreChemin(base, href); },
+        estMedia: function (chemin) { return estMedia(chemin); }
+    };
     let editor;
     let zoomLevel = 1;
     let debounceTimer;

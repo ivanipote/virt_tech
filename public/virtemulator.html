@@ -175,6 +175,10 @@
 
 
 
+            <button type="button" class="btn-virtia" id="btnVirtIA" aria-label="Ouvrir VirtIA">
+                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                <span>VirtIA</span>
+            </button>
         </div>
 
         <!-- ========================================= -->
@@ -519,6 +523,77 @@
     </div>
 </div>
 
+<div class="ia-overlay" id="ia-overlay"></div>
+
+<div class="ia-panel" id="ia-panel" role="dialog" aria-modal="true" aria-labelledby="ia-titre">
+    <div class="ia-entete">
+        <div class="ia-identite">
+            <span class="ia-avatar"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
+            <div>
+                <h3 id="ia-titre">VirtIA</h3>
+                <small>Assistant IA de VirtTech</small>
+            </div>
+        </div>
+        <div class="ia-entete-actions">
+            <button type="button" class="ia-icone-btn" id="ia-politique" aria-label="Politique d'utilisation" title="Politique d'utilisation">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ia-icone-btn ia-nouveau" id="ia-nouveau" aria-label="Nouvelle conversation" title="Nouvelle conversation">
+                <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ia-icone-btn ia-fermer" id="ia-fermer" aria-label="Fermer l'assistant">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="ia-messages" id="ia-messages" aria-live="polite">
+        <div class="ia-vide" id="ia-vide">
+            <span class="ia-vide-icone"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
+            <p class="ia-vide-bonjour" id="ia-bonjour">Bonjour</p>
+            <p class="ia-vide-titre">Posez votre question à l'IA VirtTech !</p>
+            <div class="ia-suggestions">
+                <button type="button" class="ia-suggestion" data-question="C'est quoi une erreur 404 ?">C'est quoi une erreur 404 ?</button>
+                <button type="button" class="ia-suggestion" data-question="Génère-moi une page HTML simple">Génère-moi une page HTML simple</button>
+                <button type="button" class="ia-suggestion" data-question="Explique-moi les balises HTML">Explique-moi les balises HTML</button>
+            </div>
+        </div>
+
+        <div class="ia-suspendu" id="ia-suspendu" hidden>
+            <i class="fa-solid fa-ban" aria-hidden="true"></i>
+            <p><strong>Accès suspendu.</strong><br>Tu as refusé la politique d'utilisation de VirtIA.</p>
+            <button type="button" class="btn-relire" id="btn-relire">Relire la politique</button>
+        </div>
+    </div>
+
+    <p class="ia-alerte" id="ia-alerte" hidden></p>
+
+    <form class="ia-pied" id="ia-form">
+        <textarea id="ia-input" rows="1" placeholder="Écris ton message…" autocomplete="off" aria-label="Ton message"></textarea>
+        <button type="submit" class="ia-envoyer" aria-label="Envoyer le message">
+            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+        </button>
+    </form>
+</div>
+
+<!-- ===== POLITIQUE D'UTILISATION ===== -->
+<div class="politique-overlay" id="politique-overlay" hidden>
+    <div class="politique-boite" role="dialog" aria-modal="true" aria-labelledby="politique-titre">
+        <h4 id="politique-titre">Politique d'utilisation de VirtIA</h4>
+        <ul>
+            <li>VirtIA est une <strong>IA</strong> : elle peut se tromper. Vérifie toujours le code avant de l'utiliser.</li>
+            <li>Tes questions et réponses sont enregistrées <strong>90 jours</strong> pour améliorer l'assistant (IP hachée, pas de données personnelles).</li>
+            <li>N'écris pas d'informations sensibles : mot de passe, numéro, adresse.</li>
+            <li>VirtIA ne répond qu'aux sujets de <strong>développement web</strong> et de VirtTech.</li>
+            <li>Limite : <strong>10 messages / 10 minutes</strong>, réservés à l'apprentissage.</li>
+        </ul>
+        <div class="politique-actions">
+            <button type="button" class="politique-accepter" id="politique-accepter">J'accepte et je continue</button>
+            <button type="button" class="politique-refuser" id="politique-refuser">Je refuse</button>
+        </div>
+    </div>
+</div>
+
 <!-- ========================================= -->
 <!-- SCRIPTS -->
 <!-- ========================================= -->
@@ -618,9 +693,13 @@
 <script src="/js/toolsemulator.js"></script>
 
 <!-- 5. Émulateur (cœur) -->
+<script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="/js/mediaStore.js"></script>
 <script src="/js/dialogue.js"></script>
 <script src="/js/emulateur.js"></script>
+<script src="/js/virtia-contexte.js"></script>
+<script src="/js/virtia-chat.js"></script>
 
 </body>
 </html>
