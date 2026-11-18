@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Historique - VirtTech</title>
+<title>Assistant IA - Démo | VirtTech</title>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,109 +17,112 @@
        BASE MOBILE FIRST
        ========================================= */
     h1 {
-        font-size: 1.9rem;
+        font-size: 1.8rem;
         line-height: 1.15;
         color: var(--ombre);
         margin-bottom: 6px;
     }
     .sous-titre {
         color: var(--metal-fonce);
-        font-size: 1rem;
-        margin-bottom: 26px;
+        font-size: .98rem;
+        margin-bottom: 24px;
     }
 
     /* =========================================
-       UNE ACTIVITÉ (sans carte)
+       APERÇU DE L'ÉDITEUR
        ========================================= */
-    .activite {
-        padding: 22px 0 24px;
-        border-bottom: 1px solid rgba(22, 31, 39, .12);
-    }
-    .activite:last-of-type {
-        border-bottom: none;
-        padding-bottom: 10px;
+    .mock-editeur {
+        border: 1px solid #d9e0e4;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(22, 31, 39, .12);
     }
 
-    .activite-tete {
+    .mock-barre {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 12px;
+        gap: 6px;
+        padding: 10px 12px;
+        background: #eef2f4;
+        border-bottom: 1px solid #e1e7ea;
         flex-wrap: wrap;
     }
+    .mock-onglet {
+        font-size: .72rem;
+        font-weight: 700;
+        color: #5b6873;
+        padding: 3px 9px;
+        border-radius: 6px;
+        background: #dfe6ea;
+    }
+    .mock-onglet.actif {
+        background: var(--metal-fonce);
+        color: #fff;
+    }
+    .mock-espace { flex: 1; }
 
-    .activite h2 {
-        margin: 0;
-        border-bottom: none;
-        font-size: 1.12rem;
-        min-width: 0;
+    .btn-executer {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 20px;
+        border: 1px solid #cfd8de;
+        background: #fff;
+        color: var(--metal-fonce);
+        font-size: .72rem;
+        font-weight: 700;
+        cursor: default;
     }
 
-    .activite p {
-        margin-top: 10px;
-        font-size: .95rem;
-        line-height: 1.65;
-        color: #3F4C55;
-        max-width: 70ch;
-    }
-
-    /* Mots importants : gras + surlignage doré */
-    .activite strong {
-        font-weight: 800;
-        color: var(--ombre);
-        background: linear-gradient(180deg, transparent 55%, rgba(212,175,55,.5) 55%);
-        padding: 0 2px;
-    }
-
-    .lien-plus {
+    .btn-ia {
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        margin-top: 10px;
-        font-size: .85rem;
-        font-weight: 800;
-        color: var(--metal-fonce);
-        text-decoration: none;
-        border-bottom: 2px solid var(--or);
-        padding-bottom: 2px;
-    }
-    .lien-plus i { color: var(--or); font-size: .75rem; }
-    .lien-plus:hover { color: var(--ombre); }
-
-    /* =========================================
-       BOUTON RUN
-       ========================================= */
-    .btn-run {
-        margin-left: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 17px;
-        border-radius: 30px;
+        padding: 7px 15px;
+        border-radius: 20px;
         border: 2px solid var(--or);
         background: transparent;
         color: var(--metal-fonce);
+        font-size: .75rem;
         font-weight: 800;
-        font-size: .78rem;
-        letter-spacing: .6px;
-        text-transform: uppercase;
+        letter-spacing: .5px;
         cursor: pointer;
         transition: background .3s, color .3s, transform .3s;
     }
-    .btn-run i { color: var(--or); font-size: .75rem; transition: color .3s; }
-    .btn-run:hover,
-    .btn-run:focus-visible {
+    .btn-ia i { color: var(--or); transition: color .3s; }
+    .btn-ia:hover {
         background: var(--or);
         color: var(--ombre);
         transform: translateY(-2px);
     }
-    .btn-run:hover i,
-    .btn-run:focus-visible i { color: var(--ombre); }
+    .btn-ia:hover i { color: var(--ombre); }
+
+    .mock-code {
+        margin: 0;
+        padding: 14px;
+        background: #1e2a33;
+        color: #d8e0e6;
+        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+        font-size: .78rem;
+        line-height: 1.6;
+        overflow-x: auto;
+        white-space: pre;
+        min-height: 150px;
+    }
+
+    .note-demo {
+        margin-top: 16px;
+        font-size: .85rem;
+        color: #7b8891;
+    }
+    .note-demo strong { color: var(--metal-fonce); }
 
     /* =========================================
-       LE SLIDE
+       LA SLIDE DE L'ASSISTANT (hauteur fixe)
        ========================================= */
-    .slide-overlay {
+    .ia-overlay {
         position: fixed;
         inset: 0;
         background: rgba(22, 31, 39, .7);
@@ -129,102 +132,250 @@
         visibility: hidden;
         transition: opacity .3s, visibility 0s .3s;
     }
-    .slide-overlay.ouvert {
+    .ia-overlay.ouvert {
         opacity: 1;
         visibility: visible;
         transition: opacity .3s;
     }
 
-    .slide-panel {
+    .ia-panel {
         position: fixed;
         left: 0;
         bottom: 0;
         width: 100%;
-        height: 88vh;
-        max-height: 88vh;
+        height: 68vh;
+        max-height: 68vh;
         background: var(--blanc);
         border-radius: 25px 25px 0 0;
         box-shadow: 0 -10px 40px rgba(0, 0, 0, .5);
         z-index: 1001;
+        display: flex;
+        flex-direction: column;
         transform: translateY(100%);
         visibility: hidden;
         transition: transform .4s cubic-bezier(.22, .8, .3, 1), visibility 0s .4s;
-        display: flex;
-        flex-direction: column;
     }
-    .slide-panel.ouvert {
+    .ia-panel.ouvert {
         transform: none;
         visibility: visible;
         transition: transform .4s cubic-bezier(.22, .8, .3, 1);
     }
 
-    .slide-header {
+    /* En-tête */
+    .ia-entete {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        gap: 14px;
-        padding: 18px 20px;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 18px;
         background: var(--metal-fonce);
         color: var(--blanc);
         border-bottom: 3px solid var(--or);
         border-radius: 25px 25px 0 0;
-        flex-shrink: 0;
+        flex: none;
     }
-    .slide-header h3 {
-        font-size: 1.05rem;
+    .ia-identite {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+    .ia-avatar {
+        flex: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(212, 175, 55, .15);
+        border: 1px solid var(--or);
+        color: var(--or);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .95rem;
+    }
+    .ia-entete h3 {
         margin: 0;
+        font-size: 1rem;
+        line-height: 1.2;
     }
-    .btn-fermer-slide {
+    .ia-entete small {
+        display: block;
+        font-size: .7rem;
+        opacity: .7;
+        font-weight: 400;
+    }
+    .ia-fermer {
         flex: none;
         background: none;
         border: none;
         color: var(--blanc);
-        font-size: 1.3rem;
+        font-size: 1.25rem;
         cursor: pointer;
         transition: color .2s, transform .2s;
     }
-    .btn-fermer-slide:hover { color: #ffb3b3; transform: scale(1.1); }
+    .ia-fermer:hover { color: #ffb3b3; transform: scale(1.1); }
 
-    .slide-contenu {
-        padding: 22px 20px 32px;
-        overflow-y: auto;
+    /* Messages */
+    .ia-messages {
         flex: 1;
+        overflow-y: auto;
+        padding: 18px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: #fbfcfd;
     }
-    .slide-contenu p {
+
+    .ia-vide {
+        margin: auto;
+        text-align: center;
+        color: #8b969d;
+        font-size: .88rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 20px;
+        max-width: 320px;
+        line-height: 1.5;
+    }
+    .ia-vide i { font-size: 1.8rem; color: var(--or); }
+
+    .ia-message {
+        max-width: 85%;
+        padding: 10px 14px;
+        border-radius: 16px;
+        font-size: .92rem;
+        line-height: 1.55;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .ia-message p { margin: 0; }
+
+    /* La réponse de l'IA : pas de bulle, pleine largeur */
+    .ia-message.bot {
+        align-self: stretch;
+        max-width: 100%;
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
         color: #3F4C55;
-        font-size: .95rem;
-        line-height: 1.7;
-        margin-bottom: 14px;
     }
-    .slide-contenu h4 {
-        color: var(--metal-fonce);
-        font-size: 1rem;
-        margin: 22px 0 8px;
-        padding-bottom: 5px;
-        border-bottom: 1px solid var(--surface);
+
+    .ia-reponse p {
+        margin: 0 0 10px;
+        font-size: .93rem;
+        line-height: 1.65;
     }
-    .slide-contenu ul,
-    .slide-contenu ol {
-        margin: 0 0 14px 20px;
-        color: #3F4C55;
-        font-size: .95rem;
-        line-height: 1.7;
+    .ia-reponse p:last-child { margin-bottom: 0; }
+
+    .ia-reponse a {
+        color: #8a6d1a;
+        font-weight: 700;
+        text-decoration: underline;
+        text-decoration-color: var(--or);
+        text-underline-offset: 2px;
+        word-break: break-word;
     }
-    .slide-contenu li { margin-bottom: 4px; }
-    .slide-contenu strong { color: var(--ombre); }
-    .slide-contenu code {
-        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
-        background: var(--surface);
-        padding: 1px 5px;
-        border-radius: 4px;
-        font-size: .88em;
-        color: var(--metal-fonce);
-    }
-    .slide-contenu a {
-        color: var(--metal-fonce);
+    .ia-reponse a:hover { color: var(--ombre); }
+
+    /* Mots-clés surlignés, comme une réponse d'IA soignée */
+    .mot-cle {
+        background: linear-gradient(180deg, transparent 55%, rgba(212, 175, 55, .45) 55%);
+        color: var(--ombre);
         font-weight: 800;
-        border-bottom: 2px solid var(--or);
-        text-decoration: none;
+        padding: 0 2px;
+    }
+
+    /* Apparition mot par mot */
+    .mot {
+        opacity: 0;
+        animation: motIn .35s ease forwards;
+    }
+    @keyframes motIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .ia-message.moi {
+        align-self: flex-end;
+        background: var(--metal-fonce);
+        color: var(--blanc);
+        border-bottom-right-radius: 6px;
+    }
+
+    /* « en train d'écrire » */
+    .ia-ecrit {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 12px 16px;
+    }
+    .ia-ecrit span {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #9aa6ae;
+        animation: iaPulse 1s infinite;
+    }
+    .ia-ecrit span:nth-child(2) { animation-delay: .15s; }
+    .ia-ecrit span:nth-child(3) { animation-delay: .3s; }
+    @keyframes iaPulse {
+        0%, 80%, 100% { opacity: .3; transform: translateY(0); }
+        40% { opacity: 1; transform: translateY(-3px); }
+    }
+
+    /* Pied : saisie + envoyer */
+    .ia-pied {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        border-top: 1px solid #e6ebee;
+        background: #fff;
+        flex: none;
+    }
+    .ia-pied input {
+        flex: 1;
+        min-width: 0;
+        padding: 13px 16px;
+        border: 2px solid #dbe2e6;
+        border-radius: 24px;
+        font-size: 16px;
+        color: var(--ombre);
+        background: #fbfcfd;
+        transition: border-color .3s, box-shadow .3s;
+    }
+    .ia-pied input:focus {
+        outline: none;
+        border-color: var(--or);
+        box-shadow: 0 0 0 4px rgba(212, 175, 55, .15);
+    }
+    .ia-envoyer {
+        flex: none;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: none;
+        background: var(--metal-fonce);
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .3s, color .3s, transform .3s;
+    }
+    .ia-envoyer:hover {
+        background: var(--or);
+        color: var(--ombre);
+        transform: translateY(-2px);
+    }
+    .ia-envoyer:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+        transform: none;
+        background: var(--metal-fonce);
+        color: #fff;
     }
 
     /* =========================================
@@ -246,15 +397,12 @@
        DESKTOP
        ========================================= */
     @media (min-width: 768px) {
-        h1 { font-size: 2.5rem; }
-        .sous-titre { font-size: 1.1rem; }
-        .activite { padding: 28px 0 30px; }
-        .activite h2 { font-size: 1.25rem; }
-        .activite p { font-size: 1rem; }
-        .slide-panel { height: 80vh; max-height: 80vh; }
-        .slide-header { padding: 20px 26px; }
-        .slide-contenu { padding: 26px 26px 40px; }
-        .slide-header h3 { font-size: 1.2rem; }
+        h1 { font-size: 2.2rem; }
+        .mock-code { min-height: 200px; }
+        .ia-panel { height: 72vh; max-height: 72vh; }
+        .ia-messages { padding: 22px 24px; }
+        .ia-pied { padding: 14px 24px; }
+        .ia-message { max-width: 70%; font-size: .95rem; }
     }
 </style>
 
@@ -267,184 +415,298 @@
 
 <div class="contenu">
 
-    <h1 class="reveal">Historique d'activité</h1>
-    <p class="sous-titre reveal">Retrouve les concours, les formations et les cours de VirtTech.</p>
+    <h1 class="reveal">Assistant IA</h1>
+    <p class="sous-titre reveal">Aperçu de l'assistant qui sera intégré à VirtEmulator.</p>
 
-    <!-- 1 -->
-    <article class="activite reveal">
-        <div class="activite-tete">
-            <h2>Concours Virt_Dev</h2>
-            <button class="btn-run" data-slide="virtdev"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
+    <!-- Aperçu de l'éditeur -->
+    <div class="mock-editeur reveal">
+        <div class="mock-barre">
+            <span class="mock-onglet actif">HTML</span>
+            <span class="mock-onglet">CSS</span>
+            <span class="mock-onglet">JS</span>
+            <span class="mock-espace"></span>
+            <span class="btn-executer"><i class="fa-solid fa-play"></i> Exécuter</span>
+            <button type="button" class="btn-ia" id="btnIA">
+                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> IA
+            </button>
         </div>
-        <p>Du <strong>30 octobre</strong> au <strong>4 novembre 2026</strong>, les participants devaient reproduire une page de connexion en HTML et CSS. <strong>Horo David</strong> remporte la 1re place, <strong>Koudouss</strong> la 2e.</p>
-        <a class="lien-plus" href="/virt-dev">Voir les résultats <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-    </article>
+        <pre class="mock-code">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;title&gt;Ma page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Bonjour VirtTech&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    </div>
 
-    <!-- 2 -->
-    <article class="activite reveal">
-        <div class="activite-tete">
-            <h2>Formation : arborescence et liaison</h2>
-            <button class="btn-run" data-slide="arborescence"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
-        </div>
-        <p>Un projet web, ce sont des fichiers rangés dans des dossiers. On a appris à créer une <strong>arborescence claire</strong> et à <strong>lier le CSS et le JS</strong> au HTML.</p>
-    </article>
-
-    <!-- 3 -->
-    <article class="activite reveal">
-        <div class="activite-tete">
-            <h2>Cours : les codes d'erreur du web</h2>
-            <button class="btn-run" data-slide="erreurs"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
-        </div>
-        <p><strong>404</strong>, <strong>403</strong>, <strong>500</strong>… Chaque erreur a un numéro et une famille. Savoir les lire, c'est déjà la moitié du diagnostic.</p>
-    </article>
-
-    <!-- 4 -->
-    <article class="activite reveal">
-        <div class="activite-tete">
-            <h2>Cours : corriger ces erreurs</h2>
-            <button class="btn-run" data-slide="corriger"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
-        </div>
-        <p>Lire le code, comprendre la famille, vérifier le chemin du fichier, regarder la console : une <strong>méthode simple</strong> pour ne plus rester bloqué devant une erreur.</p>
-    </article>
-
-    <!-- 5 -->
-    <article class="activite reveal">
-        <div class="activite-tete">
-            <h2>Cours : les balises HTML usuelles</h2>
-            <button class="btn-run" data-slide="balises"><i class="fa-solid fa-play" aria-hidden="true"></i> Run</button>
-        </div>
-        <p><code>h1</code>, <code>p</code>, <code>a</code>, <code>img</code>… Chaque balise a un <strong>rôle précis</strong>. Voici celles que tu utiliseras tous les jours.</p>
-    </article>
+    <p class="note-demo reveal">
+        Clique sur <strong>IA</strong> pour ouvrir l'assistant.
+        <em>Démo sans API : les réponses sont simulées.</em>
+    </p>
 
 </div>
 
-<!-- ===== SLIDE ===== -->
-<div class="slide-overlay" id="slide-overlay"></div>
+<!-- ===== SLIDE DE L'ASSISTANT ===== -->
+<div class="ia-overlay" id="ia-overlay"></div>
 
-<div class="slide-panel" id="slide-panel" role="dialog" aria-modal="true" aria-labelledby="slide-title">
-    <div class="slide-header">
-        <h3 id="slide-title">Chargement…</h3>
-        <button class="btn-fermer-slide" id="btn-fermer-slide" aria-label="Fermer le cours">
+<div class="ia-panel" id="ia-panel" role="dialog" aria-modal="true" aria-labelledby="ia-titre">
+    <div class="ia-entete">
+        <div class="ia-identite">
+            <span class="ia-avatar"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
+            <div>
+                <h3 id="ia-titre">Assistant VirtTech</h3>
+                <small>Mode démo</small>
+            </div>
+        </div>
+        <button type="button" class="ia-fermer" id="ia-fermer" aria-label="Fermer l'assistant">
             <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
     </div>
-    <div class="slide-contenu" id="slide-contenu"></div>
+
+    <div class="ia-messages" id="ia-messages" aria-live="polite">
+        <div class="ia-vide" id="ia-vide">
+            <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
+            <p>Pose ta question sur VirtTech ou sur ton code.</p>
+        </div>
+    </div>
+
+    <form class="ia-pied" id="ia-form">
+        <input type="text" id="ia-input" placeholder="Écris ton message…" autocomplete="off" aria-label="Ton message">
+        <button type="submit" class="ia-envoyer" aria-label="Envoyer le message">
+            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+        </button>
+    </form>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    // ---------------------------------------------------------------
-    // Contenu minimal des cours (démo)
-    // ---------------------------------------------------------------
-    const cours = {
-        virtdev: {
-            titre: "Concours Virt_Dev",
-            contenu: `
-                <p><strong>30 octobre → 4 novembre 2026.</strong> Les participants devaient reproduire une page de connexion en HTML et CSS. L'IA était autorisée.</p>
-                <h4>Podium</h4>
-                <ul>
-                    <li><strong>1re place :</strong> Horo David — 2 000 F CFA</li>
-                    <li><strong>2e place :</strong> Koudouss — 1 000 F CFA</li>
-                </ul>
-                <p><a href="/virt-dev">Voir la page des résultats <i class="fa-solid fa-arrow-right"></i></a></p>
-            `
-        },
-        arborescence: {
-            titre: "Formation : arborescence et liaison",
-            contenu: `
-                <p>Un projet web, c'est des fichiers rangés dans des dossiers :</p>
-                <ul>
-                    <li><code>index.html</code> — la page</li>
-                    <li><code>css/style.css</code> — le style</li>
-                    <li><code>js/script.js</code> — les interactions</li>
-                </ul>
-                <p>La règle : on met le <strong>nom du dossier</strong>, puis un slash, jusqu'au fichier.</p>
-            `
-        },
-        erreurs: {
-            titre: "Cours : les codes d'erreur du web",
-            contenu: `
-                <p>Chaque erreur a un numéro. La famille indique qui est en cause :</p>
-                <ul>
-                    <li><strong>4xx</strong> — le visiteur (mauvaise adresse, accès refusé…)</li>
-                    <li><strong>5xx</strong> — le serveur (bug, panne…)</li>
-                </ul>
-                <h4>Les plus courantes</h4>
-                <p><strong>404</strong> page introuvable · <strong>403</strong> accès refusé · <strong>500</strong> erreur du serveur · <strong>503</strong> service indisponible.</p>
-            `
-        },
-        corriger: {
-            titre: "Cours : corriger ces erreurs",
-            contenu: `
-                <p>La méthode en 4 temps :</p>
-                <ol>
-                    <li>Lire le code (404, 403, 500…).</li>
-                    <li>Comprendre la famille : 4xx = toi, 5xx = le serveur.</li>
-                    <li>Vérifier le chemin et le nom du fichier.</li>
-                    <li>Regarder la console (F12) et les logs.</li>
-                </ol>
-            `
-        },
-        balises: {
-            titre: "Cours : les balises HTML usuelles",
-            contenu: `
-                <p>Quelques balises et leur rôle :</p>
-                <ul>
-                    <li><code>h1</code> — le titre principal</li>
-                    <li><code>p</code> — un paragraphe</li>
-                    <li><code>a</code> — un lien</li>
-                    <li><code>img</code> — une image</li>
-                    <li><code>ul</code> / <code>li</code> — une liste</li>
-                </ul>
-            `
-        }
-    };
-
-    // ---------------------------------------------------------------
-    // Ouverture / fermeture du slide
-    // ---------------------------------------------------------------
-    const overlay = document.getElementById("slide-overlay");
-    const panel = document.getElementById("slide-panel");
-    const titre = document.getElementById("slide-title");
-    const contenu = document.getElementById("slide-contenu");
-    const fermer = document.getElementById("btn-fermer-slide");
+    const overlay = document.getElementById("ia-overlay");
+    const panel = document.getElementById("ia-panel");
+    const btnIA = document.getElementById("btnIA");
+    const fermer = document.getElementById("ia-fermer");
+    const messages = document.getElementById("ia-messages");
+    const vide = document.getElementById("ia-vide");
+    const form = document.getElementById("ia-form");
+    const input = document.getElementById("ia-input");
 
     let dernierFocus = null;
 
-    function ouvrirSlide(id, declencheur) {
-        const data = cours[id];
-        if (!data) return;
-
-        titre.textContent = data.titre;
-        contenu.innerHTML = data.contenu;
-        contenu.scrollTop = 0;
-        dernierFocus = declencheur || document.activeElement;
-
+    // ---------------------------------------------------------------
+    // Ouverture / fermeture
+    // ---------------------------------------------------------------
+    function ouvrir() {
+        dernierFocus = document.activeElement;
         overlay.classList.add("ouvert");
         panel.classList.add("ouvert");
         document.body.style.overflow = "hidden";
-        fermer.focus();
+        input.focus();
     }
 
-    function fermerSlide() {
+    function fermerAssistant() {
         overlay.classList.remove("ouvert");
         panel.classList.remove("ouvert");
         document.body.style.overflow = "";
         if (dernierFocus) dernierFocus.focus();
     }
 
-    document.querySelectorAll(".btn-run").forEach(function (bouton) {
-        bouton.addEventListener("click", function () {
-            ouvrirSlide(bouton.dataset.slide, bouton);
-        });
-    });
-
-    overlay.addEventListener("click", fermerSlide);
-    fermer.addEventListener("click", fermerSlide);
+    btnIA.addEventListener("click", ouvrir);
+    fermer.addEventListener("click", fermerAssistant);
+    overlay.addEventListener("click", fermerAssistant);
 
     document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && panel.classList.contains("ouvert")) fermerSlide();
+        if (e.key === "Escape" && panel.classList.contains("ouvert")) fermerAssistant();
+    });
+
+    // ---------------------------------------------------------------
+    // Affichage des messages
+    // ---------------------------------------------------------------
+    function defilerEnBas() {
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function ajouterMessage(role, texte) {
+        if (vide) vide.remove();
+
+        const bulle = document.createElement("div");
+        bulle.className = "ia-message " + role;
+        const p = document.createElement("p");
+        p.textContent = texte;
+        bulle.appendChild(p);
+        messages.appendChild(bulle);
+        defilerEnBas();
+        return bulle;
+    }
+
+    // ---------------------------------------------------------------
+    // Rendu d'une réponse : paragraphes, liens, mots-clés, animation
+    // ---------------------------------------------------------------
+    const MOTS_CLES = [
+        "VirtTech by Ipote", "VirtEmulator", "TransformLink", "Virt_Dev", "VirtTech",
+        "JavaScript", "Node.js", "HTML", "CSS", "GitHub", "Abidjan",
+        "arborescence", "balises", "balise", "404", "403", "500"
+    ];
+
+    const MOTIF = new RegExp(
+        "(https?:\\/\\/[^\\s]+|virttech\\.site\\/[^\\s]*)" +
+        "|(\\b(?:" + MOTS_CLES.join("|").replace(/\./g, "\\.") + ")\\b)",
+        "gi"
+    );
+
+    function remplir(cible, texte) {
+        const motif = new RegExp(MOTIF.source, "gi");
+        let index = 0;
+        let m;
+
+        while ((m = motif.exec(texte)) !== null) {
+            if (m.index > index) {
+                cible.appendChild(document.createTextNode(texte.slice(index, m.index)));
+            }
+
+            if (m[1]) {
+                const url = m[1].replace(/[.,;:!?)]+$/, "");
+                const a = document.createElement("a");
+                a.href = /^https?:/i.test(url) ? url : "https://" + url;
+                a.target = "_blank";
+                a.rel = "noopener";
+                a.textContent = url;
+                cible.appendChild(a);
+
+                const reste = m[1].slice(url.length);
+                if (reste) cible.appendChild(document.createTextNode(reste));
+            } else {
+                const mark = document.createElement("mark");
+                mark.className = "mot-cle";
+                mark.textContent = m[2];
+                cible.appendChild(mark);
+            }
+
+            index = m.index + m[0].length;
+        }
+
+        if (index < texte.length) {
+            cible.appendChild(document.createTextNode(texte.slice(index)));
+        }
+    }
+
+    function animerMots(racine) {
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const marcheur = document.createTreeWalker(racine, NodeFilter.SHOW_TEXT);
+        const noeuds = [];
+        while (marcheur.nextNode()) noeuds.push(marcheur.currentNode);
+
+        let n = 0;
+
+        noeuds.forEach(function (noeud) {
+            const morceaux = noeud.nodeValue.split(/(\s+)/);
+            const frag = document.createDocumentFragment();
+
+            morceaux.forEach(function (morceau) {
+                if (!morceau) return;
+
+                if (/^\s+$/.test(morceau)) {
+                    frag.appendChild(document.createTextNode(morceau));
+                    return;
+                }
+
+                const span = document.createElement("span");
+                span.className = "mot";
+                span.style.animationDelay = Math.min(n++ * 10, 1200) + "ms";
+                span.textContent = morceau;
+                frag.appendChild(span);
+            });
+
+            noeud.parentNode.replaceChild(frag, noeud);
+        });
+    }
+
+    function ajouterReponse(texte) {
+        if (vide) vide.remove();
+
+        const bulle = document.createElement("div");
+        bulle.className = "ia-message bot";
+
+        const conteneur = document.createElement("div");
+        conteneur.className = "ia-reponse";
+
+        String(texte).split(/\n{2,}/).forEach(function (para) {
+            if (!para.trim()) return;
+            const p = document.createElement("p");
+            remplir(p, para.trim());
+            conteneur.appendChild(p);
+        });
+
+        bulle.appendChild(conteneur);
+        messages.appendChild(bulle);
+        animerMots(conteneur);
+        defilerEnBas();
+    }
+
+    function afficherEcriture() {
+        const bulle = document.createElement("div");
+        bulle.className = "ia-message bot ia-ecrit";
+        bulle.innerHTML = "<span></span><span></span><span></span>";
+        messages.appendChild(bulle);
+        defilerEnBas();
+        return bulle;
+    }
+
+    // ---------------------------------------------------------------
+    // Envoi (démo sans API : réponses simulées)
+    // ---------------------------------------------------------------
+    const envoyer = form.querySelector(".ia-envoyer");
+
+    function reponseDemo(question) {
+        const q = question.toLowerCase();
+
+        if (q.includes("404") || q.includes("erreur") || q.includes("code")) {
+            return "Le code 404 veut dire « page introuvable » : l'adresse demandée ne correspond à aucun fichier sur le serveur.\n\n" +
+                "Les causes les plus fréquentes : un fichier renommé, un chemin mal écrit (css/style.css au lieu de style.css), ou une page supprimée.\n\n" +
+                "Pour les autres codes (403, 500…) et la méthode de correction, ouvre le cours dans l'historique : https://virttech.site/historique\n\n" +
+                "Le réflexe : lire le code, vérifier le chemin, puis regarder la console du navigateur.";
+        }
+
+        if (q.includes("html") || q.includes("balise")) {
+            return "Une balise HTML indique au navigateur ce que représente le contenu. Elle s'écrit entre chevrons : <p> pour un paragraphe, <h1> pour un titre, <a> pour un lien.\n\n" +
+                "La plupart vont par paire : une balise ouvrante et une balise fermante. Le texte entre les deux est ce que le navigateur affiche.\n\n" +
+                "Tu peux tester tout de suite dans VirtEmulator : https://virttech.site/virtemulator";
+        }
+
+        if (q.includes("virttech") || q.includes("qui") || q.includes("quoi")) {
+            return "Je suis l'assistant de VirtTech by Ipote, la communauté de développement web d'Abidjan.\n\n" +
+                "Le site propose trois outils gratuits : VirtEmulator pour coder dans le navigateur, TransformLink pour raccourcir tes liens, et Astuces pour partager ce que tu apprends.\n\n" +
+                "Tu peux aussi suivre les cours dans l'historique : https://virttech.site/historique";
+        }
+
+        return "Mode démo : l'IA n'est pas connectée pour l'instant, mais la structure de réponse est prête.\n\n" +
+            "Bientôt, je répondrai à toutes tes questions sur le HTML, le CSS, le JavaScript et les outils de VirtTech.\n\n" +
+            "Essaie par exemple : « c'est quoi une erreur 404 ? » ou « explique-moi les balises HTML ».";
+    }
+
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const texte = input.value.trim();
+        if (!texte || envoyer.disabled) {
+            input.focus();
+            return;
+        }
+
+        ajouterMessage("moi", texte);
+        input.value = "";
+        envoyer.disabled = true;
+
+        const ecriture = afficherEcriture();
+
+        setTimeout(function () {
+            ecriture.remove();
+            ajouterReponse(reponseDemo(texte));
+            envoyer.disabled = false;
+            input.focus();
+        }, 700);
     });
 
     // ---------------------------------------------------------------
