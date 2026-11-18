@@ -251,6 +251,32 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 500);
         });
 
+        // 9 bis. Suggestions de code (balises, propriétés CSS, JS)
+        let hintTimer = null;
+
+        editor.on('inputRead', function(cm, change) {
+            const texte = change.text && change.text[0] ? change.text[0] : '';
+            if (!texte || !/[a-zA-Z0-9<>]/.test(texte)) return;
+
+            clearTimeout(hintTimer);
+            hintTimer = setTimeout(function() {
+                const mode = cm.getMode().name;
+                if (mode !== 'htmlmixed' && mode !== 'css' && mode !== 'javascript') return;
+
+                const curseur = cm.getCursor();
+                const avant = cm.getLine(curseur.line).slice(0, curseur.ch);
+                const mot = (avant.match(/[a-zA-Z0-9-]+$/) || [''])[0];
+
+                if (mot.length < 2 && texte !== '<') return;
+
+                try {
+                    cm.showHint({ completeSingle: false });
+                } catch (e) {
+                    // Pas de suggestion disponible pour ce mode
+                }
+            }, 120);
+        });
+
         // 10. Restaurer nom téléphone
         const savedName = localStorage.getItem('virttech_device_name');
         if (savedName) {
@@ -364,6 +390,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (e.key === 'Enter') validerModalFichier();
             });
         }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest || !e.target.closest('.fld-menu-wrap')) fermerMenus();
+        });
 
         document.addEventListener('keydown', function (e) {
             if (e.key !== 'Escape') return;
@@ -522,6 +552,40 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
+    // Intercepte les liens cliqués dans l'aperçu : navigation interne au projet
+    function brancherLiensIframe(doc, cheminPage) {
+        if (!doc) return;
+
+        doc.addEventListener('click', function (e) {
+            const lien = e.target && e.target.closest ? e.target.closest('a') : null;
+            if (!lien) return;
+
+            const href = lien.getAttribute('href');
+            if (!href) return;
+
+            // Ancre interne : on laisse faire
+            if (href.charAt(0) === '#') return;
+
+            // Lien externe ou spécial
+            if (/^(https?:|mailto:|tel:|javascript:)/i.test(href)) {
+                e.preventDefault();
+                if (/^https?:/i.test(href)) {
+                    window.open(href, '_blank', 'noopener');
+                }
+                return;
+            }
+
+            // Lien interne au projet
+            e.preventDefault();
+
+            const base = cheminPage.indexOf('/') !== -1 ? cheminPage.slice(0, cheminPage.lastIndexOf('/')) : "";
+            const cible = resoudreChemin(base, href);
+            if (!cible) return;
+
+            chargerPage(normaliserNom(cible), true);
+        });
+    }
+
     function chargerPage(nom, ajouterHistorique) {
         if (ajouterHistorique === undefined) ajouterHistorique = true;
 
@@ -555,6 +619,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 doc.open();
                 doc.write(construirePage(nomComplet));
                 doc.close();
+                brancherLiensIframe(doc, nomComplet);
                 if (urlInput) urlInput.value = nomComplet;
             } else {
                 if (page404) page404.style.display = 'flex';
@@ -574,6 +639,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     doc.open();
                     doc.write(construirePage(nomActuel));
                     doc.close();
+                    brancherLiensIframe(doc, nomActuel);
                 }
             }
         }
@@ -875,6 +941,82 @@ document.addEventListener("DOMContentLoaded", function() {
         return b;
     }
 
+    // Menu « ⋯ » : Renommer / Supprimer
+    function fermerMenus() {
+        document.querySelectorAll('.fld-menu').forEach(function (m) { m.hidden = true; });
+        document.querySelectorAll('.fld-bouton-plus').forEach(function (b) {
+            b.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    function construireMenu(noeud) {
+        const enveloppe = document.createElement('span');
+        enveloppe.className = 'fld-menu-wrap';
+
+        const bouton = document.createElement('button');
+        bouton.type = 'button';
+        bouton.className = 'fld-bouton-plus';
+        bouton.setAttribute('aria-label', "Plus d'options pour " + noeud.nom);
+        bouton.setAttribute('aria-haspopup', 'menu');
+        bouton.setAttribute('aria-expanded', 'false');
+        bouton.innerHTML = '<i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>';
+
+        const menu = document.createElement('div');
+        menu.className = 'fld-menu';
+        menu.setAttribute('role', 'menu');
+        menu.hidden = true;
+
+        const renommer = document.createElement('button');
+        renommer.type = 'button';
+        renommer.setAttribute('role', 'menuitem');
+        renommer.innerHTML = '<i class="fa-solid fa-pen" aria-hidden="true"></i> Renommer';
+
+        const supprimer = document.createElement('button');
+        supprimer.type = 'button';
+        supprimer.className = 'danger';
+        supprimer.setAttribute('role', 'menuitem');
+        supprimer.innerHTML = '<i class="fa-solid fa-trash" aria-hidden="true"></i> Supprimer';
+
+        renommer.addEventListener('click', function (e) {
+            e.stopPropagation();
+            fermerMenus();
+            ouvrirModalFichier('renommer', null, noeud);
+        });
+
+        supprimer.addEventListener('click', function (e) {
+            e.stopPropagation();
+            fermerMenus();
+
+            const estDossier = noeud.type === 'dossier';
+
+            VirtDialogue.confirmer({
+                titre: estDossier ? 'Supprimer le dossier' : 'Supprimer le fichier',
+                message: 'Supprimer « ' + noeud.nom + ' »' + (estDossier ? ' et tout son contenu' : '') + ' ?',
+                confirmer: 'Supprimer',
+                danger: true
+            }).then(function (ok) {
+                if (!ok) return;
+
+                supprimerChemin(noeud.chemin, estDossier);
+                if (fldSelection === noeud.chemin) fldSelection = '';
+                rendreDossier();
+                toast('Supprimé : ' + noeud.nom);
+            });
+        });
+
+        bouton.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const etaitFerme = menu.hidden;
+            fermerMenus();
+            menu.hidden = !etaitFerme;
+            bouton.setAttribute('aria-expanded', menu.hidden ? 'false' : 'true');
+        });
+
+        menu.append(renommer, supprimer);
+        enveloppe.append(bouton, menu);
+        return enveloppe;
+    }
+
     function construireNoeudDossier(noeud, racine) {
         const ouvert = racine || !dossiersFermes.has(noeud.chemin);
 
@@ -922,24 +1064,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         actions.append(bFichier, bDossier);
 
-        if (!racine) {
-            const bRenommer = boutonMini('renommer', 'Renommer ' + noeud.nom, 'fa-solid fa-pen');
-            const bSupprimer = boutonMini('supprimer', 'Supprimer ' + noeud.nom, 'fa-solid fa-trash');
-
-            bRenommer.addEventListener('click', function (e) {
-                e.stopPropagation();
-                ouvrirModalFichier('renommer', null, noeud);
-            });
-            bSupprimer.addEventListener('click', function (e) {
-                e.stopPropagation();
-                if (!confirm('Supprimer « ' + noeud.nom + ' » et tout son contenu ?')) return;
-                supprimerChemin(noeud.chemin, true);
-                rendreDossier();
-                toast('Supprimé : ' + noeud.nom);
-            });
-
-            actions.append(bRenommer, bSupprimer);
-        }
+        if (!racine) actions.appendChild(construireMenu(noeud));
 
         ligne.append(chevron, icone, nom, actions);
         bloc.appendChild(ligne);
@@ -1000,24 +1125,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const actions = document.createElement('span');
         actions.className = 'fld-actions';
-
-        const bRenommer = boutonMini('renommer', 'Renommer ' + noeud.nom, 'fa-solid fa-pen');
-        const bSupprimer = boutonMini('supprimer', 'Supprimer ' + noeud.nom, 'fa-solid fa-trash');
-
-        bRenommer.addEventListener('click', function (e) {
-            e.stopPropagation();
-            ouvrirModalFichier('renommer', null, noeud);
-        });
-        bSupprimer.addEventListener('click', function (e) {
-            e.stopPropagation();
-            if (!confirm('Supprimer « ' + noeud.nom + ' » ?')) return;
-            supprimerChemin(noeud.chemin, false);
-            if (fldSelection === noeud.chemin) fldSelection = "";
-            rendreDossier();
-            toast('Supprimé : ' + noeud.nom);
-        });
-
-        actions.append(bRenommer, bSupprimer);
+        actions.appendChild(construireMenu(noeud));
         ligne.append(vide, icone, nom, actions);
         bloc.appendChild(ligne);
 
