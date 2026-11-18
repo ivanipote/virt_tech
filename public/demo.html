@@ -8,6 +8,9 @@
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<!-- Prism.js : coloration syntaxique du code généré -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
 <!-- Styles du site -->
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/header.css">
@@ -306,6 +309,92 @@
         from { opacity: 0; }
         to { opacity: 1; }
     }
+
+    /* =========================================
+       BLOC DE CODE GÉNÉRÉ (cadre à hauteur fixe)
+       ========================================= */
+    .bloc-code-ia {
+        margin: 12px 0;
+        border: 1px solid #26333c;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #1e2a33;
+    }
+
+    .code-tete {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 8px 12px;
+        background: #26333c;
+        border-bottom: 1px solid #1a242c;
+    }
+    .code-langue {
+        font-size: .68rem;
+        font-weight: 700;
+        letter-spacing: .6px;
+        color: #9fb0bb;
+        text-transform: uppercase;
+    }
+    .code-copier {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 7px;
+        border: 1px solid #3c4c57;
+        background: transparent;
+        color: #cfd8de;
+        font-size: .72rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .2s, color .2s;
+    }
+    .code-copier:hover {
+        background: var(--or);
+        border-color: var(--or);
+        color: var(--ombre);
+    }
+
+    .code-scroll {
+        display: flex;
+        align-items: flex-start;
+        height: 240px;      /* hauteur fixe */
+        overflow: auto;     /* défilement X et Y */
+        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+        font-size: .76rem;
+        line-height: 1.55;
+    }
+
+    /* Numéros de ligne, fixés à gauche quand on défile horizontalement */
+    .code-lignes {
+        position: sticky;
+        left: 0;
+        flex: none;
+        padding: 12px 8px 12px 12px;
+        background: #18232b;
+        color: #62727e;
+        text-align: right;
+        white-space: pre;
+        user-select: none;
+        font: inherit;
+    }
+
+    .code-pre {
+        margin: 0;
+        padding: 12px 14px;
+        flex: 1 0 auto;
+        white-space: pre;
+        color: #d8e0e6;
+        font: inherit;
+        background: transparent;
+    }
+    .code-pre code {
+        background: none;
+        font: inherit;
+        text-shadow: none;
+    }
     .ia-message.moi {
         align-self: flex-end;
         background: var(--metal-fonce);
@@ -459,7 +548,8 @@
 
     <p class="note-demo reveal">
         Clique sur <strong>IA</strong> pour ouvrir l'assistant.
-        <em>Démo sans API : les réponses sont simulées.</em>
+        <em>Démo sans API : les réponses sont simulées.</em><br>
+        Essaie « génère-moi une page HTML » ou « c'est quoi une erreur 404 ? ».
     </p>
 
 </div>
@@ -496,6 +586,8 @@
     </form>
 </div>
 
+<script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -610,7 +702,15 @@ document.addEventListener("DOMContentLoaded", function () {
     function animerMots(racine) {
         if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-        const marcheur = document.createTreeWalker(racine, NodeFilter.SHOW_TEXT);
+        const marcheur = document.createTreeWalker(racine, NodeFilter.SHOW_TEXT, {
+            acceptNode: function (noeud) {
+                const parent = noeud.parentNode;
+                if (parent && parent.closest && parent.closest(".bloc-code-ia")) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
         const noeuds = [];
         while (marcheur.nextNode()) noeuds.push(marcheur.currentNode);
 
@@ -639,6 +739,73 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function ajouterParagraphes(conteneur, texte) {
+        String(texte).split(/\n{2,}/).forEach(function (para) {
+            if (!para.trim()) return;
+            const p = document.createElement("p");
+            remplir(p, para.trim());
+            conteneur.appendChild(p);
+        });
+    }
+
+    function normaliserLangage(langage) {
+        const l = String(langage || "").toLowerCase();
+        if (l === "html" || l === "xml" || l === "markup") return "markup";
+        if (l === "js" || l === "javascript") return "javascript";
+        if (l === "css") return "css";
+        return "none";
+    }
+
+    function construireCode(code, langage) {
+        const bloc = document.createElement("div");
+        bloc.className = "bloc-code-ia";
+
+        const tete = document.createElement("div");
+        tete.className = "code-tete";
+
+        const nom = document.createElement("span");
+        nom.className = "code-langue";
+        nom.textContent = langage || "code";
+
+        const copier = document.createElement("button");
+        copier.type = "button";
+        copier.className = "code-copier";
+        copier.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i> Copier';
+        copier.dataset.code = code;
+
+        tete.append(nom, copier);
+
+        const scroll = document.createElement("div");
+        scroll.className = "code-scroll";
+
+        const lignes = document.createElement("div");
+        lignes.className = "code-lignes";
+        lignes.setAttribute("aria-hidden", "true");
+        lignes.textContent = Array.from({ length: code.split("\n").length }, function (_, i) {
+            return i + 1;
+        }).join("\n");
+
+        const pre = document.createElement("pre");
+        pre.className = "code-pre";
+        const codeEl = document.createElement("code");
+        codeEl.className = "language-" + normaliserLangage(langage);
+        codeEl.textContent = code;
+        pre.appendChild(codeEl);
+
+        scroll.append(lignes, pre);
+        bloc.append(tete, scroll);
+
+        if (window.Prism && Prism.highlightElement) {
+            try {
+                Prism.highlightElement(codeEl);
+            } catch (e) {
+                // Langage non chargé : le code reste en texte brut
+            }
+        }
+
+        return bloc;
+    }
+
     function ajouterReponse(texte) {
         if (vide) vide.remove();
 
@@ -648,12 +815,18 @@ document.addEventListener("DOMContentLoaded", function () {
         const conteneur = document.createElement("div");
         conteneur.className = "ia-reponse";
 
-        String(texte).split(/\n{2,}/).forEach(function (para) {
-            if (!para.trim()) return;
-            const p = document.createElement("p");
-            remplir(p, para.trim());
-            conteneur.appendChild(p);
-        });
+        // Découpe le texte et les blocs de code (```langage ... ```)
+        const motif = /```([a-z0-9+#-]*)\n([\s\S]*?)```/gi;
+        let dernier = 0;
+        let m;
+
+        while ((m = motif.exec(texte)) !== null) {
+            ajouterParagraphes(conteneur, texte.slice(dernier, m.index));
+            conteneur.appendChild(construireCode(m[2].replace(/\n$/, ""), m[1]));
+            dernier = m.index + m[0].length;
+        }
+
+        ajouterParagraphes(conteneur, texte.slice(dernier));
 
         bulle.appendChild(conteneur);
         messages.appendChild(bulle);
@@ -688,7 +861,27 @@ document.addEventListener("DOMContentLoaded", function () {
     function reponseDemo(question) {
         const q = question.toLowerCase();
 
-        if (q.includes("404") || q.includes("erreur") || q.includes("code")) {
+        if (q.includes("code") || q.includes("génère") || q.includes("genere") || q.includes("page html")) {
+            const exemple = [
+                "<!DOCTYPE html>",
+                "<html lang=\"fr\">",
+                "<head>",
+                "    <meta charset=\"UTF-8\">",
+                "    <title>Ma page</title>",
+                "</head>",
+                "<body>",
+                "    <h1>Bonjour VirtTech</h1>",
+                "    <p>Ma première page.</p>",
+                "</body>",
+                "</html>"
+            ].join("\n");
+
+            return "Voici un exemple de page HTML complète :\n\n" +
+                "```html\n" + exemple + "\n```\n\n" +
+                "Ce code crée une page avec un titre et un paragraphe. Tu peux le coller dans VirtEmulator pour le tester : https://virttech.site/virtemulator";
+        }
+
+        if (q.includes("404") || q.includes("erreur")) {
             return "Le code 404 veut dire « page introuvable » : l'adresse demandée ne correspond à aucun fichier sur le serveur.\n\n" +
                 "Les causes les plus fréquentes : un fichier renommé, un chemin mal écrit (css/style.css au lieu de style.css), ou une page supprimée.\n\n" +
                 "Pour les autres codes (403, 500…) et la méthode de correction, ouvre le cours dans l'historique : https://virttech.site/historique\n\n" +
@@ -735,6 +928,28 @@ document.addEventListener("DOMContentLoaded", function () {
             envoyer.disabled = false;
             input.focus({ preventScroll: true });
         }, 700);
+    });
+
+    // ---------------------------------------------------------------
+    // Copier un bloc de code
+    // ---------------------------------------------------------------
+    messages.addEventListener("mousedown", function (e) {
+        if (e.target.closest && e.target.closest(".code-copier")) e.preventDefault();
+    });
+
+    messages.addEventListener("click", function (e) {
+        const bouton = e.target.closest ? e.target.closest(".code-copier") : null;
+        if (!bouton) return;
+
+        const code = bouton.dataset.code || "";
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(code).then(function () {
+                const ancien = bouton.innerHTML;
+                bouton.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Copié';
+                setTimeout(function () { bouton.innerHTML = ancien; }, 1600);
+            }).catch(function () {});
+        }
     });
 
     // ---------------------------------------------------------------
