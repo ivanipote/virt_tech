@@ -122,7 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
         overlay.classList.add("ouvert");
         panel.classList.add("ouvert");
         document.body.style.overflow = "hidden";
-        if (!estSuspendu()) input.focus();
     }
 
     function fermerAssistant() {
@@ -152,7 +151,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fermerPolitique() {
         politique.hidden = true;
-        if (!estSuspendu()) input.focus({ preventScroll: true });
     }
 
     function majSuspendu() {
@@ -749,7 +747,6 @@ document.addEventListener("DOMContentLoaded", function () {
             ajouterErreur("Connexion impossible. Vérifie ta connexion et réessaie.", texte);
         } finally {
             envoyer.disabled = false;
-            input.focus({ preventScroll: true });
         }
     }
 
@@ -770,7 +767,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         input.value = "";
         ajusterHauteur();
-        input.focus({ preventScroll: true });
+        input.blur();
 
         const msg = {
             id: uid(),
@@ -888,7 +885,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         input.value = "";
         ajusterHauteur();
-        if (!estSuspendu()) input.focus();
         });
     });
 

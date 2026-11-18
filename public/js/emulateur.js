@@ -1300,7 +1300,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         overlay.hidden = false;
-        setTimeout(function () { nom.focus(); nom.select(); }, 50);
     }
 
     function fermerModalFichier() {
@@ -1313,9 +1312,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function erreurModalFichier(message) {
         const erreur = document.getElementById('fldErreur');
-        const nom = document.getElementById('fldNom');
         if (erreur) { erreur.textContent = message; erreur.hidden = false; }
-        if (nom) nom.focus();
     }
 
     function validerModalFichier() {
