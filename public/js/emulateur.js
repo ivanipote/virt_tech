@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let files = {};
     let dossiers = [];                  // dossiers vides (chemins)
     const dossiersFermes = new Set();   // dossiers repliés dans le slide
+    const mediasUrls = new Map();       // chemin -> URL blob (images / vidéos)
     let activeFile = "index.html";
     let editor;
     let zoomLevel = 1;
@@ -296,6 +297,23 @@ document.addEventListener("DOMContentLoaded", function() {
         const savedZoom = localStorage.getItem('virtemulator_zoom');
         if (savedZoom) zoomLevel = parseFloat(savedZoom);
         appliquerZoom();
+
+        // 13. Charger les médias importés (IndexedDB)
+        if (window.MediaStore) {
+            MediaStore.toutLire().then(function (liste) {
+                liste.forEach(function (m) {
+                    if (!m || !m.blob) return;
+                    if (!mediasUrls.has(m.chemin)) {
+                        mediasUrls.set(m.chemin, URL.createObjectURL(m.blob));
+                    }
+                    if (files[m.chemin] === undefined) files[m.chemin] = "";
+                });
+                sauvegarder();
+                rafraichirNavigateurSiOuvert();
+            }).catch(function () {
+                // IndexedDB indisponible : les médias ne seront pas rechargés
+            });
+        }
     }
 
     // ==========================================
@@ -394,6 +412,13 @@ document.addEventListener("DOMContentLoaded", function() {
         document.addEventListener('click', function (e) {
             if (!e.target.closest || !e.target.closest('.fld-menu-wrap')) fermerMenus();
         });
+
+        const fldTypeEl = document.getElementById('fldType');
+        if (fldTypeEl) {
+            fldTypeEl.addEventListener('change', function () {
+                majChampMedia(fldTypeEl.value);
+            });
+        }
 
         document.addEventListener('keydown', function (e) {
             if (e.key !== 'Escape') return;
@@ -719,6 +744,33 @@ document.addEventListener("DOMContentLoaded", function() {
         return /\.(png|jpe?g|gif|webp|svg)$/i.test(chemin);
     }
 
+    function estVideo(chemin) {
+        return /\.(mp4|webm|ogg|ogv|mov)$/i.test(chemin);
+    }
+
+    function estMedia(chemin) {
+        return estImage(chemin) || estVideo(chemin);
+    }
+
+    // Remplace les sources de médias par les URL des fichiers importés
+    function remplacerMedias(html, base) {
+        if (!mediasUrls.size) return html;
+
+        html = html.replace(/\b(src|poster)\s*=\s*["']([^"']+)["']/gi, function (tag, attr, href) {
+            const cible = resoudreChemin(base, href);
+            if (!cible || !mediasUrls.has(cible)) return tag;
+            return attr + '="' + mediasUrls.get(cible) + '"';
+        });
+
+        html = html.replace(/url\(\s*["']?([^"')]+)["']?\s*\)/gi, function (tag, href) {
+            const cible = resoudreChemin(base, href);
+            if (!cible || !mediasUrls.has(cible)) return tag;
+            return 'url("' + mediasUrls.get(cible) + '")';
+        });
+
+        return html;
+    }
+
     // Résout un chemin relatif par rapport au dossier du fichier
     function resoudreChemin(base, href) {
         if (!href || /^(https?:|data:|blob:|mailto:|tel:|#)/i.test(href)) return null;
@@ -752,7 +804,8 @@ document.addEventListener("DOMContentLoaded", function() {
             if (!m) return tag;
             const cible = resoudreChemin(base, m[1]);
             if (!cible || files[cible] === undefined) return tag;
-            return '<style>\n' + files[cible] + '\n</style>';
+            const baseCss = cible.indexOf('/') !== -1 ? cible.slice(0, cible.lastIndexOf('/')) : "";
+            return '<style>\n' + remplacerMedias(files[cible], baseCss) + '\n</style>';
         });
 
         html = html.replace(/<script\b([^>]*)><\/script>/gi, function (tag, attrs) {
@@ -762,6 +815,8 @@ document.addEventListener("DOMContentLoaded", function() {
             if (!cible || files[cible] === undefined) return tag;
             return '<script>\n' + files[cible] + '\n</script>';
         });
+
+        html = remplacerMedias(html, base);
 
         return html;
     }
@@ -775,6 +830,8 @@ document.addEventListener("DOMContentLoaded", function() {
         header.innerHTML = '';
 
         Object.keys(files).forEach(function (chemin) {
+            if (estMedia(chemin)) return; // pas d'onglet pour les médias
+
             const tab = document.createElement('div');
             tab.className = 'tab' + (chemin === activeFile ? ' active' : '');
             tab.title = chemin;
@@ -1164,8 +1221,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function ouvrirDepuisDossier(chemin) {
-        if (estImage(chemin)) {
-            toast('Les images seront éditables plus tard');
+        if (estMedia(chemin)) {
+            toast("Média : ouvre-le avec le bouton ▶ de l'aperçu");
             return;
         }
         fermerDossier();
@@ -1176,6 +1233,22 @@ document.addEventListener("DOMContentLoaded", function() {
     // ==========================================
     // DOSSIER : MODALE + ACTIONS
     // ==========================================
+    function majChampMedia(type) {
+        const wrap = document.getElementById('fldMediaWrap');
+        const input = document.getElementById('fldMedia');
+        const aide = document.getElementById('fldMediaAide');
+        if (!wrap || !input) return;
+
+        const estTypeMedia = /^(svg|png|jpe?g|gif|webp|mp4|webm|ogg|mov)$/i.test(type || '');
+        wrap.hidden = !estTypeMedia;
+
+        if (estTypeMedia) {
+            input.accept = /^(mp4|webm|ogg|mov)$/i.test(type) ? 'video/*' : 'image/*';
+            input.value = '';
+            if (aide) aide.textContent = '25 Mo maximum.';
+        }
+    }
+
     function ouvrirModalFichier(mode, parentChemin, noeud) {
         const overlay = document.getElementById('fldModal');
         const titre = document.getElementById('fldModalTitre');
@@ -1197,15 +1270,22 @@ document.addEventListener("DOMContentLoaded", function() {
             nom.value = '';
             nom.placeholder = 'ex : style.css';
             if (valider) valider.textContent = 'Créer';
+
+            const mediaInput = document.getElementById('fldMedia');
+            if (mediaInput) mediaInput.value = '';
+            const typeEl = document.getElementById('fldType');
+            majChampMedia(typeEl ? typeEl.value : 'html');
         } else if (mode === 'dossier') {
             titre.textContent = 'Nouveau dossier';
             if (typeWrap) typeWrap.hidden = true;
+            majChampMedia('');
             nom.value = '';
             nom.placeholder = 'ex : assets';
             if (valider) valider.textContent = 'Créer';
         } else {
             titre.textContent = 'Renommer';
             if (typeWrap) typeWrap.hidden = true;
+            majChampMedia('');
             nom.value = noeud ? noeud.nom : '';
             if (valider) valider.textContent = 'Renommer';
         }
@@ -1231,18 +1311,41 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function validerModalFichier() {
         const nomEl = document.getElementById('fldNom');
-        const typeEl = document.getElementById('fldType');
         if (!nomEl) return;
 
+        const typeEl = document.getElementById('fldType');
+        const mediaInput = document.getElementById('fldMedia');
+        const typeChoisi = typeEl ? typeEl.value : 'html';
+        const estMediaType = fldMode === 'fichier' && /^(svg|png|jpe?g|gif|webp|mp4|webm|ogg|mov)$/i.test(typeChoisi);
+
         let nom = nomEl.value.trim();
+
+        if (estMediaType) {
+            if (!mediaInput || !mediaInput.files || !mediaInput.files[0]) {
+                return erreurModalFichier('Choisis un fichier à importer.');
+            }
+
+            const fichier = mediaInput.files[0];
+
+            if (fichier.size > 25 * 1024 * 1024) {
+                return erreurModalFichier('Fichier trop lourd (25 Mo maximum).');
+            }
+
+            if (!nom) nom = fichier.name.replace(/\.[^.]+$/, '');
+        }
 
         if (!nom) return erreurModalFichier('Donne un nom.');
         if (nom.length > 40) return erreurModalFichier('40 caractères maximum.');
         if (/\/|\\|\.\./.test(nom)) return erreurModalFichier('Pas de / ni de .. dans le nom.');
         if (/\.$/.test(nom)) return erreurModalFichier('Nom invalide.');
 
-        if (fldMode === 'fichier' && nom.indexOf('.') === -1 && typeEl) {
-            nom = nom + '.' + typeEl.value;
+        if (fldMode === 'fichier' && nom.indexOf('.') === -1) {
+            if (estMediaType) {
+                const m = mediaInput.files[0].name.match(/\.([a-z0-9]+)$/i);
+                nom = nom + '.' + (m ? m[1].toLowerCase() : typeChoisi);
+            } else {
+                nom = nom + '.' + typeChoisi;
+            }
         }
 
         const base = fldParent || '';
@@ -1273,6 +1376,27 @@ document.addEventListener("DOMContentLoaded", function() {
         if (existe) return erreurModalFichier('Ce nom existe déjà ici.');
 
         if (fldMode === 'fichier') {
+            if (estMediaType) {
+                const fichier = mediaInput.files[0];
+
+                if (!window.MediaStore) {
+                    return erreurModalFichier('Stockage des médias indisponible.');
+                }
+
+                MediaStore.enregistrer(chemin, fichier).then(function () {
+                    files[chemin] = '';
+                    mediasUrls.set(chemin, URL.createObjectURL(fichier));
+                    sauvegarder();
+                    fermerModalFichier();
+                    genererUserApps();
+                    fermerDossier();
+                    toast('Importé : ' + chemin);
+                }).catch(function () {
+                    erreurModalFichier('Import impossible (stockage du navigateur).');
+                });
+                return;
+            }
+
             files[chemin] = '';
             sauvegarder();
             fermerModalFichier();
@@ -1311,21 +1435,58 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
+        // Médias : renommer les fichiers (et ceux des sous-dossiers)
+        const mediasARenommer = [];
+        mediasUrls.forEach(function (url, c) {
+            if (c === ancien || c.indexOf(ancien + '/') === 0) {
+                mediasARenommer.push([c, nouveau + c.slice(ancien.length)]);
+            }
+        });
+
+        mediasARenommer.forEach(function (paire) {
+            const a = paire[0];
+            const n = paire[1];
+
+            if (!window.MediaStore) return;
+
+            MediaStore.lire(a).then(function (blob) {
+                if (!blob) return;
+                return MediaStore.enregistrer(n, blob).then(function () {
+                    MediaStore.supprimer(a);
+                    const url = mediasUrls.get(a);
+                    if (url) URL.revokeObjectURL(url);
+                    mediasUrls.delete(a);
+                    mediasUrls.set(n, URL.createObjectURL(blob));
+                });
+            }).catch(function () {});
+        });
+
         sauvegarder();
         mettreAJourOnglets();
         genererUserApps();
     }
 
     function supprimerChemin(chemin, estDossier) {
+        function oublierMedia(c) {
+            if (!mediasUrls.has(c)) return;
+            try { URL.revokeObjectURL(mediasUrls.get(c)); } catch (e) { /* déjà révoqué */ }
+            mediasUrls.delete(c);
+            if (window.MediaStore) MediaStore.supprimer(c).catch(function () {});
+        }
+
         if (estDossier) {
             Object.keys(files).forEach(function (c) {
-                if (c.indexOf(chemin + '/') === 0) delete files[c];
+                if (c.indexOf(chemin + '/') === 0) {
+                    delete files[c];
+                    oublierMedia(c);
+                }
             });
             dossiers = dossiers.filter(function (d) {
                 return d !== chemin && d.indexOf(chemin + '/') !== 0;
             });
         } else {
             delete files[chemin];
+            oublierMedia(chemin);
         }
 
         if (activeFile === chemin || activeFile.indexOf(chemin + '/') === 0) {

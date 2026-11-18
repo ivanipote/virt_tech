@@ -573,7 +573,15 @@
                 <option value="png">Image PNG</option>
                 <option value="jpg">Image JPG</option>
                 <option value="webp">Image WEBP</option>
+                <option value="mp4">Vidéo MP4</option>
+                <option value="webm">Vidéo WEBM</option>
             </select>
+        </div>
+
+        <div id="fldMediaWrap" hidden>
+            <label for="fldMedia">Fichier à importer</label>
+            <input type="file" id="fldMedia" accept="image/*,video/*">
+            <p class="fld-aide" id="fldMediaAide">25 Mo maximum.</p>
         </div>
 
         <p class="fld-erreur" id="fldErreur" hidden></p>
@@ -610,6 +618,7 @@
 <script src="/js/toolsemulator.js"></script>
 
 <!-- 5. Émulateur (cœur) -->
+<script src="/js/mediaStore.js"></script>
 <script src="/js/dialogue.js"></script>
 <script src="/js/emulateur.js"></script>
 
