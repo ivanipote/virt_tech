@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folder - Démo | VirtTech</title>
+
+<link rel="icon" type="image/png" href="/logo.png">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Styles du site -->
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+    * { -webkit-tap-highlight-color: transparent; }
+    button, a { touch-action: manipulation; }
+
+    h1 { font-size: 1.8rem; line-height: 1.15; color: var(--ombre); margin-bottom: 6px; }
+    .sous-titre { color: var(--metal-fonce); font-size: .98rem; margin-bottom: 24px; }
+
+    /* =========================================
+       APERÇU ÉDITEUR (point d'entrée du slide)
+       ========================================= */
+    .mock-editeur {
+        border: 1px solid #d9e0e4;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(22, 31, 39, .12);
+    }
+    .mock-barre {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        background: #eef2f4;
+        border-bottom: 1px solid #e1e7ea;
+        flex-wrap: wrap;
+    }
+    .mock-onglet {
+        font-size: .72rem;
+        font-weight: 700;
+        color: #5b6873;
+        padding: 3px 9px;
+        border-radius: 6px;
+        background: #dfe6ea;
+    }
+    .mock-onglet.actif { background: var(--metal-fonce); color: #fff; }
+    .mock-espace { flex: 1; }
+
+    .btn-folder {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 14px;
+        border-radius: 20px;
+        border: 2px solid var(--or);
+        background: transparent;
+        color: var(--metal-fonce);
+        font-size: .75rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background .3s, color .3s, transform .3s;
+    }
+    .btn-folder i { color: var(--or); transition: color .3s; }
+    .btn-folder:hover { background: var(--or); color: var(--ombre); transform: translateY(-2px); }
+    .btn-folder:hover i { color: var(--ombre); }
+
+    .mock-code {
+        margin: 0;
+        padding: 14px;
+        background: #1e2a33;
+        color: #d8e0e6;
+        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+        font-size: .78rem;
+        line-height: 1.6;
+        overflow-x: auto;
+        white-space: pre;
+        min-height: 130px;
+    }
+    .note-demo { margin-top: 16px; font-size: .85rem; color: #7b8891; }
+    .note-demo strong { color: var(--metal-fonce); }
+
+    /* =========================================
+       SLIDE FOLDER
+       ========================================= */
+    .folder-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(22, 31, 39, .7);
+        backdrop-filter: blur(3px);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .3s, visibility 0s .3s;
+    }
+    .folder-overlay.ouvert { opacity: 1; visibility: visible; transition: opacity .3s; }
+
+    .folder-panel {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 85vh;
+        max-height: 85vh;
+        background: var(--blanc);
+        border-radius: 25px 25px 0 0;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, .5);
+        z-index: 1001;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(100%);
+        visibility: hidden;
+        transition: transform .4s cubic-bezier(.22, .8, .3, 1), visibility 0s .4s;
+    }
+    .folder-panel.ouvert {
+        transform: none;
+        visibility: visible;
+        transition: transform .4s cubic-bezier(.22, .8, .3, 1);
+    }
+
+    .folder-entete {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 18px;
+        background: var(--metal-fonce);
+        color: var(--blanc);
+        border-bottom: 3px solid var(--or);
+        border-radius: 25px 25px 0 0;
+        flex: none;
+    }
+    .folder-id { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .folder-id > i {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(212, 175, 55, .15);
+        border: 1px solid var(--or);
+        color: var(--or);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .95rem;
+        flex: none;
+    }
+    .folder-id h3 { margin: 0; font-size: 1.05rem; }
+    .folder-id small { display: block; font-size: .7rem; opacity: .7; }
+
+    .folder-fermer {
+        flex: none;
+        background: none;
+        border: none;
+        color: var(--blanc);
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: color .2s, transform .2s;
+    }
+    .folder-fermer:hover { color: #ffb3b3; transform: scale(1.1); }
+
+    .folder-corps {
+        flex: 1;
+        overflow: auto;
+        padding: 12px 10px;
+        background: #fbfcfd;
+    }
+
+    /* =========================================
+       ARBORESCENCE
+       ========================================= */
+    .noeud { position: relative; }
+
+    .ligne {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 44px;
+        padding: 4px 6px;
+        border-radius: 10px;
+        transition: background .15s;
+    }
+    .ligne:hover { background: #f1f4f6; }
+
+    .noeud.racine > .ligne {
+        background: #f4f7f9;
+        border: 1px solid #e3e9ec;
+        margin-bottom: 6px;
+    }
+
+    .chevron {
+        flex: none;
+        width: 26px;
+        height: 26px;
+        border: none;
+        background: none;
+        color: #7b8891;
+        font-size: .65rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
+    .chevron:hover { background: #e3e9ec; color: var(--metal-fonce); }
+    .chevron-vide { flex: none; width: 26px; height: 26px; }
+
+    .icone { flex: none; width: 18px; text-align: center; font-size: .95rem; color: var(--metal-fonce); }
+    .icone.folder { color: #b08d2a; }
+    .icone.html { color: #e34f26; }
+    .icone.css { color: #264de4; }
+    .icone.js { color: #c9a227; }
+    .icone.json { color: #6b7a85; }
+    .icone.texte { color: #5b6873; }
+    .icone.image { color: #2e8b57; }
+
+    .nom {
+        flex: 1;
+        min-width: 0;
+        font-size: .88rem;
+        color: var(--metal-fonce);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .nom-racine { font-weight: 800; color: var(--ombre); }
+
+    .actions { display: flex; align-items: center; gap: 2px; flex: none; }
+    .mini {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: none;
+        color: #8b969d;
+        font-size: .78rem;
+        cursor: pointer;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .15s, color .15s;
+    }
+    .mini:hover { background: #e3e9ec; color: var(--metal-fonce); }
+    .mini.danger:hover { background: #fdf3f2; color: #c0392b; }
+
+    .enfants { padding-left: 18px; border-left: 1px dashed #dfe5e9; margin-left: 12px; }
+    .enfants[hidden] { display: none; }
+
+    .fichier .ligne { cursor: pointer; }
+    .fichier.selectionne > .ligne {
+        background: rgba(212, 175, 55, .16);
+        outline: 1px solid rgba(212, 175, 55, .55);
+    }
+    .fichier:focus-visible > .ligne { outline: 2px solid var(--metal-fonce); }
+
+    .arbre-vide {
+        padding: 18px 12px;
+        color: #8b969d;
+        font-size: .82rem;
+        text-align: center;
+    }
+
+    /* =========================================
+       PIED DU SLIDE
+       ========================================= */
+    .folder-pied {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        border-top: 1px solid #e6ebee;
+        background: #fff;
+    }
+    .folder-selection {
+        flex: 1;
+        min-width: 0;
+        font-size: .78rem;
+        color: #7b8891;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .folder-selection strong { color: var(--metal-fonce); }
+
+    .btn-ouvrir {
+        flex: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 2px solid var(--metal-fonce);
+        background: var(--metal-fonce);
+        color: #fff;
+        font-weight: 800;
+        font-size: .8rem;
+        cursor: pointer;
+        transition: background .2s, color .2s, border-color .2s;
+    }
+    .btn-ouvrir:hover:not(:disabled) { background: var(--or); border-color: var(--or); color: var(--ombre); }
+    .btn-ouvrir:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* =========================================
+       MODALE (créer / renommer)
+       ========================================= */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1200;
+        background: rgba(22, 31, 39, .75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+    }
+    .modal-overlay[hidden] { display: none; }
+
+    .modal-boite {
+        width: 100%;
+        max-width: 400px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+    }
+    .modal-boite h4 { font-size: 1rem; color: var(--ombre); margin-bottom: 14px; }
+
+    .modal-boite label { display: block; font-size: .8rem; font-weight: 700; color: var(--metal-fonce); margin: 10px 0 5px; }
+    .modal-boite input,
+    .modal-boite select {
+        width: 100%;
+        padding: 12px 13px;
+        border: 2px solid #dbe2e6;
+        border-radius: 10px;
+        font-size: 16px;
+        font-family: inherit;
+        color: var(--ombre);
+        background: #fbfcfd;
+    }
+    .modal-boite input:focus,
+    .modal-boite select:focus { outline: none; border-color: var(--or); box-shadow: 0 0 0 4px rgba(212, 175, 55, .15); }
+
+    .modal-erreur {
+        margin-top: 10px;
+        font-size: .78rem;
+        color: #a02020;
+        font-weight: 600;
+    }
+    .modal-erreur[hidden] { display: none; }
+
+    .modal-actions { display: flex; gap: 8px; margin-top: 18px; }
+    .modal-actions button {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: .85rem;
+        cursor: pointer;
+    }
+    .modal-annuler { background: transparent; border: 2px solid #dfe5e9; color: var(--metal-fonce); }
+    .modal-annuler:hover { background: #f1f4f6; }
+    .modal-valider { background: var(--metal-fonce); border: 2px solid var(--metal-fonce); color: #fff; }
+    .modal-valider:hover { background: var(--or); border-color: var(--or); color: var(--ombre); }
+
+    /* Toast */
+    .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 26px;
+        transform: translateX(-50%);
+        z-index: 1300;
+        background: var(--ombre);
+        color: #fff;
+        padding: 11px 18px;
+        border-radius: 30px;
+        font-size: .82rem;
+        font-weight: 700;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s;
+    }
+    .toast.visible { opacity: 1; }
+
+    /* =========================================
+       RESPONSIVE
+       ========================================= */
+    @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+    }
+
+    @media (min-width: 768px) {
+        h1 { font-size: 2.2rem; }
+        .folder-panel { height: 80vh; max-height: 80vh; }
+        .folder-corps { padding: 18px 24px; }
+        .nom { font-size: .92rem; }
+    }
+</style>
+
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+
+<script src="/js/header.js"></script>
+
+<div class="contenu">
+
+    <h1>Folder</h1>
+    <p class="sous-titre">Aperçu du slide de gestion du dossier de VirtEmulator.</p>
+
+    <div class="mock-editeur">
+        <div class="mock-barre">
+            <span class="mock-onglet actif">HTML</span>
+            <span class="mock-onglet">CSS</span>
+            <span class="mock-onglet">JS</span>
+            <span class="mock-espace"></span>
+            <button type="button" class="btn-folder" id="btnFolder">
+                <i class="fa-solid fa-folder" aria-hidden="true"></i> Folder
+            </button>
+        </div>
+        <pre class="mock-code">&lt;h1&gt;Bonjour VirtTech&lt;/h1&gt;</pre>
+    </div>
+
+    <p class="note-demo">
+        Clique sur <strong>Folder</strong> : c'est la racine du projet.
+        Chaque dossier a ses boutons <strong>fichier</strong> et <strong>dossier</strong>.
+        <em>Démo : les fichiers sont vides et rien n'est sauvegardé.</em>
+    </p>
+
+</div>
+
+<!-- ===== SLIDE FOLDER ===== -->
+<div class="folder-overlay" id="folderOverlay"></div>
+
+<div class="folder-panel" id="folderPanel" role="dialog" aria-modal="true" aria-labelledby="folderTitre">
+    <div class="folder-entete">
+        <div class="folder-id">
+            <i class="fa-solid fa-folder-tree" aria-hidden="true"></i>
+            <div>
+                <h3 id="folderTitre">Folder</h3>
+                <small>VirtEmulator</small>
+            </div>
+        </div>
+        <button type="button" class="folder-fermer" id="folderFermer" aria-label="Fermer le dossier">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <div class="folder-corps">
+        <div class="folder-arbre" id="arbre" role="tree" aria-label="Arborescence du projet VirtEmulator"></div>
+    </div>
+
+    <div class="folder-pied">
+        <span class="folder-selection" id="selection">Aucun fichier sélectionné</span>
+        <button type="button" class="btn-ouvrir" id="btnOuvrir" disabled>Ouvrir</button>
+    </div>
+</div>
+
+<!-- ===== MODALE ===== -->
+<div class="modal-overlay" id="modalOverlay" hidden>
+    <div class="modal-boite" role="dialog" aria-modal="true" aria-labelledby="modalTitre">
+        <h4 id="modalTitre">Nouveau fichier</h4>
+
+        <label for="modalNom">Nom</label>
+        <input type="text" id="modalNom" placeholder="ex : style.css" autocomplete="off" maxlength="40">
+
+        <div id="modalTypeWrap">
+            <label for="modalType">Type</label>
+            <select id="modalType">
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+                <option value="js">JavaScript</option>
+                <option value="json">JSON</option>
+                <option value="md">Markdown</option>
+                <option value="txt">Texte</option>
+                <option value="svg">Image SVG</option>
+                <option value="png">Image PNG</option>
+                <option value="jpg">Image JPG</option>
+                <option value="webp">Image WEBP</option>
+            </select>
+        </div>
+
+        <p class="modal-erreur" id="modalErreur" hidden></p>
+
+        <div class="modal-actions">
+            <button type="button" class="modal-annuler" id="modalAnnuler">Annuler</button>
+            <button type="button" class="modal-valider" id="modalValider">Créer</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ===============================================================
+    // ÉLÉMENTS
+    // ===============================================================
+    const overlay = document.getElementById("folderOverlay");
+    const panel = document.getElementById("folderPanel");
+    const btnFolder = document.getElementById("btnFolder");
+    const fermer = document.getElementById("folderFermer");
+    const arbreEl = document.getElementById("arbre");
+    const selectionEl = document.getElementById("selection");
+    const btnOuvrir = document.getElementById("btnOuvrir");
+
+    const modalOverlay = document.getElementById("modalOverlay");
+    const modalTitre = document.getElementById("modalTitre");
+    const modalNom = document.getElementById("modalNom");
+    const modalTypeWrap = document.getElementById("modalTypeWrap");
+    const modalType = document.getElementById("modalType");
+    const modalErreur = document.getElementById("modalErreur");
+    const modalAnnuler = document.getElementById("modalAnnuler");
+    const modalValider = document.getElementById("modalValider");
+    const toastEl = document.getElementById("toast");
+
+    // ===============================================================
+    // ARBORESCENCE (démo)
+    // ===============================================================
+    const arbre = {
+        nom: "VirtEmulator",
+        type: "dossier",
+        ouvert: true,
+        enfants: [
+            { type: "fichier", nom: "index.html" },
+            {
+                type: "dossier", nom: "css", ouvert: true, enfants: [
+                    { type: "fichier", nom: "style.css" }
+                ]
+            },
+            {
+                type: "dossier", nom: "js", ouvert: false, enfants: [
+                    { type: "fichier", nom: "app.js" }
+                ]
+            }
+        ]
+    };
+
+    let selection = "";
+    let modalMode = null;      // fichier | dossier | renommer
+    let modalParent = null;    // dossier de destination
+    let modalNoeud = null;     // nœud à renommer
+    let dernierFocus = null;
+
+    // ===============================================================
+    // OUTILS
+    // ===============================================================
+    function infoFichier(nom) {
+        const ext = String(nom).split(".").pop().toLowerCase();
+
+        if (ext === "html" || ext === "htm") return { classe: "fa-brands fa-html5", teinte: "html" };
+        if (ext === "css") return { classe: "fa-brands fa-css3-alt", teinte: "css" };
+        if (ext === "js" || ext === "mjs") return { classe: "fa-brands fa-js", teinte: "js" };
+        if (ext === "json") return { classe: "fa-solid fa-file-code", teinte: "json" };
+        if (ext === "md" || ext === "txt") return { classe: "fa-solid fa-file-lines", teinte: "texte" };
+        if (["png", "jpg", "jpeg", "gif", "webp", "svg"].indexOf(ext) !== -1) {
+            return { classe: "fa-solid fa-file-image", teinte: "image" };
+        }
+        return { classe: "fa-solid fa-file", teinte: "texte" };
+    }
+
+    function trouverParent(racine, cible) {
+        if (!racine.enfants) return null;
+
+        for (let i = 0; i < racine.enfants.length; i++) {
+            const enfant = racine.enfants[i];
+            if (enfant === cible) return racine;
+            if (enfant.type === "dossier") {
+                const trouve = trouverParent(enfant, cible);
+                if (trouve) return trouve;
+            }
+        }
+        return null;
+    }
+
+    function compterEnfants(noeud) {
+        if (noeud.type !== "dossier") return 0;
+        return noeud.enfants.reduce(function (total, e) { return total + 1 + compterEnfants(e); }, 0);
+    }
+
+    function cheminAffiche(cheminParent, nom) {
+        return cheminParent ? cheminParent + "/" + nom : nom;
+    }
+
+    // ===============================================================
+    // RENDU
+    // ===============================================================
+    function boutonMini(action, titre, icone) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "mini" + (action === "supprimer" ? " danger" : "");
+        b.title = titre;
+        b.setAttribute("aria-label", titre);
+        b.dataset.action = action;
+        b.innerHTML = '<i class="' + icone + '" aria-hidden="true"></i>';
+        return b;
+    }
+
+    function construireDossier(dossier, chemin, racine) {
+        const bloc = document.createElement("div");
+        bloc.className = "noeud dossier" + (racine ? " racine" : "");
+        bloc.setAttribute("role", "treeitem");
+        bloc.setAttribute("aria-expanded", dossier.ouvert ? "true" : "false");
+
+        const ligne = document.createElement("div");
+        ligne.className = "ligne";
+
+        const chevron = document.createElement("button");
+        chevron.type = "button";
+        chevron.className = "chevron";
+        chevron.setAttribute("aria-label", (dossier.ouvert ? "Replier " : "Déplier ") + dossier.nom);
+        chevron.innerHTML = '<i class="fa-solid fa-chevron-' + (dossier.ouvert ? "down" : "right") + '" aria-hidden="true"></i>';
+        chevron.addEventListener("click", function () {
+            dossier.ouvert = !dossier.ouvert;
+            rendre();
+        });
+
+        const icone = document.createElement("i");
+        icone.className = "fa-solid " + (dossier.ouvert ? "fa-folder-open" : "fa-folder") + " icone folder";
+        icone.setAttribute("aria-hidden", "true");
+
+        const nom = document.createElement("span");
+        nom.className = "nom" + (racine ? " nom-racine" : "");
+        nom.textContent = dossier.nom;
+
+        const actions = document.createElement("span");
+        actions.className = "actions";
+
+        const bFichier = boutonMini("fichier", "Nouveau fichier dans " + dossier.nom, "fa-solid fa-file-circle-plus");
+        const bDossier = boutonMini("dossier", "Nouveau dossier dans " + dossier.nom, "fa-solid fa-folder-plus");
+
+        bFichier.addEventListener("click", function () { ouvrirModal("fichier", dossier, null); });
+        bDossier.addEventListener("click", function () { ouvrirModal("dossier", dossier, null); });
+
+        actions.append(bFichier, bDossier);
+
+        if (!racine) {
+            const bRenommer = boutonMini("renommer", "Renommer " + dossier.nom, "fa-solid fa-pen");
+            const bSupprimer = boutonMini("supprimer", "Supprimer " + dossier.nom, "fa-solid fa-trash");
+
+            bRenommer.addEventListener("click", function () { ouvrirModal("renommer", null, dossier); });
+            bSupprimer.addEventListener("click", function () { supprimer(dossier); });
+
+            actions.append(bRenommer, bSupprimer);
+        }
+
+        ligne.append(chevron, icone, nom, actions);
+        bloc.appendChild(ligne);
+
+        const enfants = document.createElement("div");
+        enfants.className = "enfants";
+        enfants.setAttribute("role", "group");
+        if (!dossier.ouvert) enfants.hidden = true;
+
+        const cheminEnfant = racine ? "" : cheminAffiche(chemin, dossier.nom);
+
+        if (!dossier.enfants.length) {
+            const vide = document.createElement("div");
+            vide.className = "arbre-vide";
+            vide.textContent = "Dossier vide";
+            enfants.appendChild(vide);
+        }
+
+        dossier.enfants.forEach(function (enfant) {
+            if (enfant.type === "dossier") {
+                enfants.appendChild(construireDossier(enfant, cheminEnfant, false));
+            } else {
+                enfants.appendChild(construireFichier(enfant, cheminEnfant));
+            }
+        });
+
+        bloc.appendChild(enfants);
+        return bloc;
+    }
+
+    function construireFichier(fichier, cheminParent) {
+        const chemin = cheminAffiche(cheminParent, fichier.nom);
+        const info = infoFichier(fichier.nom);
+
+        const bloc = document.createElement("div");
+        bloc.className = "noeud fichier" + (selection === chemin ? " selectionne" : "");
+        bloc.setAttribute("role", "treeitem");
+        bloc.setAttribute("tabindex", "0");
+        bloc.dataset.chemin = chemin;
+
+        const ligne = document.createElement("div");
+        ligne.className = "ligne";
+
+        const vide = document.createElement("span");
+        vide.className = "chevron-vide";
+
+        const icone = document.createElement("i");
+        icone.className = info.classe + " icone " + info.teinte;
+        icone.setAttribute("aria-hidden", "true");
+
+        const nom = document.createElement("span");
+        nom.className = "nom";
+        nom.textContent = fichier.nom;
+
+        const actions = document.createElement("span");
+        actions.className = "actions";
+
+        const bRenommer = boutonMini("renommer", "Renommer " + fichier.nom, "fa-solid fa-pen");
+        const bSupprimer = boutonMini("supprimer", "Supprimer " + fichier.nom, "fa-solid fa-trash");
+
+        bRenommer.addEventListener("click", function (e) {
+            e.stopPropagation();
+            ouvrirModal("renommer", null, fichier);
+        });
+        bSupprimer.addEventListener("click", function (e) {
+            e.stopPropagation();
+            supprimer(fichier);
+        });
+
+        actions.append(bRenommer, bSupprimer);
+
+        ligne.append(vide, icone, nom, actions);
+        bloc.appendChild(ligne);
+
+        function choisir() {
+            selection = chemin;
+            majSelection();
+            rendre();
+        }
+
+        bloc.addEventListener("click", choisir);
+        bloc.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                choisir();
+            }
+        });
+
+        return bloc;
+    }
+
+    function rendre() {
+        arbreEl.innerHTML = "";
+        arbreEl.appendChild(construireDossier(arbre, "", true));
+        majSelection();
+    }
+
+    function majSelection() {
+        if (!selection) {
+            selectionEl.textContent = "Aucun fichier sélectionné";
+            btnOuvrir.disabled = true;
+            return;
+        }
+
+        selectionEl.innerHTML = "";
+        const fort = document.createElement("strong");
+        fort.textContent = selection;
+        selectionEl.append("Fichier : ", fort);
+        btnOuvrir.disabled = false;
+    }
+
+    // ===============================================================
+    // OUVERTURE / FERMETURE
+    // ===============================================================
+    function ouvrirSlide() {
+        dernierFocus = document.activeElement;
+        overlay.classList.add("ouvert");
+        panel.classList.add("ouvert");
+        document.body.style.overflow = "hidden";
+        fermer.focus();
+    }
+
+    function fermerSlide() {
+        overlay.classList.remove("ouvert");
+        panel.classList.remove("ouvert");
+        document.body.style.overflow = "";
+        if (dernierFocus) dernierFocus.focus();
+    }
+
+    btnFolder.addEventListener("click", ouvrirSlide);
+    fermer.addEventListener("click", fermerSlide);
+    overlay.addEventListener("click", fermerSlide);
+
+    // ===============================================================
+    // MODALE
+    // ===============================================================
+    function ouvrirModal(mode, parent, noeud) {
+        modalMode = mode;
+        modalParent = parent;
+        modalNoeud = noeud;
+        modalErreur.hidden = true;
+
+        if (mode === "fichier") {
+            modalTitre.textContent = "Nouveau fichier";
+            modalTypeWrap.hidden = false;
+            modalNom.value = "";
+            modalNom.placeholder = "ex : style.css";
+            modalValider.textContent = "Créer";
+        } else if (mode === "dossier") {
+            modalTitre.textContent = "Nouveau dossier";
+            modalTypeWrap.hidden = true;
+            modalNom.value = "";
+            modalNom.placeholder = "ex : assets";
+            modalValider.textContent = "Créer";
+        } else {
+            modalTitre.textContent = "Renommer";
+            modalTypeWrap.hidden = true;
+            modalNom.value = noeud.nom;
+            modalValider.textContent = "Renommer";
+        }
+
+        modalOverlay.hidden = false;
+        setTimeout(function () { modalNom.focus(); modalNom.select(); }, 50);
+    }
+
+    function fermerModal() {
+        modalOverlay.hidden = true;
+        modalMode = null;
+        modalParent = null;
+        modalNoeud = null;
+    }
+
+    function erreurModal(message) {
+        modalErreur.textContent = message;
+        modalErreur.hidden = false;
+        modalNom.focus();
+    }
+
+    function validerModal() {
+        let nom = modalNom.value.trim();
+
+        if (!nom) return erreurModal("Donne un nom.");
+        if (nom.length > 40) return erreurModal("40 caractères maximum.");
+        if (/[\/\\.]{1,}$/.test(nom)) return erreurModal("Nom invalide.");
+        if (nom.indexOf("/") !== -1 || nom.indexOf("\\") !== -1 || nom.indexOf("..") !== -1) {
+            return erreurModal("Pas de / ni de .. dans le nom.");
+        }
+
+        if (modalMode === "fichier") {
+            if (nom.indexOf(".") === -1) {
+                const ext = modalType.value;
+                nom = nom + "." + ext;
+            }
+        }
+
+        const parent = modalMode === "renommer" ? trouverParent(arbre, modalNoeud) : modalParent;
+        if (!parent) return erreurModal("Dossier introuvable.");
+
+        // Doublon
+        const existant = parent.enfants.find(function (e) {
+            return e.nom.toLowerCase() === nom.toLowerCase() && e !== modalNoeud;
+        });
+        if (existant) return erreurModal("Ce nom existe déjà ici.");
+
+        if (modalMode === "renommer") {
+            modalNoeud.nom = nom;
+        } else if (modalMode === "fichier") {
+            parent.enfants.push({ type: "fichier", nom: nom });
+            parent.ouvert = true;
+        } else {
+            parent.enfants.push({ type: "dossier", nom: nom, ouvert: true, enfants: [] });
+            parent.ouvert = true;
+        }
+
+        fermerModal();
+        rendre();
+        toast(modalMode === "renommer" ? "Renommé : " + nom : "Créé : " + nom);
+    }
+
+    function supprimer(noeud) {
+        const parent = trouverParent(arbre, noeud);
+        if (!parent) return;
+
+        const nombre = compterEnfants(noeud);
+        const message = noeud.type === "dossier" && nombre > 0
+            ? "Supprimer « " + noeud.nom + " » et son contenu (" + nombre + " élément(s)) ?"
+            : "Supprimer « " + noeud.nom + " » ?";
+
+        if (!confirm(message)) return;
+
+        parent.enfants = parent.enfants.filter(function (e) { return e !== noeud; });
+
+        if (selection && selection.indexOf(noeud.nom) !== -1) {
+            selection = "";
+        }
+
+        rendre();
+        toast("Supprimé : " + noeud.nom);
+    }
+
+    modalValider.addEventListener("click", validerModal);
+    modalAnnuler.addEventListener("click", fermerModal);
+    modalOverlay.addEventListener("click", function (e) {
+        if (e.target === modalOverlay) fermerModal();
+    });
+    modalNom.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") validerModal();
+    });
+
+    // ===============================================================
+    // OUVRIR DANS L'ÉDITEUR (démo)
+    // ===============================================================
+    btnOuvrir.addEventListener("click", function () {
+        if (!selection) return;
+        toast("Ouverture de " + selection + " dans l'éditeur (démo)");
+    });
+
+    // ===============================================================
+    // TOAST
+    // ===============================================================
+    let toastTimer = null;
+    function toast(message) {
+        toastEl.textContent = message;
+        toastEl.classList.add("visible");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toastEl.classList.remove("visible"); }, 2200);
+    }
+
+    // ===============================================================
+    // CLAVIER
+    // ===============================================================
+    document.addEventListener("keydown", function (e) {
+        if (e.key !== "Escape") return;
+        if (!modalOverlay.hidden) { fermerModal(); return; }
+        if (panel.classList.contains("ouvert")) fermerSlide();
+    });
+
+    // ===============================================================
+    // DÉMARRAGE
+    // ===============================================================
+    rendre();
+});
+</script>
+
+</body>
+</html>

@@ -183,6 +183,10 @@
         <div class="editor-header-wrapper">
             <div class="editor-tabs" id="editorHeader"></div>
             <div class="editor-actions">
+                <button class="btn-header-action" id="btnFolder" title="Dossier du projet">
+                    <i class="fa-solid fa-folder"></i>
+                    Folder
+                </button>
                 <button class="btn-header-action" id="btnExportCode" title="Télécharger">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                     Exporter
@@ -516,22 +520,70 @@
 </div>
 
 <!-- ========================================= -->
-<!-- OVERLAY CREATION DE FICHIER -->
+<!-- SCRIPTS -->
 <!-- ========================================= -->
-<div class="overlay-create" id="overlayCreate">
-    <div class="modal-create">
-        <h3>Nouveau fichier</h3>
-        <input type="text" id="inputNomFichier" placeholder="ex: page2.html">
-        <div class="btns">
-            <button class="btn-annuler" id="btnAnnulerCreate">Annuler</button>
-            <button class="btn-creer" id="btnValiderCreate">Créer</button>
+
+<!-- ========================================= -->
+<!-- SLIDE FOLDER (gestion du dossier) -->
+<!-- ========================================= -->
+<div class="fld-overlay" id="fldOverlay"></div>
+
+<div class="fld-panel" id="fldPanel" role="dialog" aria-modal="true" aria-labelledby="fldTitre">
+    <div class="fld-entete">
+        <div class="fld-id">
+            <i class="fa-solid fa-folder-tree" aria-hidden="true"></i>
+            <div>
+                <h3 id="fldTitre">Folder</h3>
+                <small>VirtEmulator</small>
+            </div>
         </div>
+        <button type="button" class="fld-fermer" id="fldFermer" aria-label="Fermer le dossier">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <div class="fld-corps">
+        <div class="fld-arbre" id="fldArbre" role="tree" aria-label="Arborescence du projet VirtEmulator"></div>
+    </div>
+
+    <div class="fld-pied">
+        <span class="fld-selection" id="fldSelection">Aucun fichier sélectionné</span>
+        <button type="button" class="fld-btn-ouvrir" id="fldOuvrir" disabled>Ouvrir</button>
     </div>
 </div>
 
-<!-- ========================================= -->
-<!-- SCRIPTS -->
-<!-- ========================================= -->
+<!-- Modale créer / renommer -->
+<div class="fld-modal-overlay" id="fldModal" hidden>
+    <div class="fld-boite" role="dialog" aria-modal="true" aria-labelledby="fldModalTitre">
+        <h4 id="fldModalTitre">Nouveau fichier</h4>
+
+        <label for="fldNom">Nom</label>
+        <input type="text" id="fldNom" placeholder="ex : style.css" autocomplete="off" maxlength="40">
+
+        <div id="fldTypeWrap">
+            <label for="fldType">Type</label>
+            <select id="fldType">
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+                <option value="js">JavaScript</option>
+                <option value="json">JSON</option>
+                <option value="md">Markdown</option>
+                <option value="txt">Texte</option>
+                <option value="svg">Image SVG</option>
+                <option value="png">Image PNG</option>
+                <option value="jpg">Image JPG</option>
+                <option value="webp">Image WEBP</option>
+            </select>
+        </div>
+
+        <p class="fld-erreur" id="fldErreur" hidden></p>
+
+        <div class="fld-actions-modal">
+            <button type="button" class="fld-annuler" id="fldAnnuler">Annuler</button>
+            <button type="button" class="fld-valider" id="fldValider">Créer</button>
+        </div>
+    </div>
+</div>
 
 <!-- 1. Header du site (injecte le header + sidebar) -->
 <script src="/js/header.js"></script>
@@ -542,6 +594,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/markdown/markdown.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
