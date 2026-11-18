@@ -94,6 +94,10 @@ app.get('/transformlink', (req, res) => res.sendFile(path.join(__dirname, 'publi
 // Page Astuces
 app.get('/astuces', (req, res) => res.sendFile(path.join(__dirname, 'public', 'astuces.html')));
 
+// Pages éditoriales
+app.get('/actualites', (req, res) => res.sendFile(path.join(__dirname, 'public', 'actualites.html')));
+app.get('/apropos', (req, res) => res.sendFile(path.join(__dirname, 'public', 'apropos.html')));
+
 // ==========================================
 // ROUTES API
 // ==========================================
