@@ -1,9 +1,12 @@
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const service = require('../services/iaService');
+const appareil = require('../services/appareilService');
+const echange = require('../services/iaEchangeService');
 
 // ---------------------------------------------------------------------
-// Limites anti-abus
+// Limites anti-abus (messages)
 // ---------------------------------------------------------------------
 const LIMITE_PAR_IP = 10;                 // messages
 const FENETRE_MS = 10 * 60 * 1000;        // par 10 minutes
@@ -50,7 +53,7 @@ function autoriser(req) {
 }
 
 // ---------------------------------------------------------------------
-// Validation
+// Utilitaires
 // ---------------------------------------------------------------------
 function nettoyerHistorique(historique) {
     if (!Array.isArray(historique)) return [];
@@ -68,8 +71,19 @@ function nettoyerHistorique(historique) {
         });
 }
 
+// IP hachée : on peut compter les abus sans stocker l'adresse en clair
+function hasherIp(ip) {
+    const sel = process.env.IP_HASH_SALT || "virttech-ip";
+    return crypto.createHash("sha256").update(String(ip) + "|" + sel).digest("hex");
+}
+
+function langue(req) {
+    const brut = String(req.headers["accept-language"] || "");
+    return brut.split(",")[0].trim().slice(0, 20) || null;
+}
+
 // ---------------------------------------------------------------------
-// POST /api/ia  { message, historique }
+// POST /api/ia  { message, historique, conversation_id }
 // ---------------------------------------------------------------------
 router.post('/', async (req, res) => {
     try {
@@ -88,9 +102,38 @@ router.post('/', async (req, res) => {
         }
 
         const historique = nettoyerHistorique(req.body.historique);
-        const reponse = await service.demander(message, historique);
 
-        res.json({ succes: true, reponse });
+        const debut = Date.now();
+        const resultat = await service.demander(message, historique);
+        const latence = Date.now() - debut;
+
+        // Enregistrement pour analyse + avis (ne bloque pas la réponse en cas d'échec)
+        const infos = appareil.detecter(req.headers["user-agent"], req.headers);
+        let id = null;
+
+        try {
+            const ligne = await echange.enregistrer({
+                conversationId: String(req.body.conversation_id || "").slice(0, 64) || null,
+                question: message,
+                reponse: resultat.texte,
+                modele: resultat.modele,
+                tokensEntree: resultat.tokensEntree,
+                tokensSortie: resultat.tokensSortie,
+                latence: latence,
+                type: infos.type,
+                marque: infos.marque,
+                modeleAppareil: infos.modele,
+                os: infos.os,
+                navigateur: infos.navigateur,
+                langue: langue(req),
+                ipHash: hasherIp(req.ip)
+            });
+            id = ligne.id;
+        } catch (e) {
+            console.error("[ia] enregistrement impossible :", e.message);
+        }
+
+        res.json({ succes: true, reponse: resultat.texte, id });
     } catch (error) {
         const status = error.status || 500;
         if (status >= 500) console.error("[ia]", error.message);
@@ -100,6 +143,33 @@ router.post('/', async (req, res) => {
                 ? "L'assistant est momentanément indisponible. Réessaie dans un instant."
                 : error.message
         });
+    }
+});
+
+// ---------------------------------------------------------------------
+// POST /api/ia/:id/avis  { note: 1 | -1 | 0 }
+// ---------------------------------------------------------------------
+router.post('/:id/avis', async (req, res) => {
+    try {
+        const id = Number.parseInt(req.params.id, 10);
+        const note = Number(req.body.note);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({ succes: false, message: "Identifiant invalide." });
+        }
+        if (![-1, 0, 1].includes(note)) {
+            return res.status(400).json({ succes: false, message: "Avis invalide." });
+        }
+
+        const ok = await echange.noter(id, note);
+        if (!ok) {
+            return res.status(404).json({ succes: false, message: "Réponse introuvable." });
+        }
+
+        res.json({ succes: true, note });
+    } catch (error) {
+        console.error("[ia] avis :", error.message);
+        res.status(500).json({ succes: false, message: "Erreur serveur." });
     }
 });
 

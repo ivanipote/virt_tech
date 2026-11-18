@@ -103,3 +103,33 @@ CREATE TABLE IF NOT EXISTS activites_clics (
 
     CONSTRAINT activites_clics_positif CHECK (clics >= 0)
 );
+
+-- =====================================================================
+-- IA : un enregistrement par échange (analyse + avis) — 90 jours
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS ia_echanges (
+    id SERIAL PRIMARY KEY,
+    conversation_id VARCHAR(64),
+    question TEXT NOT NULL,
+    reponse TEXT NOT NULL,
+    modele VARCHAR(40),
+    tokens_entree INTEGER,
+    tokens_sortie INTEGER,
+    latence_ms INTEGER,
+    appareil_type VARCHAR(20),
+    appareil_marque VARCHAR(40),
+    appareil_modele VARCHAR(80),
+    os VARCHAR(40),
+    navigateur VARCHAR(40),
+    langue VARCHAR(20),
+    ip_hash CHAR(64),
+    note SMALLINT NOT NULL DEFAULT 0,
+    cree_le TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    note_le TIMESTAMP,
+
+    CONSTRAINT ia_echanges_note_ok CHECK (note IN (-1, 0, 1))
+);
+
+CREATE INDEX IF NOT EXISTS idx_ia_echanges_date ON ia_echanges (cree_le DESC);
+CREATE INDEX IF NOT EXISTS idx_ia_echanges_note ON ia_echanges (note);
+CREATE INDEX IF NOT EXISTS idx_ia_echanges_marque ON ia_echanges (appareil_marque);

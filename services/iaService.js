@@ -3,7 +3,7 @@ const MODELE = "deepseek-chat";
 const TIMEOUT_MS = 30000;
 
 // Le prompt système donne à l'IA son rôle et ses connaissances sur VirtTech.
-const PROMPT_SYSTEME = `Tu es « Assistant VirtTech », l'assistant du site VirtTech by Ipote (https://virttech.site).
+const PROMPT_SYSTEME = `Tu es « VirtAi », l'assistant du site VirtTech by Ipote (https://virttech.site).
 
 Qui tu es :
 - VirtTech by Ipote est une communauté et une plateforme de formation gratuite en développement web, fondée par Ipote à Abidjan, en Côte d'Ivoire.
@@ -73,7 +73,12 @@ async function demander(message, historique = []) {
             console.log(`[ia] ${data.usage.prompt_tokens} tokens entrée / ${data.usage.completion_tokens} sortie`);
         }
 
-        return texte;
+        return {
+            texte,
+            modele: MODELE,
+            tokensEntree: data.usage ? data.usage.prompt_tokens : null,
+            tokensSortie: data.usage ? data.usage.completion_tokens : null
+        };
     } catch (e) {
         if (e.name === "AbortError") throw erreur(504, "L'assistant a mis trop de temps à répondre.");
         throw e;

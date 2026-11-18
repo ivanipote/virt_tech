@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Assistant IA - Démo | VirtTech</title>
+<title>VirtAi - Démo | VirtTech</title>
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="icon" type="image/png" href="/logo.png">
 
 <!-- Prism.js : coloration syntaxique du code généré -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
@@ -19,12 +20,8 @@
     /* =========================================
        MOBILE : pas de surbrillance bleue au toucher
        ========================================= */
-    * {
-        -webkit-tap-highlight-color: transparent;
-    }
-    button, a, .btn-ia, .ia-envoyer {
-        touch-action: manipulation;
-    }
+    * { -webkit-tap-highlight-color: transparent; }
+    button, a, .btn-ia, .ia-envoyer, .ia-action { touch-action: manipulation; }
 
     /* =========================================
        BASE MOBILE FIRST
@@ -51,7 +48,6 @@
         background: #fff;
         box-shadow: 0 10px 30px rgba(22, 31, 39, .12);
     }
-
     .mock-barre {
         display: flex;
         align-items: center;
@@ -69,10 +65,7 @@
         border-radius: 6px;
         background: #dfe6ea;
     }
-    .mock-onglet.actif {
-        background: var(--metal-fonce);
-        color: #fff;
-    }
+    .mock-onglet.actif { background: var(--metal-fonce); color: #fff; }
     .mock-espace { flex: 1; }
 
     .btn-executer {
@@ -88,7 +81,6 @@
         font-weight: 700;
         cursor: default;
     }
-
     .btn-ia {
         display: inline-flex;
         align-items: center;
@@ -105,11 +97,7 @@
         transition: background .3s, color .3s, transform .3s;
     }
     .btn-ia i { color: var(--or); transition: color .3s; }
-    .btn-ia:hover {
-        background: var(--or);
-        color: var(--ombre);
-        transform: translateY(-2px);
-    }
+    .btn-ia:hover { background: var(--or); color: var(--ombre); transform: translateY(-2px); }
     .btn-ia:hover i { color: var(--ombre); }
 
     .mock-code {
@@ -133,7 +121,7 @@
     .note-demo strong { color: var(--metal-fonce); }
 
     /* =========================================
-       LA SLIDE DE L'ASSISTANT (hauteur fixe)
+       LA SLIDE DE VIRTAI
        ========================================= */
     .ia-overlay {
         position: fixed;
@@ -145,19 +133,15 @@
         visibility: hidden;
         transition: opacity .3s, visibility 0s .3s;
     }
-    .ia-overlay.ouvert {
-        opacity: 1;
-        visibility: visible;
-        transition: opacity .3s;
-    }
+    .ia-overlay.ouvert { opacity: 1; visibility: visible; transition: opacity .3s; }
 
     .ia-panel {
         position: fixed;
         left: 0;
         bottom: 0;
         width: 100%;
-        height: 68vh;
-        max-height: 68vh;
+        height: 85vh;
+        max-height: 85vh;
         background: var(--blanc);
         border-radius: 25px 25px 0 0;
         box-shadow: 0 -10px 40px rgba(0, 0, 0, .5);
@@ -187,16 +171,11 @@
         border-radius: 25px 25px 0 0;
         flex: none;
     }
-    .ia-identite {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 0;
-    }
+    .ia-identite { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .ia-avatar {
         flex: none;
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
         border-radius: 50%;
         background: rgba(212, 175, 55, .15);
         border: 1px solid var(--or);
@@ -206,27 +185,22 @@
         justify-content: center;
         font-size: .95rem;
     }
-    .ia-entete h3 {
-        margin: 0;
-        font-size: 1rem;
-        line-height: 1.2;
-    }
-    .ia-entete small {
-        display: block;
-        font-size: .7rem;
-        opacity: .7;
-        font-weight: 400;
-    }
-    .ia-fermer {
-        flex: none;
+    .ia-entete h3 { margin: 0; font-size: 1.05rem; line-height: 1.2; }
+    .ia-entete small { display: block; font-size: .7rem; opacity: .7; font-weight: 400; }
+
+    .ia-entete-actions { display: flex; align-items: center; gap: 16px; flex: none; }
+    .ia-icone-btn {
         background: none;
         border: none;
         color: var(--blanc);
-        font-size: 1.25rem;
+        font-size: 1.05rem;
         cursor: pointer;
         transition: color .2s, transform .2s;
     }
+    .ia-icone-btn:hover { color: var(--or); }
+    .ia-fermer { font-size: 1.25rem; }
     .ia-fermer:hover { color: #ffb3b3; transform: scale(1.1); }
+    .ia-nouveau:hover { transform: rotate(-30deg); }
 
     /* Messages */
     .ia-messages {
@@ -239,21 +213,58 @@
         background: #fbfcfd;
     }
 
+    /* État vide */
     .ia-vide {
         margin: auto;
         text-align: center;
-        color: #8b969d;
-        font-size: .88rem;
+        color: #7b8891;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 10px;
-        padding: 20px;
-        max-width: 320px;
-        line-height: 1.5;
+        gap: 8px;
+        padding: 16px;
+        max-width: 420px;
+        width: 100%;
     }
-    .ia-vide i { font-size: 1.8rem; color: var(--or); }
+    .ia-vide[hidden] { display: none; }
+    .ia-vide-icone {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: rgba(212, 175, 55, .12);
+        border: 1px solid var(--or);
+        color: var(--or);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    .ia-vide-bonjour { font-weight: 800; color: var(--ombre); font-size: 1rem; }
+    .ia-vide-titre { font-size: .9rem; line-height: 1.5; }
 
+    .ia-suggestions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        margin-top: 10px;
+    }
+    .ia-suggestion {
+        width: 100%;
+        text-align: left;
+        padding: 11px 14px;
+        border-radius: 10px;
+        border: 1px solid #dfe5e9;
+        background: #fff;
+        color: var(--metal-fonce);
+        font-size: .82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: border-color .2s, background .2s;
+    }
+    .ia-suggestion:hover { border-color: var(--or); background: #fffdf6; }
+
+    /* Messages */
     .ia-message {
         max-width: 85%;
         padding: 10px 14px;
@@ -264,8 +275,14 @@
         word-break: break-word;
     }
     .ia-message p { margin: 0; }
+    .ia-message.moi {
+        align-self: flex-end;
+        background: var(--metal-fonce);
+        color: var(--blanc);
+        border-bottom-right-radius: 6px;
+    }
 
-    /* La réponse de l'IA : pas de bulle, pleine largeur */
+    /* Réponse de VirtAi : pleine largeur, sans bulle */
     .ia-message.bot {
         align-self: stretch;
         max-width: 100%;
@@ -275,84 +292,32 @@
         color: #3F4C55;
     }
 
-    .ia-reponse p {
-        margin: 0 0 10px;
-        font-size: .93rem;
-        line-height: 1.65;
+    /* « en train d'écrire » */
+    .ia-message.ia-ecrit {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        align-self: flex-start;
+        padding: 12px 16px;
+        background: #eef2f4;
+        border-radius: 16px;
+        border-bottom-left-radius: 6px;
     }
-    .ia-reponse p:last-child { margin-bottom: 0; }
-
-    .ia-reponse a {
-        color: #8a6d1a;
-        font-weight: 700;
-        text-decoration: underline;
-        text-decoration-color: var(--or);
-        text-underline-offset: 2px;
-        word-break: break-word;
+    .ia-message.ia-ecrit span {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #9aa6ae;
+        animation: iaPulse 1s infinite;
     }
-    .ia-reponse a:hover { color: var(--ombre); }
-
-    /* Mots-clés surlignés, comme une réponse d'IA soignée */
-    .mot-cle {
-        background: linear-gradient(180deg, transparent 55%, rgba(212, 175, 55, .45) 55%);
-        color: var(--ombre);
-        font-weight: 800;
-        padding: 0 2px;
-    }
-
-    /* Listes */
-    .ia-reponse ul,
-    .ia-reponse ol {
-        margin: 0 0 10px;
-        padding-left: 22px;
-    }
-    .ia-reponse li {
-        margin-bottom: 4px;
-        font-size: .93rem;
-        line-height: 1.6;
-        color: #3F4C55;
-    }
-    .ia-reponse ul li::marker { color: var(--or); }
-    .ia-reponse ol li::marker { color: var(--or); font-weight: 800; }
-
-    .ia-reponse strong { color: var(--ombre); font-weight: 800; }
-
-    .ia-reponse .code-inline {
-        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
-        background: var(--surface);
-        padding: 1px 5px;
-        border-radius: 4px;
-        font-size: .88em;
-        color: var(--metal-fonce);
+    .ia-message.ia-ecrit span:nth-child(2) { animation-delay: .15s; }
+    .ia-message.ia-ecrit span:nth-child(3) { animation-delay: .3s; }
+    @keyframes iaPulse {
+        0%, 80%, 100% { opacity: .3; transform: translateY(0); }
+        40% { opacity: 1; transform: translateY(-3px); }
     }
 
-    /* Tableaux */
-    .tableau-scroll {
-        overflow-x: auto;
-        margin: 12px 0;
-        border: 1px solid #e0e6ea;
-        border-radius: 10px;
-    }
-    .ia-reponse table {
-        border-collapse: collapse;
-        width: 100%;
-        min-width: 320px;
-        font-size: .88rem;
-    }
-    .ia-reponse th,
-    .ia-reponse td {
-        padding: 8px 10px;
-        text-align: left;
-        border-bottom: 1px solid #eef2f4;
-    }
-    .ia-reponse th {
-        background: #f1f4f6;
-        color: var(--metal-fonce);
-        font-weight: 800;
-    }
-    .ia-reponse tr:last-child td { border-bottom: none; }
-
-    /* État d'erreur */
+    /* Erreur */
     .ia-message.erreur {
         align-self: stretch;
         max-width: 100%;
@@ -385,24 +350,66 @@
         font-weight: 700;
         cursor: pointer;
     }
-    .btn-reessayer:hover {
-        background: #8c2f27;
-        border-color: #8c2f27;
-        color: #fff;
+    .btn-reessayer:hover { background: #8c2f27; border-color: #8c2f27; color: #fff; }
+
+    .ia-reponse p { margin: 0 0 10px; font-size: .93rem; line-height: 1.65; }
+    .ia-reponse p:last-child { margin-bottom: 0; }
+
+    .ia-reponse a {
+        color: #8a6d1a;
+        font-weight: 700;
+        text-decoration: underline;
+        text-decoration-color: var(--or);
+        text-underline-offset: 2px;
+        word-break: break-word;
     }
+    .ia-reponse a:hover { color: var(--ombre); }
+
+    .mot-cle {
+        background: linear-gradient(180deg, transparent 55%, rgba(212, 175, 55, .45) 55%);
+        color: var(--ombre);
+        font-weight: 800;
+        padding: 0 2px;
+    }
+
+    .ia-reponse strong { color: var(--ombre); font-weight: 800; }
+    .ia-reponse .code-inline {
+        font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+        background: var(--surface);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: .88em;
+        color: var(--metal-fonce);
+    }
+
+    /* Listes */
+    .ia-reponse ul, .ia-reponse ol { margin: 0 0 10px; padding-left: 22px; }
+    .ia-reponse li { margin-bottom: 4px; font-size: .93rem; line-height: 1.6; color: #3F4C55; }
+    .ia-reponse ul li::marker { color: var(--or); }
+    .ia-reponse ol li::marker { color: var(--or); font-weight: 800; }
+
+    /* Tableaux */
+    .tableau-scroll {
+        overflow-x: auto;
+        margin: 12px 0;
+        border: 1px solid #e0e6ea;
+        border-radius: 10px;
+    }
+    .ia-reponse table { border-collapse: collapse; width: 100%; min-width: 320px; font-size: .88rem; }
+    .ia-reponse th, .ia-reponse td {
+        padding: 8px 10px;
+        text-align: left;
+        border-bottom: 1px solid #eef2f4;
+    }
+    .ia-reponse th { background: #f1f4f6; color: var(--metal-fonce); font-weight: 800; }
+    .ia-reponse tr:last-child td { border-bottom: none; }
 
     /* Apparition mot par mot */
-    .mot {
-        opacity: 0;
-        animation: motIn .35s ease forwards;
-    }
-    @keyframes motIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
+    .mot { opacity: 0; animation: motIn .35s ease forwards; }
+    @keyframes motIn { from { opacity: 0; } to { opacity: 1; } }
 
     /* =========================================
-       BLOC DE CODE GÉNÉRÉ (cadre à hauteur fixe)
+       BLOC DE CODE GÉNÉRÉ
        ========================================= */
     .bloc-code-ia {
         margin: 12px 0;
@@ -411,7 +418,6 @@
         overflow: hidden;
         background: #1e2a33;
     }
-
     .code-tete {
         display: flex;
         align-items: center;
@@ -421,13 +427,7 @@
         background: #26333c;
         border-bottom: 1px solid #1a242c;
     }
-    .code-langue {
-        font-size: .68rem;
-        font-weight: 700;
-        letter-spacing: .6px;
-        color: #9fb0bb;
-        text-transform: uppercase;
-    }
+    .code-langue { font-size: .68rem; font-weight: 700; letter-spacing: .6px; color: #9fb0bb; text-transform: uppercase; }
     .code-copier {
         display: inline-flex;
         align-items: center;
@@ -442,23 +442,17 @@
         cursor: pointer;
         transition: background .2s, color .2s;
     }
-    .code-copier:hover {
-        background: var(--or);
-        border-color: var(--or);
-        color: var(--ombre);
-    }
+    .code-copier:hover { background: var(--or); border-color: var(--or); color: var(--ombre); }
 
     .code-scroll {
         display: flex;
         align-items: flex-start;
-        height: 240px;      /* hauteur fixe */
-        overflow: auto;     /* défilement X et Y */
+        height: 240px;
+        overflow: auto;
         font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
         font-size: .76rem;
         line-height: 1.55;
     }
-
-    /* Numéros de ligne, fixés à gauche quand on défile horizontalement */
     .code-lignes {
         position: sticky;
         left: 0;
@@ -471,7 +465,6 @@
         user-select: none;
         font: inherit;
     }
-
     .code-pre {
         margin: 0;
         padding: 12px 14px;
@@ -481,40 +474,76 @@
         font: inherit;
         background: transparent;
     }
-    .code-pre code {
-        background: none;
-        font: inherit;
-        text-shadow: none;
-    }
-    .ia-message.moi {
-        align-self: flex-end;
-        background: var(--metal-fonce);
-        color: var(--blanc);
-        border-bottom-right-radius: 6px;
-    }
+    .code-pre code { background: none; font: inherit; text-shadow: none; }
 
-    /* « en train d'écrire » */
-    .ia-ecrit {
-        display: flex;
+    /* =========================================
+       ACTIONS SOUS UNE RÉPONSE
+       ========================================= */
+    .ia-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .ia-action {
+        display: inline-flex;
         align-items: center;
-        gap: 4px;
-        padding: 12px 16px;
+        gap: 5px;
+        padding: 5px 9px;
+        border-radius: 8px;
+        border: 1px solid #dfe5e9;
+        background: #fff;
+        color: #7b8891;
+        font-size: .72rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .2s, color .2s, border-color .2s;
     }
-    .ia-ecrit span {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #9aa6ae;
-        animation: iaPulse 1s infinite;
-    }
-    .ia-ecrit span:nth-child(2) { animation-delay: .15s; }
-    .ia-ecrit span:nth-child(3) { animation-delay: .3s; }
-    @keyframes iaPulse {
-        0%, 80%, 100% { opacity: .3; transform: translateY(0); }
-        40% { opacity: 1; transform: translateY(-3px); }
-    }
+    .ia-action:hover { background: #f1f4f6; color: var(--metal-fonce); }
+    .ia-action i { font-size: .78rem; }
+    .ia-action.actif { background: var(--or); border-color: var(--or); color: var(--ombre); }
+    .ia-action.actif.negatif { background: #c0392b; border-color: #c0392b; color: #fff; }
 
-    /* Pied : saisie + envoyer */
+    /* =========================================
+       ÉTAT SUSPENDU
+       ========================================= */
+    .ia-suspendu {
+        margin: auto;
+        max-width: 340px;
+        text-align: center;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        color: #8c2f27;
+    }
+    .ia-suspendu[hidden] { display: none; }
+    .ia-suspendu > i { font-size: 1.8rem; }
+    .ia-suspendu p { margin: 0; font-size: .9rem; line-height: 1.55; }
+    .ia-suspendu strong { color: var(--ombre); }
+    .btn-relire {
+        margin-top: 4px;
+        padding: 9px 16px;
+        border-radius: 9px;
+        border: 1px solid #e0b4ae;
+        background: #fff;
+        color: #8c2f27;
+        font-weight: 700;
+        font-size: .82rem;
+        cursor: pointer;
+    }
+    .btn-relire:hover { background: #8c2f27; border-color: #8c2f27; color: #fff; }
+
+    /* =========================================
+       ALERTE LIMITE + PIED
+       ========================================= */
+    .ia-alerte {
+        flex: none;
+        padding: 6px 14px;
+        font-size: .72rem;
+        text-align: center;
+        color: #8a6d1a;
+        background: #fff8e6;
+        border-top: 1px solid #f0e0b0;
+    }
+    .ia-alerte[hidden] { display: none; }
+
     .ia-pied {
         display: flex;
         align-items: flex-end;
@@ -546,6 +575,7 @@
         border-color: var(--or);
         box-shadow: 0 0 0 4px rgba(212, 175, 55, .15);
     }
+    .ia-pied textarea:disabled { opacity: .6; }
     .ia-envoyer {
         flex: none;
         width: 48px;
@@ -561,21 +591,65 @@
         justify-content: center;
         transition: background .3s, color .3s, transform .3s;
     }
-    .ia-envoyer:hover {
-        background: var(--or);
-        color: var(--ombre);
-        transform: translateY(-2px);
-    }
-    .ia-envoyer:disabled {
-        opacity: .55;
-        cursor: not-allowed;
-        transform: none;
-        background: var(--metal-fonce);
-        color: #fff;
-    }
+    .ia-envoyer:hover { background: var(--or); color: var(--ombre); transform: translateY(-2px); }
+    .ia-envoyer:disabled { opacity: .55; cursor: not-allowed; transform: none; background: var(--metal-fonce); color: #fff; }
 
     /* =========================================
-       ANIMATIONS
+       POLITIQUE D'UTILISATION
+       ========================================= */
+    .politique-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1200;
+        background: rgba(22, 31, 39, .78);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+    }
+    .politique-overlay[hidden] { display: none; }
+
+    .politique-boite {
+        width: 100%;
+        max-width: 520px;
+        max-height: 86vh;
+        overflow-y: auto;
+        background: #fff;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+    }
+    .politique-boite h4 {
+        font-size: 1.05rem;
+        color: var(--ombre);
+        margin-bottom: 14px;
+    }
+    .politique-boite ul {
+        margin: 0 0 18px 18px;
+        color: #3F4C55;
+        font-size: .86rem;
+        line-height: 1.6;
+    }
+    .politique-boite li { margin-bottom: 7px; }
+
+    .politique-actions { display: flex; flex-direction: column; gap: 8px; }
+    .politique-actions button {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: .86rem;
+        cursor: pointer;
+        transition: background .2s, color .2s;
+    }
+    .politique-accepter { background: var(--metal-fonce); color: #fff; border: 2px solid var(--metal-fonce); }
+    .politique-accepter:hover { background: var(--or); border-color: var(--or); color: var(--ombre); }
+    .politique-refuser { background: transparent; color: #8c2f27; border: 2px solid #e0b4ae; }
+    .politique-refuser:hover { background: #8c2f27; border-color: #8c2f27; color: #fff; }
+
+    /* =========================================
+       ANIMATIONS & RESPONSIVE
        ========================================= */
     .js .reveal {
         opacity: 0;
@@ -587,18 +661,21 @@
     @media (prefers-reduced-motion: reduce) {
         * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
         .js .reveal { opacity: 1; transform: none; }
+        .mot { opacity: 1; animation: none; }
     }
 
-    /* =========================================
-       DESKTOP
-       ========================================= */
+    @media (min-width: 600px) {
+        .politique-actions { flex-direction: row-reverse; }
+        .politique-actions button { width: auto; flex: 1; }
+    }
+
     @media (min-width: 768px) {
         h1 { font-size: 2.2rem; }
         .mock-code { min-height: 200px; }
-        .ia-panel { height: 72vh; max-height: 72vh; }
+        .ia-panel { height: 80vh; max-height: 80vh; }
         .ia-messages { padding: 22px 24px; }
         .ia-pied { padding: 14px 24px; }
-        .ia-message { max-width: 70%; font-size: .95rem; }
+        .ia-message.moi { max-width: 70%; font-size: .95rem; }
     }
 </style>
 
@@ -611,8 +688,8 @@
 
 <div class="contenu">
 
-    <h1 class="reveal">Assistant IA</h1>
-    <p class="sous-titre reveal">Aperçu de l'assistant qui sera intégré à VirtEmulator.</p>
+    <h1 class="reveal">VirtAi</h1>
+    <p class="sous-titre reveal">L'assistant IA de VirtTech — démo.</p>
 
     <!-- Aperçu de l'éditeur -->
     <div class="mock-editeur reveal">
@@ -638,14 +715,14 @@
     </div>
 
     <p class="note-demo reveal">
-        Clique sur <strong>IA</strong> pour ouvrir l'assistant.
-        <em>Démo connectée à l'IA.</em><br>
-        Essaie « génère-moi une page HTML », « c'est quoi une erreur 404 ? » ou « fais un tableau des codes 4xx et 5xx ».
+        Clique sur <strong>IA</strong> pour ouvrir VirtAi.
+        <em>Démo connectée : l'assistant répond pour de vrai.</em><br>
+        Essaie « génère-moi une page HTML » ou « fais un tableau des codes 4xx et 5xx ».
     </p>
 
 </div>
 
-<!-- ===== SLIDE DE L'ASSISTANT ===== -->
+<!-- ===== SLIDE VIRTAI ===== -->
 <div class="ia-overlay" id="ia-overlay"></div>
 
 <div class="ia-panel" id="ia-panel" role="dialog" aria-modal="true" aria-labelledby="ia-titre">
@@ -653,21 +730,43 @@
         <div class="ia-identite">
             <span class="ia-avatar"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
             <div>
-                <h3 id="ia-titre">Assistant VirtTech</h3>
-                <small>Démo connectée</small>
+                <h3 id="ia-titre">VirtAi</h3>
+                <small>Assistant IA de VirtTech</small>
             </div>
         </div>
-        <button type="button" class="ia-fermer" id="ia-fermer" aria-label="Fermer l'assistant">
-            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-        </button>
+        <div class="ia-entete-actions">
+            <button type="button" class="ia-icone-btn" id="ia-politique" aria-label="Politique d'utilisation" title="Politique d'utilisation">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ia-icone-btn ia-nouveau" id="ia-nouveau" aria-label="Nouvelle conversation" title="Nouvelle conversation">
+                <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="ia-icone-btn ia-fermer" id="ia-fermer" aria-label="Fermer l'assistant">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
     </div>
 
     <div class="ia-messages" id="ia-messages" aria-live="polite">
         <div class="ia-vide" id="ia-vide">
-            <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
-            <p>Pose ta question sur VirtTech ou sur ton code.</p>
+            <span class="ia-vide-icone"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>
+            <p class="ia-vide-bonjour" id="ia-bonjour">Bonjour</p>
+            <p class="ia-vide-titre">Posez votre question à l'IA VirtTech !</p>
+            <div class="ia-suggestions">
+                <button type="button" class="ia-suggestion" data-question="C'est quoi une erreur 404 ?">C'est quoi une erreur 404 ?</button>
+                <button type="button" class="ia-suggestion" data-question="Génère-moi une page HTML simple">Génère-moi une page HTML simple</button>
+                <button type="button" class="ia-suggestion" data-question="Explique-moi les balises HTML">Explique-moi les balises HTML</button>
+            </div>
+        </div>
+
+        <div class="ia-suspendu" id="ia-suspendu" hidden>
+            <i class="fa-solid fa-ban" aria-hidden="true"></i>
+            <p><strong>Accès suspendu.</strong><br>Tu as refusé la politique d'utilisation de VirtAi.</p>
+            <button type="button" class="btn-relire" id="btn-relire">Relire la politique</button>
         </div>
     </div>
+
+    <p class="ia-alerte" id="ia-alerte" hidden></p>
 
     <form class="ia-pied" id="ia-form">
         <textarea id="ia-input" rows="1" placeholder="Écris ton message…" autocomplete="off" aria-label="Ton message"></textarea>
@@ -677,31 +776,150 @@
     </form>
 </div>
 
+<!-- ===== POLITIQUE D'UTILISATION ===== -->
+<div class="politique-overlay" id="politique-overlay" hidden>
+    <div class="politique-boite" role="dialog" aria-modal="true" aria-labelledby="politique-titre">
+        <h4 id="politique-titre">Politique d'utilisation de VirtAi</h4>
+        <ul>
+            <li>VirtAi est une <strong>IA</strong> : elle peut se tromper. Vérifie toujours le code avant de l'utiliser.</li>
+            <li>Tes questions et réponses sont enregistrées <strong>90 jours</strong> pour améliorer l'assistant (IP hachée, pas de données personnelles).</li>
+            <li>N'écris pas d'informations sensibles : mot de passe, numéro, adresse.</li>
+            <li>VirtAi ne répond qu'aux sujets de <strong>développement web</strong> et de VirtTech.</li>
+            <li>Limite : <strong>10 messages / 10 minutes</strong>, réservés à l'apprentissage.</li>
+        </ul>
+        <div class="politique-actions">
+            <button type="button" class="politique-accepter" id="politique-accepter">J'accepte et je continue</button>
+            <button type="button" class="politique-refuser" id="politique-refuser">Je refuse</button>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
 <script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
+    // ===============================================================
+    // 1. ÉLÉMENTS
+    // ===============================================================
     const overlay = document.getElementById("ia-overlay");
     const panel = document.getElementById("ia-panel");
     const btnIA = document.getElementById("btnIA");
     const fermer = document.getElementById("ia-fermer");
+    const nouveau = document.getElementById("ia-nouveau");
+    const btnPolitique = document.getElementById("ia-politique");
     const messages = document.getElementById("ia-messages");
     const vide = document.getElementById("ia-vide");
+    const bonjour = document.getElementById("ia-bonjour");
     const form = document.getElementById("ia-form");
     const input = document.getElementById("ia-input");
+    const envoyer = form.querySelector(".ia-envoyer");
+    const alerte = document.getElementById("ia-alerte");
+    const suspendu = document.getElementById("ia-suspendu");
+    const btnRelire = document.getElementById("btn-relire");
+    const politique = document.getElementById("politique-overlay");
+    const politiqueAccepter = document.getElementById("politique-accepter");
+    const politiqueRefuser = document.getElementById("politique-refuser");
 
+    // ===============================================================
+    // 2. CONSTANTES & ÉTAT
+    // ===============================================================
+    const CLE_CONV = "virttech_ia_conversation";
+    const CLE_ID = "virttech_ia_conversation_id";
+    const CLE_CONSENT = "virttech_ia_consentement";
+    const CLE_ENVOIS = "virttech_ia_envois";
+    const VERSION_POLITIQUE = 1;
+    const MAX_MESSAGES = 50;
+    const LIMITE_DOUCE = 8;
+
+    let conversation = lireConversation();
+    let conversationId = lireConversationId();
+    let consentement = lireConsentement();
+    let messageEnAttente = null;
     let dernierFocus = null;
+    let voteEnCours = false;
 
-    // ---------------------------------------------------------------
-    // Ouverture / fermeture
-    // ---------------------------------------------------------------
-    function ouvrir() {
+    // ===============================================================
+    // 3. STOCKAGE LOCAL
+    // ===============================================================
+    function lireConversation() {
+        try {
+            const v = JSON.parse(localStorage.getItem(CLE_CONV) || "[]");
+            return Array.isArray(v) ? v.slice(-MAX_MESSAGES) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function sauver() {
+        try {
+            localStorage.setItem(CLE_CONV, JSON.stringify(conversation.slice(-MAX_MESSAGES)));
+        } catch (e) { /* stockage plein */ }
+    }
+
+    function lireConversationId() {
+        try {
+            let id = localStorage.getItem(CLE_ID);
+            if (!id) {
+                id = uidConversation();
+                localStorage.setItem(CLE_ID, id);
+            }
+            return id;
+        } catch (e) {
+            return "conv-" + Date.now();
+        }
+    }
+
+    function uidConversation() {
+        return (window.crypto && crypto.randomUUID)
+            ? crypto.randomUUID()
+            : "conv-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+    }
+
+    function uid() {
+        return (window.crypto && crypto.randomUUID)
+            ? crypto.randomUUID()
+            : "m-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+    }
+
+    function lireConsentement() {
+        try {
+            const v = JSON.parse(localStorage.getItem(CLE_CONSENT) || "null");
+            return (v && v.version === VERSION_POLITIQUE) ? v : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function sauverConsentement(accepte) {
+        consentement = {
+            version: VERSION_POLITIQUE,
+            accepte: accepte,
+            date: new Date().toISOString()
+        };
+        try {
+            localStorage.setItem(CLE_CONSENT, JSON.stringify(consentement));
+        } catch (e) { /* stockage bloqué */ }
+    }
+
+    function estSuspendu() {
+        return !!consentement && consentement.accepte === false;
+    }
+
+    function aAccepte() {
+        return !!consentement && consentement.accepte === true;
+    }
+
+    // ===============================================================
+    // 4. OUVERTURE / FERMETURE
+    // ===============================================================
+    function ouvrirAssistant() {
         dernierFocus = document.activeElement;
         overlay.classList.add("ouvert");
         panel.classList.add("ouvert");
         document.body.style.overflow = "hidden";
-        input.focus();
+        if (!estSuspendu()) input.focus();
     }
 
     function fermerAssistant() {
@@ -711,37 +929,71 @@ document.addEventListener("DOMContentLoaded", function () {
         if (dernierFocus) dernierFocus.focus();
     }
 
-    btnIA.addEventListener("click", ouvrir);
+    btnIA.addEventListener("click", ouvrirAssistant);
     fermer.addEventListener("click", fermerAssistant);
     overlay.addEventListener("click", fermerAssistant);
 
     document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && panel.classList.contains("ouvert")) fermerAssistant();
+        if (e.key !== "Escape") return;
+        if (!politique.hidden) { fermerPolitique(); return; }
+        if (panel.classList.contains("ouvert")) fermerAssistant();
     });
 
-    // ---------------------------------------------------------------
-    // Affichage des messages
-    // ---------------------------------------------------------------
-    function defilerEnBas() {
-        messages.scrollTop = messages.scrollHeight;
+    // ===============================================================
+    // 5. POLITIQUE D'UTILISATION
+    // ===============================================================
+    function ouvrirPolitique() {
+        politique.hidden = false;
+        politiqueAccepter.focus();
     }
 
-    function ajouterMessage(role, texte) {
-        if (vide) vide.remove();
-
-        const bulle = document.createElement("div");
-        bulle.className = "ia-message " + role;
-        const p = document.createElement("p");
-        p.textContent = texte;
-        bulle.appendChild(p);
-        messages.appendChild(bulle);
-        defilerEnBas();
-        return bulle;
+    function fermerPolitique() {
+        politique.hidden = true;
+        if (!estSuspendu()) input.focus({ preventScroll: true });
     }
 
-    // ---------------------------------------------------------------
-    // Rendu d'une réponse : paragraphes, liens, mots-clés, animation
-    // ---------------------------------------------------------------
+    function majSuspendu() {
+        const s = estSuspendu();
+        suspendu.hidden = !s;
+        input.disabled = s;
+        envoyer.disabled = s;
+
+        if (s) {
+            vide.hidden = true;
+        } else if (!conversation.length) {
+            vide.hidden = false;
+        }
+    }
+
+    politiqueAccepter.addEventListener("click", function () {
+        sauverConsentement(true);
+        fermerPolitique();
+        majSuspendu();
+
+        if (messageEnAttente) {
+            const texte = messageEnAttente;
+            messageEnAttente = null;
+            envoyerMessage(texte);
+        }
+    });
+
+    politiqueRefuser.addEventListener("click", function () {
+        sauverConsentement(false);
+        messageEnAttente = null;
+        fermerPolitique();
+        majSuspendu();
+    });
+
+    politique.addEventListener("click", function (e) {
+        if (e.target === politique) fermerPolitique();
+    });
+
+    btnPolitique.addEventListener("click", ouvrirPolitique);
+    btnRelire.addEventListener("click", ouvrirPolitique);
+
+    // ===============================================================
+    // 6. RENDU DES RÉPONSES
+    // ===============================================================
     const MOTS_CLES = [
         "VirtTech by Ipote", "VirtEmulator", "TransformLink", "Virt_Dev", "VirtTech",
         "JavaScript", "Node.js", "HTML", "CSS", "GitHub", "Abidjan",
@@ -801,46 +1053,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function animerMots(racine) {
-        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-        const marcheur = document.createTreeWalker(racine, NodeFilter.SHOW_TEXT, {
-            acceptNode: function (noeud) {
-                const parent = noeud.parentNode;
-                if (parent && parent.closest && parent.closest(".bloc-code-ia")) {
-                    return NodeFilter.FILTER_REJECT;
-                }
-                return NodeFilter.FILTER_ACCEPT;
-            }
-        });
-        const noeuds = [];
-        while (marcheur.nextNode()) noeuds.push(marcheur.currentNode);
-
-        let n = 0;
-
-        noeuds.forEach(function (noeud) {
-            const morceaux = noeud.nodeValue.split(/(\s+)/);
-            const frag = document.createDocumentFragment();
-
-            morceaux.forEach(function (morceau) {
-                if (!morceau) return;
-
-                if (/^\s+$/.test(morceau)) {
-                    frag.appendChild(document.createTextNode(morceau));
-                    return;
-                }
-
-                const span = document.createElement("span");
-                span.className = "mot";
-                span.style.animationDelay = Math.min(n++ * 10, 1200) + "ms";
-                span.textContent = morceau;
-                frag.appendChild(span);
-            });
-
-            noeud.parentNode.replaceChild(frag, noeud);
-        });
-    }
-
     function construireTableau(lignesTableau) {
         function cellules(ligne) {
             return ligne.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(function (c) {
@@ -851,7 +1063,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const entetes = cellules(lignesTableau[0]);
         let debut = 1;
 
-        // Ligne de séparation Markdown : |---|---|
         if (lignesTableau[1] && /^[\s|:-]+$/.test(lignesTableau[1]) && lignesTableau[1].indexOf("-") !== -1) {
             debut = 2;
         }
@@ -860,14 +1071,15 @@ document.addEventListener("DOMContentLoaded", function () {
         scroll.className = "tableau-scroll";
 
         const table = document.createElement("table");
-
         const thead = document.createElement("thead");
         const trh = document.createElement("tr");
+
         entetes.forEach(function (c) {
             const th = document.createElement("th");
             remplir(th, c);
             trh.appendChild(th);
         });
+
         thead.appendChild(trh);
         table.appendChild(thead);
 
@@ -935,18 +1147,130 @@ document.addEventListener("DOMContentLoaded", function () {
         bloc.append(tete, scroll);
 
         if (window.Prism && Prism.highlightElement) {
-            try {
-                Prism.highlightElement(codeEl);
-            } catch (e) {
-                // Langage non chargé : le code reste en texte brut
-            }
+            try { Prism.highlightElement(codeEl); } catch (e) { /* texte brut */ }
         }
 
         return bloc;
     }
 
-    function ajouterReponse(texte) {
-        if (vide) vide.remove();
+    function animerMots(racine) {
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const marcheur = document.createTreeWalker(racine, NodeFilter.SHOW_TEXT, {
+            acceptNode: function (noeud) {
+                const parent = noeud.parentNode;
+                if (parent && parent.closest && (parent.closest(".bloc-code-ia") || parent.closest(".ia-actions"))) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+
+        const noeuds = [];
+        while (marcheur.nextNode()) noeuds.push(marcheur.currentNode);
+
+        let n = 0;
+
+        noeuds.forEach(function (noeud) {
+            const morceaux = noeud.nodeValue.split(/(\s+)/);
+            const frag = document.createDocumentFragment();
+
+            morceaux.forEach(function (morceau) {
+                if (!morceau) return;
+
+                if (/^\s+$/.test(morceau)) {
+                    frag.appendChild(document.createTextNode(morceau));
+                    return;
+                }
+
+                const span = document.createElement("span");
+                span.className = "mot";
+                span.style.animationDelay = Math.min(n++ * 10, 1200) + "ms";
+                span.textContent = morceau;
+                frag.appendChild(span);
+            });
+
+            noeud.parentNode.replaceChild(frag, noeud);
+        });
+    }
+
+    function defilerEnBas() {
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function ajouterMessage(role, texte) {
+        if (vide) vide.hidden = true;
+
+        const bulle = document.createElement("div");
+        bulle.className = "ia-message " + role;
+        const p = document.createElement("p");
+        p.textContent = texte;
+        bulle.appendChild(p);
+        messages.appendChild(bulle);
+        defilerEnBas();
+        return bulle;
+    }
+
+    function construireActions(message) {
+        const barre = document.createElement("div");
+        barre.className = "ia-actions";
+
+        const like = document.createElement("button");
+        like.type = "button";
+        like.className = "ia-action ia-like" + (message.avis === 1 ? " actif" : "");
+        like.dataset.message = message.id;
+        like.setAttribute("aria-label", "Réponse utile");
+        like.setAttribute("aria-pressed", message.avis === 1 ? "true" : "false");
+        like.innerHTML = '<i class="fa-' + (message.avis === 1 ? "solid" : "regular") + ' fa-thumbs-up"></i>';
+
+        const dislike = document.createElement("button");
+        dislike.type = "button";
+        dislike.className = "ia-action ia-dislike" + (message.avis === -1 ? " actif negatif" : "");
+        dislike.dataset.message = message.id;
+        dislike.setAttribute("aria-label", "Réponse pas utile");
+        dislike.setAttribute("aria-pressed", message.avis === -1 ? "true" : "false");
+        dislike.innerHTML = '<i class="fa-' + (message.avis === -1 ? "solid" : "regular") + ' fa-thumbs-down"></i>';
+
+        const simple = document.createElement("button");
+        simple.type = "button";
+        simple.className = "ia-action ia-plus-simple";
+        simple.textContent = "Plus simple";
+
+        const exemple = document.createElement("button");
+        exemple.type = "button";
+        exemple.className = "ia-action ia-un-exemple";
+        exemple.textContent = "Un exemple";
+
+        const partager = document.createElement("button");
+        partager.type = "button";
+        partager.className = "ia-action ia-partager";
+        partager.dataset.message = message.id;
+        partager.innerHTML = '<i class="fa-solid fa-download"></i> Partager';
+
+        barre.append(like, dislike, simple, exemple, partager);
+        return barre;
+    }
+
+    function rafraichirActions(message) {
+        const boutons = messages.querySelectorAll('[data-message="' + message.id + '"]');
+
+        boutons.forEach(function (b) {
+            if (b.classList.contains("ia-like")) {
+                b.classList.toggle("actif", message.avis === 1);
+                b.setAttribute("aria-pressed", message.avis === 1 ? "true" : "false");
+                b.innerHTML = '<i class="fa-' + (message.avis === 1 ? "solid" : "regular") + ' fa-thumbs-up"></i>';
+            }
+            if (b.classList.contains("ia-dislike")) {
+                b.classList.toggle("actif", message.avis === -1);
+                b.classList.toggle("negatif", message.avis === -1);
+                b.setAttribute("aria-pressed", message.avis === -1 ? "true" : "false");
+                b.innerHTML = '<i class="fa-' + (message.avis === -1 ? "solid" : "regular") + ' fa-thumbs-down"></i>';
+            }
+        });
+    }
+
+    function ajouterReponse(texte, animer, message) {
+        if (vide) vide.hidden = true;
 
         const bulle = document.createElement("div");
         bulle.className = "ia-message bot";
@@ -960,7 +1284,7 @@ document.addEventListener("DOMContentLoaded", function () {
         while (i < lignes.length) {
             const ligne = lignes[i];
 
-            // --- Bloc de code ---
+            // Bloc de code
             if (/^```/.test(ligne.trim())) {
                 const langage = ligne.trim().slice(3).trim();
                 i++;
@@ -974,7 +1298,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 continue;
             }
 
-            // --- Tableau ---
+            // Tableau
             if (/^\s*\|/.test(ligne)) {
                 const lignesTableau = [];
                 while (i < lignes.length && /^\s*\|/.test(lignes[i])) {
@@ -985,7 +1309,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 continue;
             }
 
-            // --- Liste à puces ---
+            // Liste à puces
             if (/^\s*[-*]\s+/.test(ligne)) {
                 const ul = document.createElement("ul");
                 while (i < lignes.length && /^\s*[-*]\s+/.test(lignes[i])) {
@@ -998,7 +1322,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 continue;
             }
 
-            // --- Liste numérotée ---
+            // Liste numérotée
             if (/^\s*\d+[.)]\s+/.test(ligne)) {
                 const ol = document.createElement("ol");
                 while (i < lignes.length && /^\s*\d+[.)]\s+/.test(lignes[i])) {
@@ -1011,7 +1335,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 continue;
             }
 
-            // --- Paragraphe ---
+            // Paragraphe
             const para = [];
             while (i < lignes.length && lignes[i].trim() !== "" &&
                    !/^```/.test(lignes[i].trim()) &&
@@ -1031,9 +1355,11 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
+        if (message) conteneur.appendChild(construireActions(message));
+
         bulle.appendChild(conteneur);
         messages.appendChild(bulle);
-        animerMots(conteneur);
+        if (animer !== false) animerMots(conteneur);
         defilerEnBas();
     }
 
@@ -1045,22 +1371,6 @@ document.addEventListener("DOMContentLoaded", function () {
         defilerEnBas();
         return bulle;
     }
-
-    // ---------------------------------------------------------------
-    // Envoi à l'IA
-    // ---------------------------------------------------------------
-    const envoyer = form.querySelector(".ia-envoyer");
-    const historique = [];
-
-    // Le champ grandit avec le texte (1 à 4 lignes environ)
-    function ajusterHauteur() {
-        input.style.height = "auto";
-        input.style.height = Math.min(input.scrollHeight, 120) + "px";
-    }
-    input.addEventListener("input", ajusterHauteur);
-
-    // Empêche le bouton de prendre le focus : le clavier mobile reste ouvert
-    envoyer.addEventListener("mousedown", function (e) { e.preventDefault(); });
 
     function ajouterErreur(message, question) {
         const bulle = document.createElement("div");
@@ -1089,9 +1399,115 @@ document.addEventListener("DOMContentLoaded", function () {
         defilerEnBas();
     }
 
+    // ===============================================================
+    // 7. ACTIONS (avis, plus simple, exemple, partage)
+    // ===============================================================
+    function trouverMessage(id) {
+        return conversation.find(function (m) { return m.id === id; }) || null;
+    }
+
+    async function voter(message, note) {
+        if (voteEnCours) return;
+
+        const nouvelleNote = message.avis === note ? 0 : note;
+        voteEnCours = true;
+
+        try {
+            if (message.reponseId) {
+                await fetch("/api/ia/" + encodeURIComponent(message.reponseId) + "/avis", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ note: nouvelleNote })
+                });
+            }
+
+            message.avis = nouvelleNote;
+            sauver();
+            rafraichirActions(message);
+        } catch (e) {
+            // silencieux
+        } finally {
+            voteEnCours = false;
+        }
+    }
+
+    function partager(message) {
+        const index = conversation.findIndex(function (m) { return m.id === message.id; });
+
+        let question = "";
+        for (let i = index - 1; i >= 0; i--) {
+            if (conversation[i].role === "user") {
+                question = conversation[i].texte;
+                break;
+            }
+        }
+
+        const date = new Date(message.date || Date.now());
+        const contenu = "VirtAi — VirtTech by Ipote\n" +
+            date.toLocaleString("fr-FR") + "\n\n" +
+            "Question :\n" + (question || "(non disponible)") + "\n\n" +
+            "Réponse :\n" + message.texte + "\n\n" +
+            "https://virttech.site\n";
+
+        const blob = new Blob([contenu], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const lien = document.createElement("a");
+        lien.href = url;
+        lien.download = "virtai-reponse-" + date.toISOString().slice(0, 10) + ".txt";
+        document.body.appendChild(lien);
+        lien.click();
+        lien.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    }
+
+    // ===============================================================
+    // 8. ENVOI
+    // ===============================================================
+    function ajusterHauteur() {
+        input.style.height = "auto";
+        input.style.height = Math.min(input.scrollHeight, 120) + "px";
+    }
+
+    input.addEventListener("input", ajusterHauteur);
+    envoyer.addEventListener("mousedown", function (e) { e.preventDefault(); });
+
+    input.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter") return;
+        if (e.ctrlKey || e.metaKey || e.shiftKey) return; // Ctrl + Entrée = nouvelle ligne
+        if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return; // mobile : nouvelle ligne
+        e.preventDefault();
+        envoyerMessage(input.value);
+    });
+
+    function compterEnvoi() {
+        try {
+            const maintenant = Date.now();
+            const fenetre = 10 * 60 * 1000;
+            const envois = JSON.parse(localStorage.getItem(CLE_ENVOIS) || "[]")
+                .filter(function (t) { return maintenant - t < fenetre; });
+
+            envois.push(maintenant);
+            localStorage.setItem(CLE_ENVOIS, JSON.stringify(envois));
+
+            if (envois.length >= LIMITE_DOUCE) {
+                const restants = Math.max(0, 10 - envois.length);
+                alerte.textContent = restants > 0
+                    ? "Attention : plus que " + restants + " message(s) avant la pause de 10 minutes."
+                    : "Limite atteinte : l'assistant va se mettre en pause.";
+                alerte.hidden = false;
+            }
+        } catch (e) { /* stockage bloqué */ }
+    }
+
     async function demanderIA(texte) {
         const ecriture = afficherEcriture();
         envoyer.disabled = true;
+
+        const contexte = conversation
+            .slice(0, -1)
+            .filter(function (m) { return m.role === "user" || m.role === "assistant"; })
+            .slice(-8)
+            .map(function (m) { return { role: m.role, content: m.texte }; });
 
         try {
             const reponse = await fetch("/api/ia", {
@@ -1099,7 +1515,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     message: texte,
-                    historique: historique.slice(-8)
+                    historique: contexte,
+                    conversation_id: conversationId
                 })
             });
 
@@ -1111,8 +1528,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            ajouterReponse(data.reponse);
-            historique.push({ role: "assistant", content: data.reponse });
+            const msg = {
+                id: uid(),
+                role: "assistant",
+                texte: data.reponse,
+                date: new Date().toISOString(),
+                reponseId: data.id || null,
+                avis: 0
+            };
+
+            conversation.push(msg);
+            sauver();
+            ajouterReponse(data.reponse, true, msg);
         } catch (err) {
             ecriture.remove();
             ajouterErreur("Connexion impossible. Vérifie ta connexion et réessaie.", texte);
@@ -1122,35 +1549,95 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    form.addEventListener("submit", function (e) {
-        e.preventDefault();
+    function envoyerMessage(texte) {
+        texte = String(texte || "").trim();
+        if (!texte) return;
 
-        const texte = input.value.trim();
-        if (!texte || envoyer.disabled) {
-            input.focus();
+        if (estSuspendu()) {
+            suspendu.scrollIntoView({ behavior: "smooth", block: "nearest" });
             return;
         }
 
-        ajouterMessage("moi", texte);
-        historique.push({ role: "user", content: texte });
+        if (!aAccepte()) {
+            messageEnAttente = texte;
+            ouvrirPolitique();
+            return;
+        }
 
         input.value = "";
         ajusterHauteur();
         input.focus({ preventScroll: true });
 
+        const msg = {
+            id: uid(),
+            role: "user",
+            texte: texte,
+            date: new Date().toISOString(),
+            avis: 0
+        };
+
+        conversation.push(msg);
+        sauver();
+        ajouterMessage("moi", texte);
+        compterEnvoi();
+
         demanderIA(texte);
+    }
+
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        envoyerMessage(input.value);
     });
 
-    // ---------------------------------------------------------------
-    // Copier un bloc de code
-    // ---------------------------------------------------------------
+    // ===============================================================
+    // 9. CLICS DANS LES MESSAGES
+    // ===============================================================
+    document.querySelectorAll(".ia-suggestion").forEach(function (b) {
+        b.addEventListener("click", function () { envoyerMessage(b.dataset.question); });
+    });
+
     messages.addEventListener("mousedown", function (e) {
-        if (e.target.closest && (e.target.closest(".code-copier") || e.target.closest(".btn-reessayer"))) {
+        if (e.target.closest && (e.target.closest(".code-copier") ||
+            e.target.closest(".btn-reessayer") ||
+            e.target.closest(".ia-action"))) {
             e.preventDefault();
         }
     });
 
     messages.addEventListener("click", function (e) {
+        const like = e.target.closest ? e.target.closest(".ia-like") : null;
+        if (like) {
+            const m = trouverMessage(like.dataset.message);
+            if (m) voter(m, 1);
+            return;
+        }
+
+        const dislike = e.target.closest ? e.target.closest(".ia-dislike") : null;
+        if (dislike) {
+            const m = trouverMessage(dislike.dataset.message);
+            if (m) voter(m, -1);
+            return;
+        }
+
+        const simple = e.target.closest ? e.target.closest(".ia-plus-simple") : null;
+        if (simple) {
+            envoyerMessage("Reformule ta dernière réponse plus simplement, pour un débutant.");
+            return;
+        }
+
+        const exemple = e.target.closest ? e.target.closest(".ia-un-exemple") : null;
+        if (exemple) {
+            envoyerMessage("Donne-moi un exemple concret.");
+            return;
+        }
+
+        const partage = e.target.closest ? e.target.closest(".ia-partager") : null;
+        if (partage) {
+            const m = trouverMessage(partage.dataset.message);
+            if (m) partager(m);
+            return;
+        }
+
         const reessayer = e.target.closest ? e.target.closest(".btn-reessayer") : null;
         if (reessayer) {
             const bulle = reessayer.closest(".ia-message");
@@ -1159,23 +1646,67 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const bouton = e.target.closest ? e.target.closest(".code-copier") : null;
-        if (!bouton) return;
-
-        const code = bouton.dataset.code || "";
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(code).then(function () {
-                const ancien = bouton.innerHTML;
-                bouton.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Copié';
-                setTimeout(function () { bouton.innerHTML = ancien; }, 1600);
-            }).catch(function () {});
+        const copier = e.target.closest ? e.target.closest(".code-copier") : null;
+        if (copier) {
+            const code = copier.dataset.code || "";
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(function () {
+                    const ancien = copier.innerHTML;
+                    copier.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Copié';
+                    setTimeout(function () { copier.innerHTML = ancien; }, 1600);
+                }).catch(function () {});
+            }
         }
     });
 
-    // ---------------------------------------------------------------
-    // Animations d'apparition
-    // ---------------------------------------------------------------
+    // ===============================================================
+    // 10. NOUVELLE CONVERSATION + RESTAURATION
+    // ===============================================================
+    nouveau.addEventListener("click", function () {
+        if (!confirm("Effacer cette conversation ?")) return;
+
+        conversation = [];
+        try {
+            localStorage.removeItem(CLE_CONV);
+            localStorage.removeItem(CLE_ID);
+        } catch (e) { /* stockage bloqué */ }
+        conversationId = lireConversationId();
+
+        messages.querySelectorAll(".ia-message").forEach(function (b) { b.remove(); });
+        if (!estSuspendu()) vide.hidden = false;
+        alerte.hidden = true;
+
+        input.value = "";
+        ajusterHauteur();
+        if (!estSuspendu()) input.focus();
+    });
+
+    function restaurerConversation() {
+        if (!conversation.length) {
+            if (!estSuspendu()) vide.hidden = false;
+            return;
+        }
+
+        vide.hidden = true;
+
+        conversation.forEach(function (m) {
+            if (m.role === "user") ajouterMessage("moi", m.texte);
+            else ajouterReponse(m.texte, false, m);
+        });
+
+        defilerEnBas();
+    }
+
+    // ===============================================================
+    // 11. DÉMARRAGE
+    // ===============================================================
+    const heure = new Date().getHours();
+    bonjour.textContent = (heure < 12 ? "Bonjour" : heure < 18 ? "Bon après-midi" : "Bonsoir") + ", je suis VirtAi.";
+
+    majSuspendu();
+    restaurerConversation();
+
+    // Animations d'apparition de la page
     var els = document.querySelectorAll(".reveal");
     if ("IntersectionObserver" in window) {
         var io = new IntersectionObserver(function (entries) {

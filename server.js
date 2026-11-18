@@ -142,6 +142,16 @@ app.use((err, req, res, next) => {
 // DÉMARRAGE
 // ==========================================
 initDB().then(() => {
+    // Purge des échanges IA de plus de 90 jours (au démarrage, puis 1 fois par jour)
+    const { purger } = require('./services/iaEchangeService');
+    const purgerEchanges = () => {
+        purger(90)
+            .then((n) => { if (n > 0) console.log(`🧹 ${n} échange(s) IA de plus de 90 jours supprimé(s).`); })
+            .catch((e) => console.error("Purge IA impossible :", e.message));
+    };
+    purgerEchanges();
+    setInterval(purgerEchanges, 24 * 60 * 60 * 1000).unref();
+
     app.listen(PORT, () => {
         console.log(`Le serveur VirtTech tourne sur http://localhost:${PORT}`);
     });
