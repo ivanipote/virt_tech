@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
   <!-- Page d'accueil -->
   <url>
     <loc>https://virttech.site/</loc>
-    <lastmod>2026-11-18</lastmod>
+    <lastmod>2026-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -58,7 +58,7 @@
     </image:image>
   </url>
 
-  <!-- Résultats Virt_Dev -->
+  <!-- RÃ©sultats Virt_Dev -->
   <url>
     <loc>https://virttech.site/virt-dev</loc>
     <lastmod>2026-11-17</lastmod>
@@ -66,7 +66,7 @@
     <priority>0.8</priority>
     <image:image>
       <image:loc>https://virttech.site/logo.png</image:loc>
-      <image:title>Résultats Virt_Dev</image:title>
+      <image:title>RÃ©sultats Virt_Dev</image:title>
     </image:image>
   </url>
 
@@ -78,15 +78,15 @@
     <priority>0.5</priority>
   </url>
 
-  <!-- Actualités -->
+  <!-- ActualitÃ©s -->
   <url>
     <loc>https://virttech.site/actualites</loc>
-    <lastmod>2026-11-18</lastmod>
+    <lastmod>2026-11-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- À propos -->
+  <!-- Ã€ propos -->
   <url>
     <loc>https://virttech.site/apropos</loc>
     <lastmod>2026-11-18</lastmod>
@@ -95,3 +95,4 @@
   </url>
 
 </urlset>
+

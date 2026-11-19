@@ -1,6 +1,17 @@
+const fs = require("fs");
+const path = require("path");
+
 const URL_API = "https://api.deepseek.com/chat/completions";
 const MODELE = "deepseek-chat";
 const TIMEOUT_MS = 30000;
+
+// Base de connaissances réelle de VirtTech (data/virttech.md)
+let CONNAISSANCE = "";
+try {
+    CONNAISSANCE = fs.readFileSync(path.join(__dirname, "..", "data", "virttech.md"), "utf8").trim();
+} catch (e) {
+    console.error("[ia] base de connaissances indisponible :", e.message);
+}
 
 // Le prompt système donne à l'IA son rôle et ses connaissances sur VirtTech.
 const PROMPT_SYSTEME = `Tu es « VirtIA », l'assistant du site VirtTech by Ipote (https://virttech.site), intégré à l'éditeur VirtEmulator.
@@ -56,6 +67,13 @@ async function demander(message, historique = [], contexte = "", mode = "lecture
     if (!cle) throw erreur(500, "L'assistant n'est pas configuré.");
 
     const messages = [{ role: "system", content: PROMPT_SYSTEME }];
+
+    if (CONNAISSANCE) {
+        messages.push({
+            role: "system",
+            content: "Base de connaissances VirtTech (source de vérité pour répondre aux questions sur le site) :\n\n" + CONNAISSANCE
+        });
+    }
 
     if (mode === "code") {
         messages.push({ role: "system", content: INSTRUCTION_CODE });
