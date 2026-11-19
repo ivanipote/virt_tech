@@ -72,7 +72,15 @@ document.addEventListener("DOMContentLoaded", function() {
         actif: function () { return activeFile; },
         arbre: function () { return construireArbre(); },
         resoudre: function (base, href) { return resoudreChemin(base, href); },
-        estMedia: function (chemin) { return estMedia(chemin); }
+        estMedia: function (chemin) { return estMedia(chemin); },
+        ecrire: function (chemin, contenu) { ecrireFichier(chemin, contenu); },
+        importer: function (objets) {
+            Object.keys(objets || {}).forEach(function (c) { files[c] = String(objets[c]); });
+            sauvegarder();
+            mettreAJourOnglets();
+            rendreDossier();
+            rafraichirNavigateurSiOuvert();
+        }
     };
     let editor;
     let zoomLevel = 1;
@@ -152,6 +160,26 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    // Écriture d'un fichier par VirtIA (PC) : contenu complet appliqué
+    function ecrireFichier(chemin, contenu) {
+        const texte = String(contenu || '');
+
+        files[chemin] = texte;
+        sauvegarder();
+
+        if (activeFile === chemin) {
+            editor.setOption('mode', modeDe(chemin));
+            editor.setValue(texte);
+        } else {
+            ouvrirFichier(chemin);
+        }
+
+        mettreAJourOnglets();
+        rendreDossier();
+        rafraichirNavigateurSiOuvert();
+        toast('Appliqué : ' + chemin);
+    }
+
     function toast(message, duree) {
         if (window.virtToast) {
             window.virtToast(message, duree);
@@ -220,6 +248,8 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
         editorBody.appendChild(editor.getWrapperElement());
+        window.VirtEditor = editor;
+        window.VirtSauver = sauvegarder;
 
         // 4. Donner l'instance à toolsemulator.js
         if (window.setEditorInstance) {
@@ -649,6 +679,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 doc.write(construirePage(nomComplet));
                 doc.close();
                 brancherLiensIframe(doc, nomComplet);
+                if (window.PcBoost) window.PcBoost.hookConsole(iframe);
                 if (urlInput) urlInput.value = nomComplet;
             } else {
                 if (page404) page404.style.display = 'flex';
@@ -669,6 +700,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     doc.write(construirePage(nomActuel));
                     doc.close();
                     brancherLiensIframe(doc, nomActuel);
+                    if (window.PcBoost) window.PcBoost.hookConsole(iframe);
                 }
             }
         }

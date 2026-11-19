@@ -2248,3 +2248,43 @@ body, html {
         display: none;
     }
 }
+
+/* ===== VirtIA mode code : boutons Appliquer ===== */
+.ia-appliquer { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #dfe5e9; }
+.ia-appliquer-btn { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border-radius: 9px; border: 2px solid var(--metal-fonce); background: var(--metal-fonce); color: #fff; font-weight: 700; font-size: .76rem; cursor: pointer; font-family: inherit; text-align: left; }
+.ia-appliquer-btn code { background: rgba(255, 255, 255, .15); padding: 1px 5px; border-radius: 4px; }
+.ia-appliquer-btn:hover:not(:disabled) { background: var(--or); border-color: var(--or); color: var(--ombre); }
+.ia-appliquer-btn:disabled { opacity: .75; cursor: default; }
+
+/* =========================================
+   BOOST PC : console, diff, plein écran
+   ========================================= */
+.pc-console { position: fixed; left: 10px; bottom: 10px; width: 440px; max-width: calc(100vw - 20px); z-index: 1300; background: #161F27; color: #dbe3e8; border-radius: 12px; box-shadow: 0 12px 30px rgba(0, 0, 0, .45); font-size: .72rem; overflow: hidden; }
+.pc-console-tete { display: flex; align-items: center; gap: 8px; padding: 8px 12px; cursor: pointer; background: #1d2a33; }
+.pc-console-titre { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.pc-console-titre i { color: #D4AF37; }
+.pc-console-compteur { background: #2f414d; border-radius: 10px; padding: 1px 7px; font-size: .66rem; }
+.pc-console.a-erreur .pc-console-compteur { background: #8c2f27; color: #fff; }
+.pc-console-btn { background: none; border: none; color: #9fb0ba; cursor: pointer; font-size: .66rem; }
+.pc-console-btn:hover { color: #fff; }
+.pc-console-compteur { margin-left: auto; }
+.pc-console-liste { display: none; max-height: 220px; overflow-y: auto; padding: 4px 8px 8px; }
+.pc-console.ouvert .pc-console-liste { display: block; }
+.pc-console-ligne { padding: 4px 6px; border-left: 3px solid #3a4650; margin-top: 4px; font-family: ui-monospace, Consolas, monospace; font-size: .66rem; color: #c9d4db; white-space: pre-wrap; word-break: break-word; }
+.pc-console-ligne.error { border-color: #c0392b; color: #ffb3ac; }
+.pc-console-ligne.warn { border-color: #D4AF37; color: #f0d98a; }
+
+.pc-diff { position: fixed; inset: 0; z-index: 1500; background: rgba(10, 15, 19, .78); display: flex; align-items: center; justify-content: center; padding: 18px; }
+.pc-diff-boite { width: 100%; max-width: 900px; max-height: 88vh; display: flex; flex-direction: column; gap: 10px; background: #fff; color: #202124; border-radius: 16px; padding: 18px; }
+.pc-diff-boite h3 { margin: 0; font-size: 1rem; }
+.pc-diff-chemin { background: #eef2f4; padding: 2px 8px; border-radius: 6px; align-self: flex-start; font-size: .72rem; }
+.pc-diff-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 0; flex: 1; }
+.pc-diff-cols h4 { margin: 0 0 6px; font-size: .68rem; color: #7b8891; text-transform: uppercase; letter-spacing: .08em; }
+.pc-diff-cols pre { margin: 0; height: 100%; max-height: 46vh; overflow: auto; background: #1e2a33; color: #d8e0e6; padding: 10px; border-radius: 8px; font-size: .7rem; }
+.pc-diff-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.pc-diff-actions button { padding: 10px 16px; border-radius: 9px; font-weight: 800; font-size: .8rem; cursor: pointer; font-family: inherit; }
+.pc-diff-annuler { background: transparent; border: 2px solid #dfe5e9; color: #323F48; }
+.pc-diff-ok { background: #323F48; border: 2px solid #323F48; color: #fff; }
+.pc-diff-ok:hover { background: #D4AF37; border-color: #D4AF37; color: #161F27; }
+
+.slide-panel.pc-plein { width: 100vw !important; max-width: 100vw !important; top: 0 !important; bottom: 0 !important; right: 0 !important; left: 0 !important; border-radius: 0 !important; z-index: 2000 !important; }

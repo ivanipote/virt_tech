@@ -473,6 +473,71 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Mode code (PC) : boutons « Appliquer » pour les fichiers proposés
+    function proposerFichiers(texte) {
+        if (!window.VirtProjet || typeof window.VirtProjet.ecrire !== "function") return;
+
+        const fichiers = [];
+        const motif = /```fichier:([^\n`]+)\n([\s\S]*?)```/g;
+        let m;
+
+        while ((m = motif.exec(String(texte))) !== null) {
+            if (m[1].trim()) fichiers.push({ chemin: m[1].trim(), contenu: m[2].replace(/\n$/, "") });
+        }
+
+        if (!fichiers.length) return;
+
+        const bulle = messages.lastElementChild;
+        if (!bulle) return;
+
+        const zone = document.createElement("div");
+        zone.className = "ia-appliquer";
+
+        fichiers.forEach(function (f) {
+            const bouton = document.createElement("button");
+            bouton.type = "button";
+            bouton.className = "ia-appliquer-btn";
+
+            const icone = document.createElement("i");
+            icone.className = "fa-solid fa-file-pen";
+            icone.setAttribute("aria-hidden", "true");
+
+            const code = document.createElement("code");
+            code.textContent = f.chemin;
+
+            bouton.append(icone, document.createTextNode(" Appliquer "), code);
+
+            bouton.addEventListener("click", function () {
+                const appliquer = function () {
+                    window.VirtProjet.ecrire(f.chemin, f.contenu);
+
+                    bouton.disabled = true;
+                    bouton.innerHTML = "";
+
+                    const ok = document.createElement("i");
+                    ok.className = "fa-solid fa-check";
+                    ok.setAttribute("aria-hidden", "true");
+
+                    const libelle = document.createElement("code");
+                    libelle.textContent = f.chemin;
+
+                    bouton.append(ok, document.createTextNode(" Appliqu\u00e9 "), libelle);
+                };
+
+                if (window.PcBoost && typeof window.PcBoost.proposer === "function") {
+                    window.PcBoost.proposer(f.chemin, f.contenu, appliquer);
+                } else {
+                    appliquer();
+                }
+            });
+
+            zone.appendChild(bouton);
+        });
+
+        bulle.appendChild(zone);
+        defilerEnBas();
+    }
+
     function ajouterReponse(texte, animer, message) {
         if (vide) vide.hidden = true;
 
@@ -721,7 +786,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     message: texte,
                     historique: contexte,
                     conversation_id: conversationId,
-                    contexte: window.VirtContexte(texte)
+                    contexte: window.VirtContexte(texte),
+                    mode: window.VIRTIA_MODE || "lecture"
                 })
             });
 
@@ -745,6 +811,8 @@ document.addEventListener("DOMContentLoaded", function () {
             conversation.push(msg);
             sauver();
             ajouterReponse(data.reponse, true, msg);
+
+            if (window.VIRTIA_MODE === "code") proposerFichiers(data.reponse);
         } catch (err) {
             ecriture.remove();
             ajouterErreur("Connexion impossible. Vérifie ta connexion et réessaie.", texte);
