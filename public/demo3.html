@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VirtEmulator PC — Démo</title>
+<link rel="icon" href="/logo.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+
+<style>
+    :root {
+        --or: #D4AF37;
+        --metal-fonce: #323F48;
+        --ombre: #161F27;
+        --blanc: #fff;
+        --code: 60%;
+        --fond-app: #1b242b;
+        --bord: #3a4650;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; margin: 0; }
+    body {
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: var(--fond-app);
+        color: #dbe3e8;
+        overflow: hidden;
+    }
+
+    /* ===== EN-TÊTE DE LA COLONNE CODE ===== */
+    .pc-code-tete {
+        flex: none;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 14px;
+        background: var(--ombre);
+        border-bottom: 1px solid var(--bord);
+    }
+
+    .pc-marque { display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: .95rem; color: #fff; }
+    .pc-marque i { color: var(--or); }
+    .pc-marque span { font-size: .68rem; font-weight: 700; color: var(--or); border: 1px solid var(--or); border-radius: 5px; padding: 1px 5px; }
+
+    .pc-top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+    .pc-btn {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 8px 13px; border-radius: 9px;
+        border: 1px solid var(--bord); background: #22303a; color: #dbe3e8;
+        font-size: .78rem; font-weight: 700; font-family: inherit; cursor: pointer;
+        transition: background .15s, border-color .15s, color .15s;
+    }
+    .pc-btn:hover { background: #2b3a45; border-color: #4d5c68; }
+    .pc-btn i { color: var(--or); }
+    .pc-btn.ia { border-color: var(--or); color: var(--or); }
+    .pc-btn.ia:hover { background: var(--or); color: var(--ombre); }
+    .pc-btn.ia:hover i { color: var(--ombre); }
+
+    /* ===== SPLIT ===== */
+    .pc-split {
+        height: 100vh;
+        display: flex;
+        padding: 10px;
+        gap: 6px;
+    }
+
+    .pc-code {
+        flex: 0 0 var(--code);
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        color: var(--ombre);
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    .pc-divider {
+        flex: none;
+        width: 7px;
+        background: #2b3a45;
+        cursor: col-resize;
+        position: relative;
+        transition: background .15s;
+    }
+    .pc-divider:hover, .pc-divider.actif { background: var(--or); }
+    .pc-divider::after {
+        content: "";
+        position: absolute; top: 50%; left: 50%;
+        width: 3px; height: 34px; margin: -17px 0 0 -1.5px;
+        border-radius: 3px; background: #66757f;
+    }
+    .pc-divider:hover::after, .pc-divider.actif::after { background: var(--ombre); }
+
+    .pc-preview {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: #141c22;
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    /* ===== BARRE SYMBOLES ===== */
+    .pc-toolbar {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        background: #f1f4f6;
+        border-bottom: 1px solid #dde4e8;
+        overflow-x: auto;
+    }
+
+    .pc-select {
+        flex: none;
+        padding: 6px 9px;
+        border-radius: 7px;
+        border: 1px solid #ccd6dc;
+        background: #fff;
+        font-size: .74rem;
+        font-weight: 700;
+        font-family: inherit;
+        color: var(--metal-fonce);
+        cursor: pointer;
+    }
+
+    .pc-sym {
+        flex: none;
+        padding: 5px 9px;
+        border-radius: 6px;
+        border: 1px solid #d6dfe4;
+        background: #fff;
+        color: #45535d;
+        font-size: .72rem;
+        font-family: ui-monospace, Consolas, monospace;
+        cursor: pointer;
+        transition: border-color .15s, color .15s;
+    }
+    .pc-sym:hover { border-color: var(--or); color: var(--ombre); }
+
+    /* ===== ONGLETS ===== */
+    .pc-tabs {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 0 6px;
+        background: #e6ebee;
+        overflow-x: auto;
+        min-height: 38px;
+    }
+
+    .pc-tab {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 10px 8px 12px;
+        border-radius: 8px 8px 0 0;
+        font-size: .76rem;
+        font-weight: 600;
+        color: #5c6a74;
+        cursor: pointer;
+        white-space: nowrap;
+        border: 1px solid transparent;
+        border-bottom: none;
+    }
+    .pc-tab:hover { background: #eff3f5; }
+    .pc-tab.actif { background: #fff; color: var(--ombre); border-color: #dde4e8; }
+    .pc-tab .croix { font-size: .62rem; color: #93a0a8; padding: 2px; }
+    .pc-tab .croix:hover { color: #c0392b; }
+
+    /* ===== ÉDITEUR ===== */
+    .pc-editor { flex: 1; min-height: 0; overflow: hidden; }
+    .CodeMirror { height: 100%; font-size: 13px; font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+
+    /* ===== NAVIGATEUR / APERÇU ===== */
+    .pc-preview-tete {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        background: #22303a;
+        border-bottom: 1px solid var(--bord);
+    }
+
+    .pc-outils {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .pc-zoom-label {
+        min-width: 42px;
+        text-align: center;
+        font-size: .68rem;
+        color: #9fb0ba;
+        font-family: ui-monospace, Consolas, monospace;
+    }
+
+    .pc-devices { display: flex; gap: 4px; }
+
+    .pc-dev {
+        padding: 5px 9px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: #93a3ad;
+        font-size: .7rem;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+    }
+    .pc-dev.on { background: #2f414d; color: #fff; border-color: #465865; }
+
+    .pc-reload {
+        flex: none;
+        width: 28px; height: 28px;
+        border-radius: 6px;
+        border: 1px solid #465865;
+        background: #2f414d;
+        color: #dbe3e8;
+        cursor: pointer;
+        font-size: .75rem;
+    }
+    .pc-reload:hover { border-color: var(--or); color: var(--or); }
+
+    .pc-screen {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+    }
+
+    .phone {
+        position: relative;
+        height: 100%;
+        aspect-ratio: 9 / 19.5;
+        max-width: 100%;
+        background: #0b0f12;
+        border: 10px solid #0b0f12;
+        border-radius: 34px;
+        box-shadow: 0 18px 50px rgba(0,0,0,.55), inset 0 0 0 2px #2a353d;
+        overflow: hidden;
+        transition: max-width .25s;
+    }
+    .phone.iphone { border-radius: 44px; }
+    .phone::before {
+        content: "";
+        position: absolute; top: 8px; left: 50%;
+        width: 64px; height: 6px; margin-left: -32px;
+        border-radius: 4px; background: #1a2329; z-index: 2;
+    }
+    .phone iframe { width: 100%; height: 100%; border: 0; background: #fff; }
+
+    /* ===== TIROIRS ===== */
+    .pc-drawer {
+        position: fixed;
+        top: 10px; bottom: 10px;
+        width: 340px;
+        max-width: 86vw;
+        background: #fff;
+        color: var(--ombre);
+        box-shadow: 0 0 40px rgba(0,0,0,.45);
+        border-radius: 18px;
+        overflow: hidden;
+        z-index: 40;
+        display: flex;
+        flex-direction: column;
+        transition: transform .28s ease;
+    }
+
+    .pc-drawer.gauche { left: 10px; transform: translateX(-115%); }
+    .pc-drawer.droite { right: 10px; transform: translateX(115%); }
+    .pc-drawer.ouvert { transform: none; }
+
+    .pc-drawer-tete {
+        flex: none;
+        display: flex; align-items: center; gap: 10px;
+        padding: 12px 14px;
+        background: var(--metal-fonce);
+        color: #fff;
+        border-bottom: 3px solid var(--or);
+    }
+    .pc-drawer-tete strong { font-size: .92rem; }
+    .pc-drawer-tete small { display: block; font-size: .66rem; opacity: .7; }
+    .pc-drawer-tete .fermer {
+        margin-left: auto; width: 30px; height: 30px; border-radius: 7px;
+        border: none; background: none; color: #fff; font-size: .95rem; cursor: pointer;
+    }
+    .pc-drawer-tete .fermer:hover { background: rgba(255,255,255,.14); }
+
+    .pc-drawer-corps { flex: 1; overflow: auto; padding: 10px; }
+
+    /* ===== ARBRE ===== */
+    .n-ligne {
+        display: flex; align-items: center; gap: 6px;
+        padding: 4px 6px; border-radius: 7px; min-height: 34px;
+    }
+    .n-ligne:hover { background: #f1f4f6; }
+    .n-enfants { padding-left: 16px; border-left: 1px dashed #e0e6ea; margin-left: 10px; }
+    .n-enfants[hidden] { display: none; }
+
+    .n-chev { width: 22px; height: 22px; border: none; background: none; color: #8492a0; font-size: .6rem; cursor: pointer; }
+    .n-chev-vide { width: 22px; }
+    .n-ico { width: 16px; text-align: center; font-size: .82rem; color: var(--metal-fonce); }
+    .n-ico.dossier { color: #b08d2a; }
+    .n-ico.html { color: #e34f26; }
+    .n-ico.css { color: #264de4; }
+    .n-ico.js { color: #c9a227; }
+    .n-ico.json { color: #6b7a85; }
+    .n-ico.image { color: #2e8b57; }
+
+    .n-nom { flex: 1; min-width: 0; font-size: .82rem; color: var(--metal-fonce); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .n-actions { display: flex; gap: 2px; }
+    .n-mini { width: 26px; height: 26px; border: none; background: none; color: #8fa0ab; border-radius: 6px; cursor: pointer; font-size: .7rem; }
+    .n-mini:hover { background: #e6ebee; color: var(--metal-fonce); }
+    .n-mini.danger:hover { background: #fdf3f2; color: #c0392b; }
+
+    .fichier-actif > .n-ligne { background: rgba(212,175,55,.16); outline: 1px solid rgba(212,175,55,.5); }
+
+    /* ===== CHAT IA ===== */
+    .ia-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; background: #fbfcfd; }
+    .ia-msg { max-width: 90%; padding: 9px 12px; border-radius: 12px; font-size: .82rem; line-height: 1.5; }
+    .ia-msg.moi { align-self: flex-end; background: var(--metal-fonce); color: #fff; }
+    .ia-msg.ia { align-self: flex-start; background: #fff; border: 1px solid #e6ebee; }
+    .ia-msg code { background: #eef2f4; padding: 1px 4px; border-radius: 4px; font-size: .92em; }
+    .ia-msg pre { background: #1e2a33; color: #d8e0e6; padding: 9px; border-radius: 8px; overflow-x: auto; font-size: .74rem; margin: 6px 0 0; }
+    .ia-msg pre code { background: none; padding: 0; }
+
+    .ia-pied { flex: none; display: flex; gap: 7px; padding: 10px; border-top: 1px solid #e6ebee; background: #fff; }
+    .ia-pied textarea {
+        flex: 1; resize: none; padding: 9px 11px; border-radius: 10px;
+        border: 2px solid #dbe2e6; font-size: 14px; font-family: inherit; color: var(--ombre);
+        max-height: 90px; line-height: 1.4;
+    }
+    .ia-pied textarea:focus { outline: none; border-color: var(--or); }
+    .ia-envoyer {
+        flex: none; width: 38px; height: 38px; border-radius: 50%;
+        border: none; background: var(--metal-fonce); color: #fff; cursor: pointer;
+    }
+    .ia-envoyer:hover { background: var(--or); color: var(--ombre); }
+
+    .ia-note {
+        flex: none; padding: 6px 12px; font-size: .64rem; text-align: center;
+        color: #8fa0ab; background: #f4f7f9; border-top: 1px solid #e6ebee;
+    }
+
+    /* ===== MODALE ===== */
+    .pc-modal {
+        position: fixed; inset: 0; z-index: 60;
+        background: rgba(10,15,19,.72);
+        display: flex; align-items: center; justify-content: center; padding: 18px;
+    }
+    .pc-modal[hidden] { display: none; }
+
+    .pc-modal-boite {
+        width: 100%; max-width: 380px; background: #fff; color: var(--ombre);
+        border-radius: 14px; padding: 18px; box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+    .pc-modal-boite h3 { margin: 0 0 12px; font-size: .98rem; }
+    .pc-modal-boite label { display: block; font-size: .72rem; font-weight: 700; color: var(--metal-fonce); margin: 9px 0 4px; }
+    .pc-modal-boite input, .pc-modal-boite select {
+        width: 100%; padding: 10px 11px; border: 2px solid #dbe2e6; border-radius: 9px;
+        font-size: 15px; font-family: inherit; color: var(--ombre);
+    }
+    .pc-modal-boite input:focus, .pc-modal-boite select:focus { outline: none; border-color: var(--or); }
+    .pc-modal-err { margin: 8px 0 0; font-size: .72rem; color: #a02020; font-weight: 600; }
+    .pc-modal-err[hidden] { display: none; }
+    .pc-modal-actions { display: flex; gap: 8px; margin-top: 14px; }
+    .pc-modal-actions button { flex: 1; padding: 10px; border-radius: 9px; font-weight: 800; font-size: .8rem; cursor: pointer; font-family: inherit; }
+    .pc-annuler { background: transparent; border: 2px solid #dfe5e9; color: var(--metal-fonce); }
+    .pc-valider { background: var(--metal-fonce); border: 2px solid var(--metal-fonce); color: #fff; }
+    .pc-valider:hover { background: var(--or); border-color: var(--or); color: var(--ombre); }
+
+    .toast {
+        position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+        background: var(--ombre); color: #fff; padding: 9px 16px; border-radius: 22px;
+        font-size: .76rem; font-weight: 700; z-index: 80; opacity: 0; pointer-events: none;
+        transition: opacity .25s;
+    }
+    .toast.visible { opacity: 1; }
+
+    /* ===== RESPONSIVE (la démo est pensé PC) ===== */
+    @media (max-width: 860px) {
+        .pc-split { flex-direction: column; }
+        .pc-code { flex: 0 0 55%; }
+        .pc-divider { width: 100%; height: 8px; cursor: row-resize; }
+        .pc-divider::after { width: 34px; height: 3px; margin: -1.5px 0 0 -17px; }
+        .pc-drawer { top: 10px; bottom: 10px; left: 10px; right: 10px; width: auto; max-width: none; }
+        .pc-drawer.gauche { transform: translateY(115%); }
+        .pc-drawer.droite { transform: translateY(115%); }
+    }
+</style>
+</head>
+<body>
+
+<main class="pc-split" id="split">
+    <section class="pc-code" id="pcCode">
+        <header class="pc-code-tete">
+            <div class="pc-marque">
+                <i class="fa-solid fa-code" aria-hidden="true"></i>
+                VirtEmulator <span>PC · démo</span>
+            </div>
+
+            <div class="pc-top-actions">
+                <button type="button" class="pc-btn" id="btnFolder"><i class="fa-solid fa-folder" aria-hidden="true"></i> Folder</button>
+                <button type="button" class="pc-btn ia" id="btnIA"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> VirtIA</button>
+                <button type="button" class="pc-btn" id="btnSave"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Save</button>
+                <button type="button" class="pc-btn" id="btnExport"><i class="fa-solid fa-download" aria-hidden="true"></i> Exporter</button>
+            </div>
+        </header>
+
+        <div class="pc-toolbar">
+            <select class="pc-select" id="langSelect" aria-label="Langage">
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+                <option value="js">JS</option>
+            </select>
+            <div id="symbols" style="display:flex;gap:6px"></div>
+        </div>
+
+        <div class="pc-tabs" id="tabs"></div>
+
+        <div class="pc-editor">
+            <textarea id="codeInput" style="display:none"></textarea>
+        </div>
+    </section>
+
+    <div class="pc-divider" id="divider" role="separator" aria-orientation="vertical" aria-label="Redimensionner les panneaux" tabindex="0"></div>
+
+    <section class="pc-preview">
+        <header class="pc-preview-tete">
+            <div class="pc-devices">
+                <button type="button" class="pc-dev on" data-dev="samsung">Samsung</button>
+                <button type="button" class="pc-dev" data-dev="iphone">iPhone</button>
+            </div>
+
+            <div class="pc-outils">
+                <button type="button" class="pc-reload" id="btnReload" aria-label="Actualiser" title="Actualiser"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i></button>
+                <button type="button" class="pc-reload" id="btnZoomMoins" aria-label="Zoom arrière" title="Zoom arrière">−</button>
+                <span class="pc-zoom-label" id="zoomLabel">100 %</span>
+                <button type="button" class="pc-reload" id="btnZoomPlus" aria-label="Zoom avant" title="Zoom avant">+</button>
+            </div>
+        </header>
+
+        <div class="pc-screen">
+            <div class="phone" id="phone">
+                <iframe id="iframe" sandbox="allow-scripts allow-same-origin" title="Aperçu"></iframe>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Tiroir Folder -->
+<aside class="pc-drawer gauche" id="folderDrawer" aria-label="Dossier du projet">
+    <div class="pc-drawer-tete">
+        <div>
+            <strong>Folder</strong>
+            <small>VirtEmulator</small>
+        </div>
+        <button type="button" class="fermer" id="folderFermer" aria-label="Fermer"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    </div>
+    <div class="pc-drawer-corps" id="arbre"></div>
+</aside>
+
+<!-- Tiroir VirtIA -->
+<aside class="pc-drawer droite" id="iaDrawer" aria-label="VirtIA">
+    <div class="pc-drawer-tete">
+        <div>
+            <strong>VirtIA</strong>
+            <small>Lit ton projet · lecture seule</small>
+        </div>
+        <button type="button" class="fermer" id="iaFermer" aria-label="Fermer"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="ia-messages" id="iaMessages">
+        <div class="ia-msg ia">Bonjour ! Je suis VirtIA. Dans cette démo, je réponds de façon <strong>simulée</strong> pour te montrer l'interface PC.</div>
+    </div>
+
+    <form class="ia-pied" id="iaForm">
+        <textarea id="iaInput" rows="1" placeholder="Pose ta question…"></textarea>
+        <button type="submit" class="ia-envoyer" aria-label="Envoyer"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
+    </form>
+    <div class="ia-note">Démo : réponses simulées — l'IA réelle arrive avec la version finale.</div>
+</aside>
+
+<!-- Modale -->
+<div class="pc-modal" id="modal" hidden>
+    <div class="pc-modal-boite" role="dialog" aria-modal="true" aria-labelledby="modalTitre">
+        <h3 id="modalTitre">Nouveau fichier</h3>
+
+        <label for="modalNom">Nom</label>
+        <input type="text" id="modalNom" placeholder="ex : style.css" autocomplete="off" maxlength="40">
+
+        <div id="modalTypeWrap">
+            <label for="modalType">Type</label>
+            <select id="modalType">
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+                <option value="js">JavaScript</option>
+                <option value="json">JSON</option>
+                <option value="md">Markdown</option>
+                <option value="txt">Texte</option>
+                <option value="svg">Image SVG</option>
+            </select>
+        </div>
+
+        <p class="pc-modal-err" id="modalErr" hidden></p>
+
+        <div class="pc-modal-actions">
+            <button type="button" class="pc-annuler" id="modalAnnuler">Annuler</button>
+            <button type="button" class="pc-valider" id="modalValider">Créer</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+    'use strict';
+
+    // =========================================================
+    // PROJET DE DÉMO
+    // =========================================================
+    const CLE_FICHIERS = 'demo3_fichiers';
+    const CLE_DOSSIERS = 'demo3_dossiers';
+
+    const PROJET_DEFAUT = {
+        'index.html': '<!DOCTYPE html>\n<html lang="fr">\n<head>\n  <meta charset="UTF-8">\n  <link rel="stylesheet" href="css/style.css">\n  <title>Mon projet</title>\n</head>\n<body>\n  <h1>Bonjour VirtTech</h1>\n  <p>Modifie ce fichier et regarde l\'aperçu.</p>\n  <script src="js/app.js"><\/script>\n</body>\n</html>',
+        'css/style.css': 'body {\n  font-family: system-ui, sans-serif;\n  padding: 24px;\n}\n\nh1 {\n  color: #D4AF37;\n}',
+        'js/app.js': 'console.log("Projet chargé");'
+    };
+
+    let fichiers = {};
+    let dossiers = [];
+    let actif = 'index.html';
+    let cm = null;
+    let minuterie = null;
+    let mode = null;
+    let parentCible = '';
+    let noeudCible = null;
+
+    function charger() {
+        try {
+            const f = JSON.parse(localStorage.getItem(CLE_FICHIERS) || 'null');
+            fichiers = f && Object.keys(f).length ? f : JSON.parse(JSON.stringify(PROJET_DEFAUT));
+        } catch (e) {
+            fichiers = JSON.parse(JSON.stringify(PROJET_DEFAUT));
+        }
+
+        try {
+            dossiers = JSON.parse(localStorage.getItem(CLE_DOSSIERS) || '[]') || [];
+        } catch (e) {
+            dossiers = [];
+        }
+
+        if (fichiers['index.html'] === undefined) fichiers['index.html'] = '';
+    }
+
+    function sauver() {
+        try {
+            localStorage.setItem(CLE_FICHIERS, JSON.stringify(fichiers));
+            localStorage.setItem(CLE_DOSSIERS, JSON.stringify(dossiers));
+        } catch (e) { /* stockage plein */ }
+    }
+
+    // =========================================================
+    // APERÇU
+    // =========================================================
+    function dossierDe(chemin) {
+        return chemin.indexOf('/') !== -1 ? chemin.slice(0, chemin.lastIndexOf('/')) : '';
+    }
+
+    function resoudre(base, href) {
+        if (!href || /^(https?:|data:|blob:|mailto:|tel:|#)/i.test(href)) return null;
+        let cible = href.split('?')[0].split('#')[0];
+        if (!cible) return null;
+        if (cible.charAt(0) === '/') return cible.slice(1);
+
+        const parties = (base ? base.split('/') : []).concat(cible.split('/'));
+        const sortie = [];
+
+        parties.forEach(function (p) {
+            if (!p || p === '.') return;
+            if (p === '..') { sortie.pop(); return; }
+            sortie.push(p);
+        });
+
+        return sortie.join('/');
+    }
+
+    function construirePage(chemin) {
+        let html = fichiers[chemin];
+        if (html === undefined) return '';
+
+        const base = dossierDe(chemin);
+
+        html = html.replace(/<link\b[^>]*>/gi, function (tag) {
+            if (!/rel\s*=\s*["']stylesheet["']/i.test(tag)) return tag;
+            const m = tag.match(/href\s*=\s*["']([^"']+)["']/i);
+            if (!m) return tag;
+            const cible = resoudre(base, m[1]);
+            if (!cible || fichiers[cible] === undefined) return tag;
+            return '<style>\n' + fichiers[cible] + '\n</style>';
+        });
+
+        html = html.replace(/<script\b([^>]*)><\/script>/gi, function (tag, attrs) {
+            const m = attrs.match(/src\s*=\s*["']([^"']+)["']/i);
+            if (!m) return tag;
+            const cible = resoudre(base, m[1]);
+            if (!cible || fichiers[cible] === undefined) return tag;
+            return '<script>\n' + fichiers[cible] + '\n<\/script>';
+        });
+
+        return html;
+    }
+
+    function pageAffichee() {
+        return /\.html?$/i.test(actif) ? actif : 'index.html';
+    }
+
+    function rafraichir() {
+        const page = pageAffichee();
+        const iframe = document.getElementById('iframe');
+
+        document.getElementById('btnReload').title = page;
+
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(construirePage(page));
+        doc.close();
+
+        doc.addEventListener('click', function (e) {
+            const lien = e.target.closest ? e.target.closest('a') : null;
+            if (!lien) return;
+            const href = lien.getAttribute('href');
+            if (!href || href.charAt(0) === '#') return;
+            if (/^(https?:|mailto:|tel:)/i.test(href)) { e.preventDefault(); return; }
+
+            e.preventDefault();
+            const cible = resoudre(dossierDe(page), href);
+            if (cible && fichiers[cible] !== undefined) {
+                ouvrirFichier(cible);
+            }
+        });
+    }
+
+    // =========================================================
+    // ÉDITEUR
+    // =========================================================
+    function modeDe(chemin) {
+        const ext = chemin.split('.').pop().toLowerCase();
+        if (ext === 'css') return 'css';
+        if (ext === 'js') return 'javascript';
+        if (ext === 'json') return { name: 'javascript', json: true };
+        return 'htmlmixed';
+    }
+
+    function ouvrirFichier(chemin) {
+        if (!fichiers[chemin] && fichiers[chemin] !== '') return;
+
+        if (/\.(png|jpe?g|gif|webp)$/i.test(chemin)) {
+            toast('Image : aperçu bientôt disponible');
+            return;
+        }
+
+        if (actif && fichiers[actif] !== undefined) {
+            fichiers[actif] = cm.getValue();
+        }
+
+        actif = chemin;
+        cm.setOption('mode', modeDe(chemin));
+        cm.setValue(fichiers[chemin] || '');
+        rendreOnglets();
+        rendreArbre();
+        rafraichir();
+        sauver();
+    }
+
+    function rendreOnglets() {
+        const tabs = document.getElementById('tabs');
+        tabs.innerHTML = '';
+
+        Object.keys(fichiers).forEach(function (chemin) {
+            if (/\.(png|jpe?g|gif|webp|svg)$/i.test(chemin)) return;
+
+            const tab = document.createElement('div');
+            tab.className = 'pc-tab' + (chemin === actif ? ' actif' : '');
+            tab.title = chemin;
+
+            const nom = document.createElement('span');
+            nom.textContent = chemin.split('/').pop();
+
+            const croix = document.createElement('span');
+            croix.className = 'croix';
+            croix.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+
+            tab.append(nom, croix);
+
+            tab.addEventListener('click', function (e) {
+                if (e.target.closest('.croix')) {
+                    e.stopPropagation();
+                    supprimer(chemin, fichiers[chemin] === undefined);
+                    return;
+                }
+                ouvrirFichier(chemin);
+            });
+
+            tabs.appendChild(tab);
+        });
+    }
+
+    // =========================================================
+    // ARBRE
+    // =========================================================
+    function construireArbre() {
+        const racine = { type: 'dossier', nom: 'VirtEmulator', chemin: '', enfants: [] };
+        const index = new Map();
+        index.set('', racine);
+
+        function dossierPour(chemin) {
+            if (index.has(chemin)) return index.get(chemin);
+
+            let courant = '';
+            let noeud = racine;
+
+            chemin.split('/').forEach(function (p) {
+                const suivant = courant ? courant + '/' + p : p;
+                let enfant = null;
+
+                noeud.enfants.forEach(function (e) {
+                    if (e.type === 'dossier' && e.nom === p) enfant = e;
+                });
+
+                if (!enfant) {
+                    enfant = { type: 'dossier', nom: p, chemin: suivant, enfants: [] };
+                    noeud.enfants.push(enfant);
+                }
+
+                index.set(suivant, enfant);
+                noeud = enfant;
+                courant = suivant;
+            });
+
+            return noeud;
+        }
+
+        dossiers.forEach(function (d) { if (d) dossierPour(d); });
+
+        Object.keys(fichiers).forEach(function (chemin) {
+            const parties = chemin.split('/');
+            const nom = parties.pop();
+            dossierPour(parties.join('/')).enfants.push({ type: 'fichier', nom: nom, chemin: chemin });
+        });
+
+        (function trier(noeud) {
+            noeud.enfants.sort(function (a, b) {
+                if (a.type !== b.type) return a.type === 'dossier' ? -1 : 1;
+                return a.nom.localeCompare(b.nom, 'fr');
+            });
+            noeud.enfants.forEach(function (e) { if (e.type === 'dossier') trier(e); });
+        })(racine);
+
+        return racine;
+    }
+
+    const fermes = new Set();
+
+    function iconeDe(nom) {
+        const ext = nom.split('.').pop().toLowerCase();
+        if (ext === 'html') return ['fa-brands fa-html5', 'html'];
+        if (ext === 'css') return ['fa-brands fa-css3-alt', 'css'];
+        if (ext === 'js') return ['fa-brands fa-js', 'js'];
+        if (ext === 'json') return ['fa-solid fa-file-code', 'json'];
+        if (ext === 'md' || ext === 'txt') return ['fa-solid fa-file-lines', ''];
+        if (/^(png|jpe?g|gif|webp|svg)$/.test(ext)) return ['fa-solid fa-file-image', 'image'];
+        return ['fa-solid fa-file', ''];
+    }
+
+    function bouton(action, titre, icone) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'n-mini' + (action === 'supprimer' ? ' danger' : '');
+        b.title = titre;
+        b.setAttribute('aria-label', titre);
+        b.innerHTML = '<i class="' + icone + '" aria-hidden="true"></i>';
+        return b;
+    }
+
+    function rendreArbre() {
+        const cible = document.getElementById('arbre');
+        cible.innerHTML = '';
+        cible.appendChild(noeudDossier(construireArbre(), ''));
+
+        function noeudDossier(noeud, chemin) {
+            const ouvert = !fermes.has(chemin);
+
+            const bloc = document.createElement('div');
+
+            const ligne = document.createElement('div');
+            ligne.className = 'n-ligne';
+
+            const chev = document.createElement('button');
+            chev.type = 'button';
+            chev.className = 'n-chev';
+            chev.innerHTML = '<i class="fa-solid fa-chevron-' + (ouvert ? 'down' : 'right') + '" aria-hidden="true"></i>';
+            chev.addEventListener('click', function () {
+                if (fermes.has(chemin)) fermes.delete(chemin); else fermes.add(chemin);
+                rendreArbre();
+            });
+
+            const ico = document.createElement('i');
+            ico.className = 'fa-solid ' + (ouvert ? 'fa-folder-open' : 'fa-folder') + ' n-ico dossier';
+
+            const nom = document.createElement('span');
+            nom.className = 'n-nom';
+            nom.textContent = noeud.nom;
+
+            const actions = document.createElement('span');
+            actions.className = 'n-actions';
+
+            const bFic = bouton('fichier', 'Nouveau fichier', 'fa-solid fa-file-circle-plus');
+            const bDos = bouton('dossier', 'Nouveau dossier', 'fa-solid fa-folder-plus');
+
+            bFic.addEventListener('click', function (e) { e.stopPropagation(); ouvrirModale('fichier', chemin, null); });
+            bDos.addEventListener('click', function (e) { e.stopPropagation(); ouvrirModale('dossier', chemin, null); });
+
+            actions.append(bFic, bDos);
+
+            if (chemin) {
+                const bRen = bouton('renommer', 'Renommer', 'fa-solid fa-pen');
+                const bSup = bouton('supprimer', 'Supprimer', 'fa-solid fa-trash');
+
+                bRen.addEventListener('click', function (e) { e.stopPropagation(); ouvrirModale('renommer', null, noeud); });
+                bSup.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (!window.confirm('Supprimer « ' + noeud.nom + ' » et son contenu ?')) return;
+                    supprimer(chemin, true);
+                });
+
+                actions.append(bRen, bSup);
+            }
+
+            ligne.append(chev, ico, nom, actions);
+            bloc.appendChild(ligne);
+
+            const enfants = document.createElement('div');
+            enfants.className = 'n-enfants';
+            if (!ouvert) enfants.hidden = true;
+
+            noeud.enfants.forEach(function (enfant) {
+                if (enfant.type === 'dossier') {
+                    enfants.appendChild(noeudDossier(enfant, enfant.chemin));
+                    return;
+                }
+
+                const f = document.createElement('div');
+                f.className = 'n-ligne' + (enfant.chemin === actif ? ' fichier-actif' : '');
+
+                const vide = document.createElement('span');
+                vide.className = 'n-chev-vide';
+
+                const info = iconeDe(enfant.nom);
+                const ic = document.createElement('i');
+                ic.className = info[0] + ' n-ico ' + info[1];
+
+                const nm = document.createElement('span');
+                nm.className = 'n-nom';
+                nm.textContent = enfant.nom;
+
+                const act = document.createElement('span');
+                act.className = 'n-actions';
+
+                const bRen = bouton('renommer', 'Renommer', 'fa-solid fa-pen');
+                const bSup = bouton('supprimer', 'Supprimer', 'fa-solid fa-trash');
+
+                bRen.addEventListener('click', function (e) { e.stopPropagation(); ouvrirModale('renommer', null, enfant); });
+                bSup.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (!window.confirm('Supprimer « ' + enfant.nom + ' » ?')) return;
+                    supprimer(enfant.chemin, false);
+                });
+
+                act.append(bRen, bSup);
+                f.append(vide, ic, nm, act);
+                f.addEventListener('click', function () { ouvrirFichier(enfant.chemin); });
+                enfants.appendChild(f);
+            });
+
+            bloc.appendChild(enfants);
+            return bloc;
+        }
+    }
+
+    // =========================================================
+    // CRÉATION / RENOMMAGE / SUPPRESSION
+    // =========================================================
+    function ouvrirModale(m, parent, noeud) {
+        mode = m;
+        parentCible = parent || '';
+        noeudCible = noeud || null;
+
+        const modal = document.getElementById('modal');
+        const titre = document.getElementById('modalTitre');
+        const nom = document.getElementById('modalNom');
+        const typeWrap = document.getElementById('modalTypeWrap');
+        const err = document.getElementById('modalErr');
+
+        err.hidden = true;
+
+        if (m === 'fichier') {
+            titre.textContent = 'Nouveau fichier';
+            typeWrap.hidden = false;
+            nom.value = '';
+            nom.placeholder = 'ex : style.css';
+        } else if (m === 'dossier') {
+            titre.textContent = 'Nouveau dossier';
+            typeWrap.hidden = true;
+            nom.value = '';
+            nom.placeholder = 'ex : assets';
+        } else {
+            titre.textContent = 'Renommer';
+            typeWrap.hidden = true;
+            nom.value = noeud ? noeud.nom : '';
+        }
+
+        modal.hidden = false;
+        document.getElementById('modalValider').textContent = m === 'renommer' ? 'Renommer' : 'Créer';
+        nom.focus();
+    }
+
+    function fermerModale() {
+        document.getElementById('modal').hidden = true;
+        mode = null;
+    }
+
+    function erreurModale(msg) {
+        const err = document.getElementById('modalErr');
+        err.textContent = msg;
+        err.hidden = false;
+    }
+
+    function validerModale() {
+        let nom = document.getElementById('modalNom').value.trim();
+        const type = document.getElementById('modalType').value;
+
+        if (!nom) return erreurModale('Donne un nom.');
+        if (/\/|\\|\.\./.test(nom)) return erreurModale('Pas de / ni de ..');
+        if (/\.$/.test(nom)) return erreurModale('Nom invalide.');
+
+        if (mode === 'fichier' && nom.indexOf('.') === -1) nom += '.' + type;
+
+        const base = mode === 'renommer' && noeudCible ? dossierDe(noeudCible.chemin) : (parentCible || '');
+        const chemin = base ? base + '/' + nom : nom;
+
+        if (mode === 'renommer' && noeudCible) {
+            if (chemin === noeudCible.chemin) { fermerModale(); return; }
+            renommer(noeudCible.chemin, chemin, noeudCible.type === 'fichier');
+            fermerModale();
+            rendreArbre();
+            rendreOnglets();
+            rafraichir();
+            toast('Renommé');
+            return;
+        }
+
+        const existe = fichiers[chemin] !== undefined || dossiers.indexOf(chemin) !== -1;
+        if (existe) return erreurModale('Ce nom existe déjà.');
+
+        if (mode === 'fichier') {
+            fichiers[chemin] = '';
+            sauver();
+            fermerModale();
+            ouvrirFichier(chemin);
+            toast('Créé : ' + chemin);
+        } else {
+            dossiers.push(chemin);
+            sauver();
+            fermerModale();
+            rendreArbre();
+            toast('Dossier créé');
+        }
+    }
+
+    function renommer(ancien, nouveau, estFichier) {
+        if (estFichier) {
+            fichiers[nouveau] = fichiers[ancien];
+            delete fichiers[ancien];
+            if (actif === ancien) actif = nouveau;
+        } else {
+            Object.keys(fichiers).forEach(function (c) {
+                if (c.indexOf(ancien + '/') === 0) {
+                    fichiers[nouveau + c.slice(ancien.length)] = fichiers[c];
+                    delete fichiers[c];
+                }
+            });
+            dossiers = dossiers.map(function (d) {
+                if (d === ancien) return nouveau;
+                if (d.indexOf(ancien + '/') === 0) return nouveau + d.slice(ancien.length);
+                return d;
+            });
+        }
+
+        if (actif.indexOf(ancien) === 0) actif = nouveau + actif.slice(ancien.length);
+        sauver();
+    }
+
+    function supprimer(chemin, estDossier) {
+        if (estDossier) {
+            Object.keys(fichiers).forEach(function (c) {
+                if (c.indexOf(chemin + '/') === 0) delete fichiers[c];
+            });
+            dossiers = dossiers.filter(function (d) { return d !== chemin && d.indexOf(chemin + '/') !== 0; });
+        } else {
+            delete fichiers[chemin];
+        }
+
+        if (actif === chemin || actif.indexOf(chemin + '/') === 0) {
+            actif = Object.keys(fichiers)[0] || 'index.html';
+            if (fichiers[actif] === undefined) fichiers[actif] = '';
+            cm.setValue(fichiers[actif]);
+        }
+
+        sauver();
+        rendreArbre();
+        rendreOnglets();
+        rafraichir();
+        toast('Supprimé');
+    }
+
+    // =========================================================
+    // VIRTIA (SIMULÉE)
+    // =========================================================
+    function reponseSimulee(question) {
+        const q = question.toLowerCase();
+
+        if (q.indexOf('css') !== -1) {
+            return "Vérifie deux choses :\n\n1. Le fichier <code>css/style.css</code> existe bien dans ton dossier.\n2. Le lien est présent dans le <code>&lt;head&gt;</code> :\n\n```html\n<link rel=\"stylesheet\" href=\"css/style.css\">\n```\n\nSi le chemin est bon, l'aperçu devrait appliquer tes styles.";
+        }
+
+        if (q.indexOf('erreur') !== -1 || q.indexOf('bug') !== -1) {
+            return "Pour diagnostiquer :\n\n- Ouvre la console du navigateur (<code>F12</code>).\n- Regarde le fichier concerné et la ligne indiquée.\n- Vérifie les chemins (une faute de nom suffit).\n\nDonne-moi le message exact et je t'explique.";
+        }
+
+        if (q.indexOf('lien') !== -1) {
+            return "Entre deux pages de ton projet, utilise un chemin relatif :\n\n```html\n<a href=\"page2.html\">Page 2</a>\n```\n\nL'aperçu ouvre la page du dossier, pas le site.";
+        }
+
+        return "Dans cette démo, je réponds de façon simulée. Envoie par exemple « pourquoi mon CSS ne s'applique pas ? » pour voir une réponse d'exemple.\n\nSur la version finale, je lis l'arborescence et les fichiers utiles de ton projet.";
+    }
+
+    function envoyerIA(e) {
+        e.preventDefault();
+
+        const input = document.getElementById('iaInput');
+        const texte = input.value.trim();
+        if (!texte) return;
+
+        const messages = document.getElementById('iaMessages');
+
+        const moi = document.createElement('div');
+        moi.className = 'ia-msg moi';
+        moi.textContent = texte;
+
+        const attente = document.createElement('div');
+        attente.className = 'ia-msg ia';
+        attente.textContent = 'VirtIA réfléchit…';
+
+        messages.append(moi, attente);
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+
+        setTimeout(function () {
+            attente.remove();
+
+            const rep = document.createElement('div');
+            rep.className = 'ia-msg ia';
+
+            const texteRep = reponseSimulee(texte);
+            const morceaux = texteRep.split('```');
+
+            morceaux.forEach(function (morceau, i) {
+                if (i % 2 === 1) {
+                    const pre = document.createElement('pre');
+                    const code = document.createElement('code');
+                    code.textContent = morceau.replace(/^[a-z]*\n/, '');
+                    pre.appendChild(code);
+                    rep.appendChild(pre);
+                } else {
+                    const p = document.createElement('div');
+                    p.innerHTML = morceau
+                        .replace(/</g, '&lt;')
+                        .replace(/&lt;code&gt;/g, '<code>')
+                        .replace(/&lt;\/code&gt;/g, '</code>')
+                        .replace(/\n/g, '<br>');
+                    rep.appendChild(p);
+                }
+            });
+
+            messages.appendChild(rep);
+            messages.scrollTop = messages.scrollHeight;
+        }, 700);
+    }
+
+    // =========================================================
+    // SPLIT DÉPLAÇABLE
+    // =========================================================
+    function initSplit() {
+        const split = document.getElementById('split');
+        const divider = document.getElementById('divider');
+        let glisse = false;
+
+        function position(clientX) {
+            const rect = split.getBoundingClientRect();
+            let pct = ((clientX - rect.left) / rect.width) * 100;
+            pct = Math.max(35, Math.min(75, pct));
+            split.style.setProperty('--code', pct + '%');
+        }
+
+        divider.addEventListener('pointerdown', function (e) {
+            glisse = true;
+            divider.classList.add('actif');
+            divider.setPointerCapture(e.pointerId);
+        });
+
+        divider.addEventListener('pointermove', function (e) {
+            if (glisse) position(e.clientX);
+        });
+
+        divider.addEventListener('pointerup', function () {
+            glisse = false;
+            divider.classList.remove('actif');
+        });
+
+        divider.addEventListener('keydown', function (e) {
+            const actuel = parseFloat(getComputedStyle(split).getPropertyValue('--code')) || 60;
+            if (e.key === 'ArrowLeft') { e.preventDefault(); split.style.setProperty('--code', Math.max(35, actuel - 2) + '%'); }
+            if (e.key === 'ArrowRight') { e.preventDefault(); split.style.setProperty('--code', Math.min(75, actuel + 2) + '%'); }
+        });
+    }
+
+    // =========================================================
+    // OUTILS
+    // =========================================================
+    let toastMinuterie = null;
+
+    function toast(message) {
+        const el = document.getElementById('toast');
+        el.textContent = message;
+        el.classList.add('visible');
+        clearTimeout(toastMinuterie);
+        toastMinuterie = setTimeout(function () { el.classList.remove('visible'); }, 1800);
+    }
+
+    const SYMBOLES = {
+        html: ['<div>', '<p>', '<h1>', '<img>', '<a>', '<ul>'],
+        css: ['color:', 'display:', 'margin:', 'padding:', 'flex:', 'border:'],
+        js: ['console.log()', 'function', 'if ()', 'document.', 'querySelector', 'addEventListener']
+    };
+
+    function rendreSymboles(lang) {
+        const zone = document.getElementById('symbols');
+        const boutons = SYMBOLES[lang] || SYMBOLES.html;
+        zone.innerHTML = '';
+
+        boutons.forEach(function (s) {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'pc-sym';
+            b.textContent = s;
+            b.addEventListener('click', function () {
+                if (!cm) return;
+                cm.replaceSelection(s);
+                cm.focus();
+            });
+            zone.appendChild(b);
+        });
+    }
+
+    // =========================================================
+    // DÉMARRAGE
+    // =========================================================
+    document.addEventListener('DOMContentLoaded', function () {
+        charger();
+
+        cm = CodeMirror.fromTextArea(document.getElementById('codeInput'), {
+            lineNumbers: true,
+            mode: 'htmlmixed',
+            autoCloseTags: true,
+            autoCloseBrackets: true,
+            indentUnit: 2,
+            tabSize: 2,
+            lineWrapping: true,
+            viewportMargin: Infinity
+        });
+
+        cm.setValue(fichiers[actif] || '');
+
+        cm.on('change', function () {
+            fichiers[actif] = cm.getValue();
+            sauver();
+            clearTimeout(minuterie);
+            minuterie = setTimeout(rafraichir, 400);
+        });
+
+        initSplit();
+        rendreOnglets();
+        rendreArbre();
+        rendreSymboles('html');
+        rafraichir();
+
+        // Folder
+        document.getElementById('btnFolder').addEventListener('click', function () {
+            document.getElementById('folderDrawer').classList.add('ouvert');
+        });
+        document.getElementById('folderFermer').addEventListener('click', function () {
+            document.getElementById('folderDrawer').classList.remove('ouvert');
+        });
+
+        // VirtIA
+        document.getElementById('btnIA').addEventListener('click', function () {
+            document.getElementById('iaDrawer').classList.add('ouvert');
+        });
+        document.getElementById('iaFermer').addEventListener('click', function () {
+            document.getElementById('iaDrawer').classList.remove('ouvert');
+        });
+        document.getElementById('iaForm').addEventListener('submit', envoyerIA);
+
+        // Modale
+        document.getElementById('modalValider').addEventListener('click', validerModale);
+        document.getElementById('modalAnnuler').addEventListener('click', fermerModale);
+        document.getElementById('modal').addEventListener('click', function (e) {
+            if (e.target === this) fermerModale();
+        });
+        document.getElementById('modalNom').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') validerModale();
+        });
+
+        // Langage
+        document.getElementById('langSelect').addEventListener('change', function () {
+            rendreSymboles(this.value);
+        });
+
+        // Appareils
+        document.querySelectorAll('.pc-dev').forEach(function (b) {
+            b.addEventListener('click', function () {
+                document.querySelectorAll('.pc-dev').forEach(function (x) { x.classList.remove('on'); });
+                b.classList.add('on');
+                const phone = document.getElementById('phone');
+                phone.classList.toggle('iphone', b.dataset.dev === 'iphone');
+            });
+        });
+
+        // Recharger
+        document.getElementById('btnReload').addEventListener('click', rafraichir);
+
+        // Zoom
+        let zoom = 1;
+
+        function appliquerZoom() {
+            document.getElementById('phone').style.zoom = zoom;
+            document.getElementById('zoomLabel').textContent = Math.round(zoom * 100) + ' %';
+        }
+
+        document.getElementById('btnZoomMoins').addEventListener('click', function () {
+            zoom = Math.max(0.6, zoom - 0.1);
+            appliquerZoom();
+        });
+
+        document.getElementById('btnZoomPlus').addEventListener('click', function () {
+            zoom = Math.min(1.2, zoom + 0.1);
+            appliquerZoom();
+        });
+
+        // Save / Export
+        document.getElementById('btnSave').addEventListener('click', function () {
+            sauver();
+            toast('Projet enregistré');
+        });
+
+        document.getElementById('btnExport').addEventListener('click', function () {
+            const contenu = fichiers[actif] || '';
+            const blob = new Blob([contenu], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = actif.split('/').pop();
+            a.click();
+            URL.revokeObjectURL(a.href);
+            toast('Fichier exporté');
+        });
+
+        // Échap
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+            if (!document.getElementById('modal').hidden) { fermerModale(); return; }
+            document.getElementById('folderDrawer').classList.remove('ouvert');
+            document.getElementById('iaDrawer').classList.remove('ouvert');
+        });
+
+        // Ctrl+S
+        document.addEventListener('keydown', function (e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                sauver();
+                toast('Projet enregistré');
+            }
+        });
+    });
+})();
+</script>
+
+</body>
+</html>

@@ -27,17 +27,39 @@ Comment tu réponds :
 - Tu ne réponds qu'aux questions sur le développement web, l'apprentissage du code et le site VirtTech.
 - Tu n'inventes jamais d'informations sur VirtTech : si tu ne sais pas, dis-le.`;
 
+// Mode « code » (PC) : l'IA peut proposer des fichiers complets, appliqués par l'utilisateur.
+const INSTRUCTION_CODE = `Mode code (PC) : tu peux proposer la création ou la modification de fichiers.
+
+Quand tu écris un fichier, place son contenu COMPLET dans un bloc dont la première ligne est \`\`\`fichier:chemin/du/fichier :
+
+\`\`\`fichier:css/style.css
+body {
+  color: #D4AF37;
+}
+\`\`\`
+
+Règles :
+- Un bloc par fichier, avec son chemin complet (ex : css/style.css, js/app.js).
+- Écris le fichier en entier et proprement : pas de « … » ni de morceau manquant.
+- Aucun texte à l'intérieur du bloc en dehors du contenu du fichier.
+- Tu ne modifies rien toi-même : l'utilisateur clique sur « Appliquer ».
+- Si tu ne modifies pas de fichier, réponds normalement sans bloc fichier.`;
+
 function erreur(status, message) {
     const err = new Error(message);
     err.status = status;
     return err;
 }
 
-async function demander(message, historique = [], contexte = "") {
+async function demander(message, historique = [], contexte = "", mode = "lecture") {
     const cle = process.env.API_DEEPSEEK;
     if (!cle) throw erreur(500, "L'assistant n'est pas configuré.");
 
     const messages = [{ role: "system", content: PROMPT_SYSTEME }];
+
+    if (mode === "code") {
+        messages.push({ role: "system", content: INSTRUCTION_CODE });
+    }
 
     if (contexte) {
         messages.push({
@@ -62,7 +84,7 @@ async function demander(message, historique = [], contexte = "") {
             body: JSON.stringify({
                 model: MODELE,
                 messages: messages,
-                max_tokens: 500,
+                max_tokens: mode === "code" ? 1600 : 500,
                 temperature: 0.7,
                 stream: false
             }),

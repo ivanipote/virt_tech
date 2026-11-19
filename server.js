@@ -89,6 +89,7 @@ app.get('/virt-dev/resultat', (req, res) => res.sendFile(path.join(__dirname, 'p
 app.get('/historique', (req, res) => res.sendFile(path.join(__dirname, 'public', 'historique.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contact.html')));
 app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator.html')));
+app.get('/virtemulator-pc', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator-pc.html')));
 app.get('/transformlink', (req, res) => res.sendFile(path.join(__dirname, 'public', 'transformlink.html')));
 
 // Page Astuces

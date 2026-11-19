@@ -103,9 +103,10 @@ router.post('/', async (req, res) => {
 
         const historique = nettoyerHistorique(req.body.historique);
         const contexte = typeof req.body.contexte === "string" ? req.body.contexte.slice(0, 12000) : "";
+        const mode = req.body.mode === "code" ? "code" : "lecture";
 
         const debut = Date.now();
-        const resultat = await service.demander(message, historique, contexte);
+        const resultat = await service.demander(message, historique, contexte, mode);
         const latence = Date.now() - debut;
 
         // Enregistrement pour analyse + avis (ne bloque pas la réponse en cas d'échec)
