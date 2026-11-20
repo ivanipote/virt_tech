@@ -290,6 +290,9 @@ dsh web</code></pre>
                     <li><code>dsh --profile web --port 8080</code> : changer le port.</li>
                 </ul>
 
+                <img src="/deepimage.jpeg" alt="Interface de DeepSeek Harness sur un PC, avec une session ouverte" class="img-cours">
+                <p class="legende">L'interface de DeepSeek Harness une fois lancée.</p>
+
                 <h4>5. La clé API</h4>
                 <p>Au premier lancement, DSH crée le dossier <code>C:\Users\ipote\.dsh</code> (profils, sessions, identifiants). Renseigne ta <strong>clé API</strong> dans l'interface : elle est stockée dans <code>.credentials.yaml</code>, jamais dans le code.</p>
 

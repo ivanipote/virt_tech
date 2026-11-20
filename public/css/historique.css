@@ -398,3 +398,20 @@ pre.bloc-code code[class*="language-"] span {
 
 .slide-contenu th { background: #f1f4f6; font-weight: 800; }
 .slide-contenu td { color: #3F4C55; }
+
+/* Images dans les cours */
+.slide-contenu img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid #dde4e8;
+    margin: 12px 0 6px;
+}
+
+.slide-contenu .legende {
+    font-size: .72rem;
+    color: #7b8891;
+    margin: 0 0 14px;
+    font-style: italic;
+}
