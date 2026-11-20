@@ -251,6 +251,86 @@ document.addEventListener("DOMContentLoaded", function () {
                 <h4>À retenir</h4>
                 <p>Trois zones : <strong>head</strong> = les infos invisibles, <strong>body</strong> = ce qu'on voit, <strong>script</strong> = ce qui bouge.</p>
             `
+        },
+
+        deepseek: {
+            titre: "Formation : DeepSeek Harness (dsh)",
+            contenu: `
+                <p><strong>DeepSeek Harness</strong> (commande <code>dsh</code>) est un agent de code qui s'exécute sur ton ordinateur : il lit ton projet, propose des modifications et lance des commandes. Voici comment l'installer et l'utiliser, pas à pas.</p>
+
+                <h4>1. Ce qu'il te faut</h4>
+                <ul>
+                    <li>Un ordinateur Windows, macOS ou Linux.</li>
+                    <li><strong>Node.js 24.9 ou plus</strong>.</li>
+                    <li>Une clé API DeepSeek (à créer sur platform.deepseek.com).</li>
+                    <li>Un terminal (PowerShell sur Windows).</li>
+                </ul>
+
+                <h4>2. Vérifier Node.js</h4>
+                <pre class="bloc-code"><code class="language-powershell">node -v</code></pre>
+                <p>Tu dois voir <code>v24.9.0</code> ou plus. Sinon :</p>
+                <pre class="bloc-code"><code class="language-powershell">winget install OpenJS.NodeJS.LTS</code></pre>
+                <p>Ferme et rouvre le terminal, puis revérifie.</p>
+
+                <h4>3. Installer DSH</h4>
+                <pre class="bloc-code"><code class="language-powershell">npm install -g @deepseek-ai/dsh</code></pre>
+                <p>Vérifier l'installation :</p>
+                <pre class="bloc-code"><code class="language-powershell">dsh --version</code></pre>
+                <p>Si un numéro de version s'affiche (par exemple <code>0.2.2</code>), c'est bon.</p>
+
+                <h4>4. Lancer DSH</h4>
+                <p>Place-toi dans le dossier de ton projet : ce dossier devient le <strong>workspace</strong>.</p>
+                <pre class="bloc-code"><code class="language-powershell">cd C:\Users\ipote\virt_tech
+dsh web</code></pre>
+                <p>Ouvre l'adresse affichée : <strong>http://127.0.0.1:3080</strong>.</p>
+                <p>Autres modes :</p>
+                <ul>
+                    <li><code>dsh tui</code> : interface dans le terminal.</li>
+                    <li><code>dsh headless "explique ce projet"</code> : une tâche, une réponse, puis quitter.</li>
+                    <li><code>dsh --profile web --port 8080</code> : changer le port.</li>
+                </ul>
+
+                <h4>5. La clé API</h4>
+                <p>Au premier lancement, DSH crée le dossier <code>C:\Users\ipote\.dsh</code> (profils, sessions, identifiants). Renseigne ta <strong>clé API</strong> dans l'interface : elle est stockée dans <code>.credentials.yaml</code>, jamais dans le code.</p>
+
+                <h4>6. Commandes utiles</h4>
+                <ul>
+                    <li><code>dsh --help</code> : l'aide générale.</li>
+                    <li><code>dsh web --help</code> : les options du mode web.</li>
+                    <li><code>dsh plugin --profile web add &lt;paquet&gt;</code> : ajouter un plugin.</li>
+                    <li><code>npm i -g @deepseek-ai/dsh@latest</code> : mettre à jour.</li>
+                    <li><code>Ctrl + C</code> : arrêter DSH.</li>
+                </ul>
+
+                <h4>7. Erreurs fréquentes et solutions</h4>
+                <ul>
+                    <li><strong>« dsh n'est pas reconnu »</strong> : le dossier npm n'est pas dans le PATH. Regarde <code>npm config get prefix</code>, ajoute ce dossier au PATH, puis rouvre le terminal.</li>
+                    <li><strong>Node trop ancien</strong> : installe Node 24 avec <code>winget install OpenJS.NodeJS.LTS</code> (ou nvm).</li>
+                    <li><strong>EPERM / accès refusé sur .dsh</strong> : ferme les autres fenêtres DSH, vérifie l'antivirus, relance le terminal en administrateur.</li>
+                    <li><strong>Port déjà utilisé</strong> : <code>dsh --profile web --port 8080</code>.</li>
+                    <li><strong>Script PowerShell bloqué</strong> : <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>.</li>
+                    <li><strong>EACCES (macOS / Linux)</strong> : n'installe pas en sudo, utilise nvm.</li>
+                    <li><strong>Rien ne s'ouvre</strong> : vérifie l'URL affichée dans le terminal et les messages d'erreur.</li>
+                </ul>
+
+                <h4>8. À retenir</h4>
+                <ul>
+                    <li>Le dossier où tu lances <code>dsh</code> est le workspace : l'agent lit et modifie ce dossier.</li>
+                    <li>Une clé API est un accès : ne la partage jamais.</li>
+                    <li>En cas de doute : <code>dsh --help</code>.</li>
+                </ul>
+
+                <h4>9. Bloqué ? Envoie ce prompt à une IA</h4>
+                <p>Copie le texte ci-dessous, complète les champs entre crochets et envoie-le à une IA externe :</p>
+                <pre class="bloc-code"><code class="language-text">Je suis bloqué en installant DeepSeek Harness (commande dsh).
+Système : [Windows 11 / macOS 14 / Ubuntu 24.04]
+Version de Node : [résultat de node -v]
+Commande exécutée : [ex. npm install -g @deepseek-ai/dsh]
+Message d'erreur complet : [colle l'erreur]
+Ce que j'ai déjà essayé : [ex. réinstallé Node, changé le port]
+Je veux : [ex. lancer dsh web sur le port 3080]
+Explique-moi la cause et donne les commandes exactes pour corriger, étape par étape.</code></pre>
+            `
         }
     };
 
@@ -264,6 +344,57 @@ document.addEventListener("DOMContentLoaded", function () {
     const fermer = document.getElementById("btn-fermer-slide");
 
     let dernierFocus = null;
+
+    // Bouton « Copier » sur chaque bloc de code
+    function ajouterBoutonsCopier() {
+        contenu.querySelectorAll(".bloc-code").forEach(function (bloc) {
+            if (bloc.querySelector(".btn-copier-code")) return;
+
+            const bouton = document.createElement("button");
+            bouton.type = "button";
+            bouton.className = "btn-copier-code";
+            bouton.setAttribute("aria-label", "Copier ce code");
+            bouton.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i> Copier';
+
+            bouton.addEventListener("click", async function (e) {
+                e.stopPropagation();
+
+                const code = bloc.querySelector("code");
+                let texte;
+
+                if (code) {
+                    texte = code.textContent;
+                } else {
+                    const copie = bloc.cloneNode(true);
+                    copie.querySelectorAll(".btn-copier-code").forEach(function (b) { b.remove(); });
+                    texte = copie.textContent;
+                }
+
+                function succes() {
+                    bouton.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Copié';
+                    setTimeout(function () {
+                        bouton.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i> Copier';
+                    }, 1600);
+                }
+
+                try {
+                    await navigator.clipboard.writeText(texte);
+                    succes();
+                } catch (err) {
+                    const zone = document.createElement("textarea");
+                    zone.value = texte;
+                    zone.style.position = "fixed";
+                    zone.style.opacity = "0";
+                    document.body.appendChild(zone);
+                    zone.select();
+                    try { document.execCommand("copy"); succes(); } catch (e2) { zone.remove(); }
+                    zone.remove();
+                }
+            });
+
+            bloc.appendChild(bouton);
+        });
+    }
 
     function colorerCode() {
         if (!window.Prism || !Prism.highlightAllUnder) return;
@@ -281,6 +412,7 @@ document.addEventListener("DOMContentLoaded", function () {
         titre.textContent = data.titre;
         contenu.innerHTML = data.contenu;
         colorerCode();
+        ajouterBoutonsCopier();
         contenu.scrollTop = 0;
         dernierFocus = declencheur || document.activeElement;
 

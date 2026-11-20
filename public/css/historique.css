@@ -334,3 +334,34 @@ pre.bloc-code code[class*="language-"] span {
     .slide-contenu { padding: 26px 26px 40px; }
     .slide-contenu p, .slide-contenu ul, .slide-contenu ol { font-size: 1rem; }
 }
+
+/* Bouton « Copier » sur les blocs de code */
+.bloc-code { position: relative; }
+
+.btn-copier-code {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, .22);
+    background: rgba(22, 31, 39, .85);
+    color: #fff;
+    font-size: .62rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s;
+}
+
+.btn-copier-code:hover {
+    background: var(--or);
+    color: var(--ombre);
+    border-color: var(--or);
+}
+
+.btn-copier-code i { font-size: .6rem; }
