@@ -331,6 +331,166 @@ Ce que j'ai déjà essayé : [ex. réinstallé Node, changé le port]
 Je veux : [ex. lancer dsh web sur le port 3080]
 Explique-moi la cause et donne les commandes exactes pour corriger, étape par étape.</code></pre>
             `
+        },
+
+        apikey: {
+            titre: "Formation : les clés API DeepSeek",
+            contenu: `
+                <p>Une <strong>clé API</strong> est un mot de passe long qui autorise un programme à utiliser ton compte DeepSeek. Elle ressemble à <code>sk-...</code> et ne doit <strong>jamais</strong> être visible dans un site ni sur GitHub.</p>
+
+                <h4>1. Créer son compte</h4>
+                <ol>
+                    <li>Va sur <strong>platform.deepseek.com</strong>.</li>
+                    <li>Inscris-toi (e-mail ou téléphone) et connecte-toi.</li>
+                    <li>Ajoute un moyen de paiement ou recharge un petit montant : l'API est payante à l'usage.</li>
+                </ol>
+
+                <h4>2. Générer la clé</h4>
+                <ol>
+                    <li>Dans le menu, ouvre <strong>API Keys</strong>.</li>
+                    <li>Clique sur <strong>Create new API key</strong> (ou « Créer »).</li>
+                    <li>Donne-lui un nom (ex. <code>virttech-site</code>).</li>
+                    <li>Copie la clé <strong>immédiatement</strong> : elle ne s'affiche qu'une seule fois.</li>
+                </ol>
+                <p>Si tu la perds : supprime-la et crées-en une nouvelle. C'est normal et sans risque.</p>
+
+                <h4>3. Où la ranger (jamais dans le code)</h4>
+                <p>Elle se range dans une <strong>variable d'environnement</strong> ou un fichier <code>.env</code> qui n'est jamais publié.</p>
+                <pre class="bloc-code"><code class="language-bash"># Fichier .env à la racine du projet
+DEEPSEEK_API_KEY=sk-ta-cle-ici</code></pre>
+                <p>Et dans <code>.gitignore</code> :</p>
+                <pre class="bloc-code"><code class="language-bash">.env</code></pre>
+                <p>Sur Windows (PowerShell), pour la session en cours :</p>
+                <pre class="bloc-code"><code class="language-powershell">$env:DEEPSEEK_API_KEY = "sk-ta-cle-ici"</code></pre>
+                <p>Pour la garder après fermeture du terminal :</p>
+                <pre class="bloc-code"><code class="language-powershell">setx DEEPSEEK_API_KEY "sk-ta-cle-ici"</code></pre>
+                <p>Sur macOS / Linux :</p>
+                <pre class="bloc-code"><code class="language-bash">export DEEPSEEK_API_KEY="sk-ta-cle-ici"</code></pre>
+
+                <h4>4. L'utiliser avec DSH</h4>
+                <p>Au premier lancement de <code>dsh web</code>, l'interface demande la clé. Elle est stockée dans <code>~/.dsh/.credentials.yaml</code> : tu n'as pas à la remettre à chaque fois. Pour la changer : supprime-la dans l'interface et colle la nouvelle.</p>
+
+                <h4>5. L'utiliser en direct (test rapide)</h4>
+                <p>Avec curl :</p>
+                <pre class="bloc-code"><code class="language-bash">curl https://api.deepseek.com/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $DEEPSEEK_API_KEY" \
+  -d '{"model":"deepseek-chat","messages":[{"role":"user","content":"Bonjour"}]}'</code></pre>
+                <p>Avec PowerShell :</p>
+                <pre class="bloc-code"><code class="language-powershell">Invoke-RestMethod -Uri "https://api.deepseek.com/chat/completions" -Method Post -Headers @{ "Authorization" = "Bearer $env:DEEPSEEK_API_KEY"; "Content-Type" = "application/json" } -Body '{"model":"deepseek-chat","messages":[{"role":"user","content":"Bonjour"}]}'</code></pre>
+                <p>Avec Node.js :</p>
+                <pre class="bloc-code"><code class="language-javascript">const reponse = await fetch("https://api.deepseek.com/chat/completions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer " + process.env.DEEPSEEK_API_KEY
+  },
+  body: JSON.stringify({
+    model: "deepseek-chat",
+    messages: [{ role: "user", content: "Bonjour" }]
+  })
+});
+
+const data = await reponse.json();
+console.log(data.choices[0].message.content);</code></pre>
+                <p>Si le modèle est refusé, vérifie son nom dans la documentation officielle (le catalogue change).</p>
+
+                <h4>6. Solde, limites et coût</h4>
+                <ul>
+                    <li>Le solde et la consommation sont visibles sur <strong>platform.deepseek.com</strong>.</li>
+                    <li>Chaque question coûte quelques millièmes de dollar ; le prix dépend du modèle et du nombre de tokens.</li>
+                    <li>Garde une marge : à 0, le service répond une erreur.</li>
+                </ul>
+
+                <h4>7. Sécurité</h4>
+                <ul>
+                    <li>Ne partage jamais ta clé : ni capture d'écran, ni message, ni dépôt public.</li>
+                    <li>Ne la mets jamais dans du HTML ou du JavaScript côté navigateur.</li>
+                    <li>Si elle fuite : <strong>révoque-la</strong> sur la plateforme et crées-en une autre.</li>
+                    <li>Utilise une clé par projet pour pouvoir la révoquer sans tout casser.</li>
+                </ul>
+
+                <h4>8. Erreurs fréquentes</h4>
+                <ul>
+                    <li><strong>401</strong> : clé absente, fausse ou révoquée. Vérifie la variable d'environnement (pas d'espace, pas de guillemets en trop).</li>
+                    <li><strong>402</strong> : solde insuffisant. Recharge sur la plateforme.</li>
+                    <li><strong>429</strong> : trop de requêtes. Attends ou réduis la fréquence.</li>
+                    <li><strong>404 sur le modèle</strong> : le nom du modèle n'existe plus. Prends le nom actuel dans la documentation.</li>
+                    <li><strong>Rien ne s'affiche</strong> : regarde le corps de la réponse, il contient souvent le vrai message.</li>
+                </ul>
+
+                <h4>9. Bloqué ? Envoie ce prompt à une IA</h4>
+                <p>Copie le texte, complète les champs et envoie-le à une IA externe :</p>
+                <pre class="bloc-code"><code class="language-text">Je bloque avec une clé API DeepSeek.
+Système : [Windows 11 / macOS 14 / Ubuntu 24.04]
+Ce que je veux faire : [utiliser DSH / appeler l'API en Node]
+Où j'ai mis la clé : [variable d'environnement / fichier .env / interface DSH]
+Commande ou code : [colle ce que tu exécutes]
+Réponse complète (sans la clé !) : [colle l'erreur]
+Explique-moi la cause et donne les commandes exactes pour corriger, sans jamais afficher ma clé.</code></pre>
+            `
+        },
+
+        tarifs: {
+            titre: "Formation : les tarifs DeepSeek",
+            contenu: `
+                <p>DeepSeek se paie <strong>à l'usage</strong> : tu recharges un petit montant, puis chaque question consomme quelques tokens. Voici les prix réels, en dollars et en <strong>FCFA</strong> (taux indicatif : 1 $ ≈ 600 F).</p>
+
+                <h4>1. Le minimum de recharge</h4>
+                <ul>
+                    <li><strong>2,00 $</strong> hors taxe + <strong>6 % de TVA</strong> (0,12 $) = <strong>2,12 $</strong>.</li>
+                    <li>Soit environ <strong>1 270 FCFA</strong>.</li>
+                    <li>Paiement par <strong>carte bancaire</strong> (débit ou crédit).</li>
+                </ul>
+                <p>2 $ suffisent déjà pour des milliers de questions.</p>
+
+                <h4>2. Le prix par million de tokens (deepseek-flash)</h4>
+                <table>
+                    <thead>
+                        <tr><th>Type</th><th>Heures creuses</th><th>Heures pleines</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Entrée (cache touché)</td><td>0,003 $ ≈ 1,8 F</td><td>0,006 $ ≈ 3,6 F</td></tr>
+                        <tr><td>Entrée (cache manqué)</td><td>0,15 $ ≈ 90 F</td><td>0,30 $ ≈ 180 F</td></tr>
+                        <tr><td>Sortie</td><td>0,60 $ ≈ 360 F</td><td>1,20 $ ≈ 720 F</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>3. Le modèle deepseek-v4-pro (plus cher)</h4>
+                <table>
+                    <thead>
+                        <tr><th>Type</th><th>Heures creuses</th><th>Heures pleines</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Entrée (cache touché)</td><td>0,022 $ ≈ 13 F</td><td>0,044 $ ≈ 26 F</td></tr>
+                        <tr><td>Entrée (cache manqué)</td><td>0,66 $ ≈ 396 F</td><td>1,32 $ ≈ 792 F</td></tr>
+                        <tr><td>Sortie</td><td>1,98 $ ≈ 1 188 F</td><td>3,96 $ ≈ 2 376 F</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>4. Heures pleines et heures creuses</h4>
+                <ul>
+                    <li><strong>Heures pleines</strong> : 01h–04h et 06h–10h UTC, du lundi au vendredi (hors jours fériés chinois).</li>
+                    <li><strong>Heures creuses</strong> : tout le reste — et c'est <strong>deux fois moins cher</strong>.</li>
+                    <li>Abidjan est en UTC : ce sont les mêmes horaires.</li>
+                </ul>
+
+                <h4>5. Ce que ça donne concrètement</h4>
+                <ul>
+                    <li>Une question simple (contexte court, réponse courte) : environ <strong>0,0004 $</strong>, soit <strong>0,24 F</strong>.</li>
+                    <li>Avec <strong>2 $</strong> : environ <strong>5 000 questions</strong> de ce type.</li>
+                    <li>Une grosse question (10 000 caractères de contexte) : environ <strong>0,0012 $</strong>, soit <strong>0,72 F</strong>.</li>
+                    <li>Un million de tokens de sortie : <strong>0,60 $</strong>, soit <strong>360 F</strong>.</li>
+                </ul>
+
+                <h4>6. À retenir</h4>
+                <ul>
+                    <li>On paie ce qu'on consomme, pas d'abonnement.</li>
+                    <li>Le cache du prompt système réduit la facture (entrée à 0,003 $ quand il est déjà en cache).</li>
+                    <li>Recharge <strong>2 $</strong> pour commencer, et surveille ton solde sur la plateforme.</li>
+                    <li>Les prix peuvent changer : vérifie la page officielle <strong>platform.deepseek.com</strong> ou la documentation.</li>
+                </ul>
+            `
         }
     };
 
@@ -495,8 +655,51 @@ Explique-moi la cause et donne les commandes exactes pour corriger, étape par �
     });
 
     // ===============================================================
-    // 5. DÉMARRAGE
+    // 5. BADGES « NEW »
     // ===============================================================
+    const CLE_VUES = "virttech_formations_vues";
+
+    function formationsVues() {
+        try { return JSON.parse(localStorage.getItem(CLE_VUES) || "[]"); } catch (e) { return []; }
+    }
+
+    function marquerVue(id) {
+        const vues = formationsVues();
+        if (vues.indexOf(id) === -1) {
+            vues.push(id);
+            try { localStorage.setItem(CLE_VUES, JSON.stringify(vues)); } catch (e) { /* stockage plein */ }
+        }
+    }
+
+    function initBadges() {
+        const vues = formationsVues();
+
+        document.querySelectorAll(".activite").forEach(function (article) {
+            const bouton = article.querySelector(".btn-run");
+            if (!bouton) return;
+
+            const id = bouton.dataset.slide;
+            if (vues.indexOf(id) !== -1) return;
+
+            const titre = article.querySelector(".activite-tete h2");
+            if (!titre) return;
+
+            const badge = document.createElement("span");
+            badge.className = "badge-new";
+            badge.textContent = "NEW";
+            titre.appendChild(badge);
+
+            bouton.addEventListener("click", function () {
+                marquerVue(id);
+                badge.remove();
+            });
+        });
+    }
+
+    // ===============================================================
+    // 6. DÉMARRAGE
+    // ===============================================================
+    initBadges();
     chargerCompteurs();
 
     // Animations d'apparition

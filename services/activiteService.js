@@ -1,7 +1,7 @@
 const { pool } = require('../database');
 
 // Slugs autorisés : ils doivent correspondre aux data-slug du HTML
-const SLUGS = ['virtdev', 'arborescence', 'erreurs', 'corriger', 'balises', 'structure', 'deepseek'];
+const SLUGS = ['virtdev', 'arborescence', 'erreurs', 'corriger', 'balises', 'structure', 'deepseek', 'apikey', 'tarifs'];
 
 function erreur(status, message) {
     const err = new Error(message);

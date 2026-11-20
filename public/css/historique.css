@@ -365,3 +365,36 @@ pre.bloc-code code[class*="language-"] span {
 }
 
 .btn-copier-code i { font-size: .6rem; }
+
+/* Badge « NEW » sur les formations jamais ouvertes */
+.badge-new {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--or);
+    color: var(--ombre);
+    font-size: .56rem;
+    font-weight: 900;
+    letter-spacing: .08em;
+    vertical-align: middle;
+}
+
+/* Tableaux dans les cours */
+.slide-contenu table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 16px;
+    font-size: .78rem;
+}
+
+.slide-contenu th,
+.slide-contenu td {
+    border: 1px solid #dde4e8;
+    padding: 7px 9px;
+    text-align: left;
+}
+
+.slide-contenu th { background: #f1f4f6; font-weight: 800; }
+.slide-contenu td { color: #3F4C55; }
