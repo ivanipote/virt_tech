@@ -310,6 +310,154 @@
     }
 
     // =========================================================
+    // ENREGISTREUR D'ÉCRAN
+    // =========================================================
+    let enregistreur = null;
+    let fluxEcran = null;
+    let fluxMicro = null;
+    let morceaux = [];
+    let chrono = null;
+    let secondes = 0;
+    let boutonRec = null;
+    let boutonPause = null;
+
+    function formatChrono(s) {
+        const m = Math.floor(s / 60);
+        const r = s % 60;
+        return (m < 10 ? '0' + m : m) + ':' + (r < 10 ? '0' + r : r);
+    }
+
+    function demarrerChrono() {
+        clearInterval(chrono);
+        chrono = setInterval(function () {
+            secondes++;
+            majBoutonRec(true);
+        }, 1000);
+    }
+
+    function majBoutonRec(actif) {        if (!boutonRec) return;
+
+        boutonRec.classList.toggle('rec-actif', actif);
+        boutonRec.innerHTML = actif
+            ? '<i class="fa-solid fa-stop" aria-hidden="true"></i> Arrêter ' + formatChrono(secondes)
+            : '<i class="fa-solid fa-circle-dot" aria-hidden="true"></i> Enregistrer';
+
+        if (boutonPause) boutonPause.hidden = !actif;
+    }
+
+    async function demarrerEnregistrement() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+            return toast("L'enregistrement d'écran n'est pas disponible sur ce navigateur.");
+        }
+
+        if (!window.MediaRecorder) {
+            return toast("L'enregistrement vidéo n'est pas disponible sur ce navigateur.");
+        }
+
+        try {
+            fluxEcran = await navigator.mediaDevices.getDisplayMedia({
+                video: { frameRate: 30 },
+                audio: false
+            });
+        } catch (e) {
+            return; // l'utilisateur a annulé
+        }
+
+        try {
+            fluxMicro = await navigator.mediaDevices.getUserMedia({ audio: true });
+        } catch (e) {
+            fluxMicro = null; // pas de micro : on enregistre sans son
+        }
+
+        const pistes = fluxEcran.getVideoTracks().slice();
+        if (fluxMicro) pistes.push.apply(pistes, fluxMicro.getAudioTracks());
+
+        const flux = new MediaStream(pistes);
+
+        let type = 'video/webm';
+        if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+            type = 'video/webm;codecs=vp9';
+        } else if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+            type = 'video/webm;codecs=vp8';
+        }
+
+        morceaux = [];
+        enregistreur = new MediaRecorder(flux, { mimeType: type });
+
+        enregistreur.ondataavailable = function (e) {
+            if (e.data && e.data.size > 0) morceaux.push(e.data);
+        };
+
+        enregistreur.onstop = function () {
+            const blob = new Blob(morceaux, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+
+            const d = new Date();
+            const nom = 'virtemulator-' + d.getFullYear() + '-' +
+                String(d.getMonth() + 1).padStart(2, '0') + '-' +
+                String(d.getDate()).padStart(2, '0') + '-' +
+                String(d.getHours()).padStart(2, '0') +
+                String(d.getMinutes()).padStart(2, '0') + '.webm';
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = nom;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            nettoyerEnregistrement();
+            toast('Vidéo enregistrée : ' + nom);
+        };
+
+        const piste = fluxEcran.getVideoTracks()[0];
+        if (piste) piste.addEventListener('ended', arreterEnregistrement);
+
+        enregistreur.start(1000);
+
+        secondes = 0;
+        majBoutonRec(true);
+        demarrerChrono();
+    }
+
+    function arreterEnregistrement() {
+        if (enregistreur && enregistreur.state !== 'inactive') {
+            enregistreur.stop();
+        } else {
+            nettoyerEnregistrement();
+        }
+    }
+
+    function nettoyerEnregistrement() {
+        clearInterval(chrono);
+        chrono = null;
+        secondes = 0;
+
+        if (fluxEcran) fluxEcran.getTracks().forEach(function (t) { t.stop(); });
+        if (fluxMicro) fluxMicro.getTracks().forEach(function (t) { t.stop(); });
+
+        fluxEcran = null;
+        fluxMicro = null;
+        enregistreur = null;
+
+        majBoutonRec(false);
+    }
+
+    function basculerPause() {
+        if (!enregistreur) return;
+
+        if (enregistreur.state === 'recording') {
+            enregistreur.pause();
+            clearInterval(chrono);
+            chrono = null;
+            boutonPause.innerHTML = '<i class="fa-solid fa-play" aria-hidden="true"></i>';
+        } else if (enregistreur.state === 'paused') {
+            enregistreur.resume();
+            demarrerChrono();
+            boutonPause.innerHTML = '<i class="fa-solid fa-pause" aria-hidden="true"></i>';
+        }
+    }
+
+    // =========================================================
     // PLEIN ÉCRAN
     // =========================================================
     function basculerPleinEcran() {
@@ -360,9 +508,33 @@
                 });
                 const format = bouton('fa-wand-magic-sparkles', 'Formater le fichier', formater);
 
+                const rec = document.createElement('button');
+                rec.type = 'button';
+                rec.className = 'btn-header-action';
+                rec.title = "Enregistrer l'écran";
+                rec.setAttribute('aria-label', "Enregistrer l'écran");
+                rec.innerHTML = '<i class="fa-solid fa-circle-dot" aria-hidden="true"></i> Enregistrer';
+                rec.addEventListener('click', function () {
+                    if (enregistreur) arreterEnregistrement();
+                    else demarrerEnregistrement();
+                });
+                boutonRec = rec;
+
+                const pause = document.createElement('button');
+                pause.type = 'button';
+                pause.className = 'btn-header-action';
+                pause.title = 'Pause';
+                pause.setAttribute('aria-label', 'Mettre en pause');
+                pause.innerHTML = '<i class="fa-solid fa-pause" aria-hidden="true"></i>';
+                pause.hidden = true;
+                pause.addEventListener('click', basculerPause);
+                boutonPause = pause;
+
                 actions.insertBefore(format, actions.firstChild);
                 actions.insertBefore(importer, actions.firstChild);
                 actions.insertBefore(zip, actions.firstChild);
+                actions.insertBefore(pause, actions.firstChild);
+                actions.insertBefore(rec, actions.firstChild);
             }
 
             const enteteSlide = document.querySelector('.slide-header .header-actions');

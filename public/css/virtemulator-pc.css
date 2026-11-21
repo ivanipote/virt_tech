@@ -2345,3 +2345,12 @@ body, html {
         background: transparent;
     }
 }
+
+/* ===== Enregistreur d'écran ===== */
+.btn-header-action.rec-actif {
+    background: #c0392b !important;
+    border-color: #c0392b !important;
+    color: #fff !important;
+}
+
+.btn-header-action.rec-actif i { color: #fff !important; }
