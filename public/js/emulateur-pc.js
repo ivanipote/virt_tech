@@ -904,7 +904,13 @@ document.addEventListener("DOMContentLoaded", function() {
         editor.setOption('mode', modeDe(chemin));
         editor.setValue(files[chemin] !== undefined ? files[chemin] : "");
         mettreAJourOnglets();
-        rafraichirNavigateurSiOuvert();
+
+        // Aperçu en direct : si le téléphone est ouvert, il suit la page active
+        if (document.body.classList.contains('pc-phone-ouvert') && /\.html?$/i.test(chemin)) {
+            window.ouvrirNavigateur(chemin);
+        } else {
+            rafraichirNavigateurSiOuvert();
+        }
     }
 
     function supprimerFichier(chemin) {
@@ -1538,13 +1544,21 @@ document.addEventListener("DOMContentLoaded", function() {
     // ==========================================
     // SLIDE
     // ==========================================
-    // Un seul slide ouvert à la fois (PC)
+    // Gestion des panneaux (PC) : le téléphone reste ouvert avec Folder / VirtIA
     function fermerAutresSlides(sauf) {
-        if (sauf !== 'telephone') fermerSlide();
-        if (sauf !== 'dossier') fermerDossier();
+        if (sauf === 'telephone') {
+            fermerDossier();
+            if (typeof window.VirtIAFermer === 'function') window.VirtIAFermer();
+            return;
+        }
 
-        if (sauf !== 'virtia' && typeof window.VirtIAFermer === 'function') {
-            window.VirtIAFermer();
+        if (sauf === 'dossier') {
+            if (typeof window.VirtIAFermer === 'function') window.VirtIAFermer();
+            return;
+        }
+
+        if (sauf === 'virtia') {
+            fermerDossier();
         }
     }
 
@@ -1552,9 +1566,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function ouvrirSlide() {
         fermerAutresSlides('telephone');
+        document.body.classList.add('pc-phone-ouvert');
         if (slideOverlay) slideOverlay.classList.add('ouvert');
         if (slidePanel) slidePanel.classList.add('ouvert');
-        afficherPage('launcher');
+
+        // PC : afficher directement la page en cours (aperçu en direct)
+        window.ouvrirPageActuelle();
+
         chromeMasque = false;
         appliquerMasquageChrome();
         if (iconToggleChrome) iconToggleChrome.className = 'fa-solid fa-eye';
@@ -1565,15 +1583,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
         mettreAJourHorloge();
         genererUserApps();
+
+        setTimeout(function () { if (editor) editor.refresh(); }, 360);
     }
 
     function fermerSlide() {
+        document.body.classList.remove('pc-phone-ouvert');
         if (slideOverlay) slideOverlay.classList.remove('ouvert');
         if (slidePanel) slidePanel.classList.remove('ouvert');
         afficherPage('launcher');
         chromeMasque = false;
         appliquerMasquageChrome();
         if (iconToggleChrome) iconToggleChrome.className = 'fa-solid fa-eye';
+
+        setTimeout(function () { if (editor) editor.refresh(); }, 360);
     }
 
     // ==========================================
