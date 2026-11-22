@@ -15,7 +15,8 @@ document.addEventListener("DOMContentLoaded", function() {
         '/actualites':          { nom: 'Actualités',   icone: 'fa-newspaper' },
         '/apropos':             { nom: 'À propos',     icone: 'fa-circle-info' },
         '/contact':             { nom: 'Contact',      icone: 'fa-envelope' },
-        '/demo.html':           { nom: 'Démo',         icone: 'fa-flask' }
+        '/demo.html':           { nom: 'Démo',         icone: 'fa-flask' },
+        '/hommage/mrAttoubre':  { nom: 'Hommage',      icone: 'fa-dove' } // NOUVEAU
     };
     const page = PAGES[path] || { nom: 'VirtTech', icone: 'fa-code' };
     const entetePage = `<span class="page-courante"><i class="fa-solid ${page.icone}" aria-hidden="true"></i><span>${page.nom}</span></span>`;
@@ -27,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let actifVirtEmulator = "";
     let actifTransformLink = "";
     let actifAstuces = "";
+    let actifHommage = "";
 
     if (path === "/" || path === "/accueil") { actifAccueil = "actif"; }
     else if (path === "/historique") { actifHistorique = "actif"; }
@@ -34,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
     else if (path === "/virtemulator") { actifVirtEmulator = "actif"; }
     else if (path === "/transformlink") { actifTransformLink = "actif"; }
     else if (path === "/astuces") { actifAstuces = "actif"; }
+    else if (path === "/hommage/mrAttoubre") { actifHommage = "actif"; }
 
     // Onglets secondaires (boutons du bas)
     const actifActualites = path === "/actualites" ? "actif" : "";
@@ -98,6 +101,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 <i class="fa-solid fa-trophy"></i>
             </a>
           </li>
+          
+          <!-- NOUVEAU : LIEN HOMMAGE -->
+          <li>
+            <a href="/hommage/mrAttoubre" class="${actifHommage}">
+                <span>Hommage M. Attoubre</span>
+                <i class="fa-solid fa-dove"></i>
+            </a>
+          </li>
+          
         </ul>
       </nav>
       
