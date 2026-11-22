@@ -357,7 +357,7 @@
         try {
             fluxEcran = await navigator.mediaDevices.getDisplayMedia({
                 video: { frameRate: 30 },
-                audio: false
+                audio: true
             });
         } catch (e) {
             return; // l'utilisateur a annulé
@@ -366,19 +366,26 @@
         try {
             fluxMicro = await navigator.mediaDevices.getUserMedia({ audio: true });
         } catch (e) {
-            fluxMicro = null; // pas de micro : on enregistre sans son
+            fluxMicro = null; // pas de micro : on enregistre sans micro
         }
 
         const pistes = fluxEcran.getVideoTracks().slice();
+        pistes.push.apply(pistes, fluxEcran.getAudioTracks());
         if (fluxMicro) pistes.push.apply(pistes, fluxMicro.getAudioTracks());
 
         const flux = new MediaStream(pistes);
+        const avecAudio = pistes.some(function (p) { return p.kind === 'audio'; });
+
+        const candidats = avecAudio
+            ? ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
+            : ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
 
         let type = 'video/webm';
-        if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-            type = 'video/webm;codecs=vp9';
-        } else if (window.MediaRecorder && MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
-            type = 'video/webm;codecs=vp8';
+        for (let i = 0; i < candidats.length; i++) {
+            if (window.MediaRecorder && MediaRecorder.isTypeSupported(candidats[i])) {
+                type = candidats[i];
+                break;
+            }
         }
 
         morceaux = [];

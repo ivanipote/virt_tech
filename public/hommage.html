@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hommage à M. ATTOUBRE JOSEPH - VirtTech</title>
+
+<!-- SEO -->
+<meta name="description" content="Hommage à M. ATTOUBRE JOSEPH, professeur de mathématiques au Lycée Professionnel de Jacquesville. Soutenez l'établissement pour sa famille." />
+<meta name="robots" content="noindex, nofollow">
+
+<!-- Styles globaux -->
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+
+<style>
+    :root {
+        --fond-sombre: #0A0E14;
+        --surface-sombre: #141A23;
+        --texte-doux: #B0BEC5;
+        --blanc: #FFFFFF;
+        --or-discret: #A68A3A; 
+    }
+
+    /* On force le fond sombre pour cette page spécifique */
+    body {
+        background: var(--fond-sombre);
+        color: var(--texte-doux);
+        font-family: 'Segoe UI', serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    /* Conteneur principal (avec un espace pour le header) */
+    .contenu-hommage {
+        max-width: 700px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 100px 20px 60px; /* Padding top pour compenser le header */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .logo-discret {
+        width: 60px;
+        opacity: 0.5;
+        margin-bottom: 30px;
+    }
+
+    .date {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        color: var(--or-discret);
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    h1 {
+        color: var(--blanc);
+        font-size: 2.2rem;
+        line-height: 1.2;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    h2 {
+        color: var(--blanc);
+        font-size: 1.2rem;
+        font-weight: 400;
+        font-style: italic;
+        margin-top: 0;
+        margin-bottom: 40px;
+    }
+
+    .texte-hommage {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        margin-bottom: 20px;
+        text-align: justify;
+    }
+
+    .texte-hommage strong {
+        color: var(--blanc);
+        font-weight: 600;
+    }
+
+    .separateur {
+        width: 50px;
+        height: 2px;
+        background: var(--or-discret);
+        margin: 40px auto;
+        opacity: 0.5;
+    }
+
+    .btn-soutien {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: transparent;
+        color: var(--blanc);
+        border: 1px solid var(--or-discret);
+        padding: 18px 40px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.4s ease;
+        margin-top: 20px;
+    }
+
+    .btn-soutien:hover {
+        background: var(--or-discret);
+        color: var(--fond-sombre);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .mention-legale {
+        font-size: 0.8rem;
+        color: #556270;
+        margin-top: 60px;
+        line-height: 1.5;
+    }
+
+    /* --- ANIMATIONS D'APPARITION --- */
+    .fade-up {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .fade-up.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Délais pour les animations */
+    .delay-1 { transition-delay: 0.2s; }
+    .delay-2 { transition-delay: 0.4s; }
+    .delay-3 { transition-delay: 0.6s; }
+    .delay-4 { transition-delay: 0.8s; }
+    .delay-5 { transition-delay: 1s; }
+
+    /* Adaptation mobile */
+    @media(max-width: 600px) {
+        .contenu-hommage { padding-top: 80px; }
+        h1 { font-size: 1.8rem; }
+        .texte-hommage { font-size: 0.95rem; }
+    }
+</style>
+</head>
+<body>
+
+<!-- Header de VirtTech -->
+<script src="/js/header.js"></script>
+
+<div class="contenu-hommage">
+    
+    <img src="/logo.png" alt="VirtTech" class="logo-discret fade-up">
+    
+    <span class="date fade-up delay-1">En hommage</span>
+    
+    <h1 class="fade-up delay-2">M. ATTOUBRE JOSEPH</h1>
+    <h2 class="fade-up delay-2">Professeur de Mathématiques<br>Lycée Professionnel de Jacquesville</h2>
+
+    <div class="separateur fade-up delay-3"></div>
+
+    <p class="texte-hommage fade-up delay-3">
+        C'est avec une profonde tristesse que nous rendons hommage à <strong>M. ATTOUBRE JOSEPH</strong>, un enseignant qui a marqué des générations d'élèves au Lycée Professionnel de Jacquesville.
+    </p>
+    <p class="texte-hommage fade-up delay-4">
+        Par sa rigueur, sa bienveillance et sa passion pour les mathématiques, il a su transmettre bien plus que des connaissances : il a forgé des esprits, encouragé des vocations et laissé une empreinte indélébile dans le cœur de ses élèves, notamment au sein de la promotion 2025-2026.
+    </p>
+    <p class="texte-hommage fade-up delay-4">
+        Son départ laisse un vide immense. Aujourd'hui, nous souhaitons nous mobiliser pour soutenir sa famille dans cette épreuve.
+    </p>
+
+    <div class="separateur fade-up delay-5"></div>
+
+    <a href="https://pay.jeko.africa/pl/487f7442-cd63-499b-a55d-1150d4cddb3c" target="_blank" rel="noopener" class="btn-soutien fade-up delay-5">
+        J'apporte mon soutien financier
+    </a>
+
+    <p class="mention-legale fade-up delay-5">
+        Cette page est organisée par la communauté VirtTech.<br>
+        L'intégralité des fonds collectés sera versée à l'établissement : <strong>Lycée Professionnel de Jacquesville</strong>, pour être remise à la famille de M. ATTOUBRE JOSEPH.
+    </p>
+
+</div>
+
+<script>
+    // Animation d'apparition des éléments au chargement
+    document.addEventListener("DOMContentLoaded", function() {
+        const elements = document.querySelectorAll('.fade-up');
+        
+        // Petit délai pour que l'animation se déclenche après le rendu initial
+        setTimeout(() => {
+            elements.forEach(el => {
+                el.classList.add('visible');
+            });
+        }, 100);
+    });
+</script>
+
+</body>
+</html>

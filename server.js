@@ -92,6 +92,9 @@ app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public
 app.get('/virtemulator-pc', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator-pc.html')));
 app.get('/transformlink', (req, res) => res.sendFile(path.join(__dirname, 'public', 'transformlink.html')));
 
+app.get('/hommage/mrAttoubre', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'hommage.html'));
+});
 // Page Astuces
 app.get('/astuces', (req, res) => res.sendFile(path.join(__dirname, 'public', 'astuces.html')));
 
@@ -128,6 +131,8 @@ app.use('/', shortenRoutes);
 app.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
+
+
 
 // ==========================================
 // GESTION DES ERREURS (JSON invalide, corps trop gros, imprévus)
