@@ -2530,3 +2530,53 @@ body, html {
     border-radius: 5px;
     font-size: .76rem;
 }
+
+/* =========================================
+   RÉSUMÉ STRUCTURÉ DES ACTIONS
+   ========================================= */
+.recap-resume { margin-bottom: 10px; }
+
+.recap-resume p {
+    margin: 0 0 8px;
+    font-size: .84rem;
+    color: #3F4C55;
+    line-height: 1.55;
+}
+
+.recap-resume ul,
+.recap-resume ol {
+    margin: 0 0 10px 18px;
+    padding: 0;
+}
+
+.recap-resume li {
+    font-size: .82rem;
+    color: #3F4C55;
+    margin-bottom: 4px;
+    line-height: 1.5;
+}
+
+.recap-resume strong { color: #161F27; font-weight: 700; }
+
+.recap-resume code {
+    background: #eef2f4;
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: .76rem;
+}
+
+/* ===== Annuler les modifications (récap) ===== */
+.recap-annuler {
+    margin-top: 12px;
+    padding: 6px 12px;
+    background: none;
+    border: 1px solid #dfe6ea;
+    border-radius: 8px;
+    font-size: .72rem;
+    font-weight: 700;
+    color: #7b8891;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.recap-annuler:hover { border-color: #c0392b; color: #c0392b; }

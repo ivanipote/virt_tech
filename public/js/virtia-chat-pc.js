@@ -777,6 +777,158 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (e) { /* stockage bloquÃ© */ }
     }
 
+    // ===============================================================
+    // APPLICATION AUTOMATIQUE DES ACTIONS (plus de bouton « Appliquer »)
+    // ===============================================================
+    function prendreSnapshot() {
+        if (!window.VirtProjet) return null;
+
+        const f = window.VirtProjet.fichiers();
+        if (!f) return null;
+
+        const copie = {};
+        Object.keys(f).forEach(function (c) { copie[c] = f[c]; });
+        return copie;
+    }
+
+    function extraireActionsAuto(texte) {
+        const s = String(texte || "");
+        const debut = s.indexOf("[");
+        if (debut < 0) return null;
+
+        let profondeur = 0;
+        let chaine = false;
+        let echappe = false;
+
+        for (let i = debut; i < s.length; i++) {
+            const c = s[i];
+
+            if (chaine) {
+                if (echappe) { echappe = false; continue; }
+                if (c === "\\") { echappe = true; continue; }
+                if (c === '"') chaine = false;
+                continue;
+            }
+
+            if (c === '"') { chaine = true; continue; }
+            if (c === "[") profondeur++;
+            else if (c === "]") {
+                profondeur--;
+                if (profondeur === 0) {
+                    try { return JSON.parse(s.slice(debut, i + 1)); } catch (e) { return null; }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    function normaliserTexte(texte) {
+        return String(texte).replace(/\r/g, "").replace(/[ \t]+$/gm, "").trim();
+    }
+
+    function modifierLignesAuto(chemin, a) {
+        const ed = window.VirtEditor;
+        if (!ed || !window.VirtProjet) return false;
+
+        if (window.VirtProjet.actif() !== chemin) {
+            const existant = window.VirtProjet.fichiers()[chemin];
+            if (existant === undefined) return false;
+            window.VirtProjet.ecrire(chemin, existant);
+        }
+
+        const avant = String(a.avant || "");
+        const apres = String(a.apres !== undefined ? a.apres : (a.contenu || ""));
+        const debut = parseInt(a.debut, 10);
+        const fin = parseInt(a.fin, 10);
+
+        if (Number.isInteger(debut) && Number.isInteger(fin) && debut >= 1 && fin >= debut) {
+            const finLigne = fin - 1;
+
+            if (finLigne < ed.lineCount()) {
+                const texteLignes = ed.getRange(
+                    { line: debut - 1, ch: 0 },
+                    { line: finLigne, ch: ed.getLine(finLigne).length }
+                );
+
+                if (normaliserTexte(texteLignes) === normaliserTexte(avant)) {
+                    ed.replaceRange(apres, { line: debut - 1, ch: 0 }, { line: finLigne, ch: ed.getLine(finLigne).length });
+                    return true;
+                }
+            }
+        }
+
+        if (avant) {
+            const index = ed.getValue().indexOf(avant);
+
+            if (index >= 0) {
+                ed.replaceRange(apres, ed.posFromIndex(index), ed.posFromIndex(index + avant.length));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function executerActionAuto(a) {
+        if (!a || typeof a !== "object" || !window.VirtProjet) return false;
+
+        const action = String(a.action || "").toLowerCase();
+        const chemin = String(a.chemin || a.fichier || a.nom || "");
+        const fichiers = window.VirtProjet.fichiers();
+
+        if (action === "dossier" || action === "creer_dossier") {
+            window.VirtProjet.dossier(chemin);
+            return true;
+        }
+
+        if (action === "fichier" || action === "creer_fichier") {
+            if (fichiers[chemin] !== undefined) return false;
+            window.VirtProjet.ecrire(chemin, typeof a.contenu === "string" ? a.contenu : "");
+            return true;
+        }
+
+        if (action === "ecrire") {
+            if (fichiers[chemin] !== undefined) return false;
+            window.VirtProjet.ecrire(chemin, String(a.contenu || ""));
+            return true;
+        }
+
+        if (action === "modifier" || action === "lignes") {
+            return modifierLignesAuto(chemin, a);
+        }
+
+        if (action === "supprimer") {
+            window.VirtProjet.supprimer(chemin);
+            return true;
+        }
+
+        if (action === "renommer") {
+            window.VirtProjet.renommer(String(a.ancien || ""), String(a.nouveau || ""));
+            return true;
+        }
+
+        return false;
+    }
+
+    function appliquerActionsAuto(texte) {
+        const actions = extraireActionsAuto(texte);
+        if (!actions || !actions.length) return null;
+
+        const snapshot = prendreSnapshot();
+        const faites = [];
+
+        actions.forEach(function (a) {
+            try {
+                if (executerActionAuto(a)) faites.push(a);
+            } catch (e) { /* action ignorée */ }
+        });
+
+        if (window.VirtSauver) window.VirtSauver();
+
+        return { actions: faites, snapshot: faites.length ? snapshot : null };
+    }
+
     async function demanderIA(texte) {
         const ecriture = afficherEcriture();
         envoyer.disabled = true;
@@ -819,9 +971,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
             conversation.push(msg);
             sauver();
-            ajouterReponse(data.reponse, true, msg);
 
-            if (window.VIRTIA_MODE === "code") proposerFichiers(data.reponse);
+            let resultat = null;
+
+            if (window.VIRTIA_MODE === "code") {
+                resultat = appliquerActionsAuto(data.reponse);
+            }
+
+            if (resultat && resultat.actions.length) {
+                const resume = (String(data.reponse).split(/###\s*R[ÉE]SUM[ÉE]/i)[1] || "").trim();
+                ajouterRecap(resultat.actions, resume, resultat.snapshot);
+            } else {
+                ajouterReponse(data.reponse, true, msg);
+            }
         } catch (err) {
             ecriture.remove();
             ajouterErreur("Connexion impossible. VÃ©rifie ta connexion et rÃ©essaie.", texte);
@@ -952,6 +1114,55 @@ document.addEventListener("DOMContentLoaded", function () {
         return String(texte).replace(/`([^`\n]+)`/g, "**$1**");
     }
 
+    // Rendu structuré : paragraphes + listes à puces / numérotées
+    function remplirBlocs(conteneur, texte) {
+        const lignes = String(texte || "").replace(/\r\n/g, "\n").split("\n");
+        let i = 0;
+
+        while (i < lignes.length) {
+            const ligne = lignes[i];
+
+            if (!ligne.trim()) { i++; continue; }
+
+            if (/^\s*[-*]\s+/.test(ligne)) {
+                const ul = document.createElement("ul");
+                while (i < lignes.length && /^\s*[-*]\s+/.test(lignes[i])) {
+                    const li = document.createElement("li");
+                    remplir(li, enGras(lignes[i].replace(/^\s*[-*]\s+/, "")));
+                    ul.appendChild(li);
+                    i++;
+                }
+                conteneur.appendChild(ul);
+                continue;
+            }
+
+            if (/^\s*\d+[.)]\s+/.test(ligne)) {
+                const ol = document.createElement("ol");
+                while (i < lignes.length && /^\s*\d+[.)]\s+/.test(lignes[i])) {
+                    const li = document.createElement("li");
+                    remplir(li, enGras(lignes[i].replace(/^\s*\d+[.)]\s+/, "")));
+                    ol.appendChild(li);
+                    i++;
+                }
+                conteneur.appendChild(ol);
+                continue;
+            }
+
+            const para = [];
+            while (i < lignes.length && lignes[i].trim() !== "" &&
+                   !/^\s*[-*]\s+/.test(lignes[i]) && !/^\s*\d+[.)]\s+/.test(lignes[i])) {
+                para.push(lignes[i]);
+                i++;
+            }
+
+            if (para.length) {
+                const p = document.createElement("p");
+                remplir(p, enGras(para.join(" ")));
+                conteneur.appendChild(p);
+            }
+        }
+    }
+
     // Récap des actions (variante A : liste sobre)
     function iconeAction(action) {
         const a = String(action || "").toLowerCase();
@@ -988,7 +1199,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return code;
     }
 
-    function ajouterRecap(actions, resume) {
+    function ajouterRecap(actions, resume, snapshot) {
         if (vide) vide.hidden = true;
 
         const bulle = document.createElement("div");
@@ -998,9 +1209,10 @@ document.addEventListener("DOMContentLoaded", function () {
         conteneur.className = "ia-reponse";
 
         if (resume) {
-            const p = document.createElement("p");
-            remplir(p, enGras(resume));
-            conteneur.appendChild(p);
+            const blocResume = document.createElement("div");
+            blocResume.className = "recap-resume";
+            remplirBlocs(blocResume, resume);
+            conteneur.appendChild(blocResume);
         }
 
         const bloc = document.createElement("div");
@@ -1037,6 +1249,29 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         bloc.append(titre, liste);
+
+        if (snapshot) {
+            const annuler = document.createElement("button");
+            annuler.type = "button";
+            annuler.className = "recap-annuler";
+            annuler.textContent = "Annuler ces modifications";
+            annuler.addEventListener("click", function () {
+                if (window.VirtProjet) {
+                    window.VirtProjet.importer(snapshot);
+
+                    if (window.VirtEditor) {
+                        const actif = window.VirtProjet.actif();
+                        const contenu = window.VirtProjet.fichiers()[actif];
+                        if (contenu !== undefined) window.VirtEditor.setValue(contenu);
+                    }
+                }
+
+                if (bulle && bulle.remove) bulle.remove();
+                if (window.virtToast) window.virtToast("Modifications annulées");
+            });
+            bloc.appendChild(annuler);
+        }
+
         conteneur.appendChild(bloc);
         bulle.appendChild(conteneur);
         messages.appendChild(bulle);
