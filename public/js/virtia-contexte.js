@@ -1,4 +1,4 @@
-// --- virtia-contexte.js ---
+﻿// --- virtia-contexte.js ---
 // Contexte projet pour VirtIA : arborescence + fichiers utiles (lecture seule).
 
 (function () {
@@ -30,25 +30,31 @@
             });
         })(window.VirtProjet.arbre(), 0);
 
-        function ajouter(chemin, max) {
+        function ajouter(chemin, max, numeroter) {
             if (!chemin || choisis.indexOf(chemin) !== -1) return;
             if (fichiers[chemin] === undefined) return;
             if (window.VirtProjet.estMedia(chemin)) return;
             if (choisis.length >= 6) return;
 
             let contenu = String(fichiers[chemin] || '');
-            if (contenu.length > max) contenu = contenu.slice(0, max) + '\n… (tronqué)';
+            if (contenu.length > max) contenu = contenu.slice(0, max) + '\nâ€¦ (tronquÃ©)';
+
+            if (numeroter) {
+                contenu = contenu.split('\n').map(function (l, i) {
+                    return (i + 1) + '│ ' + l;
+                }).join('\n');
+            }
             if (total + contenu.length > MAX) return;
 
             choisis.push(chemin);
             total += contenu.length;
-            blocs.push('--- Fichier : ' + chemin + ' ---\n' + contenu);
+            blocs.push('--- Fichier : ' + chemin + (numeroter ? ' (numéros de ligne)' : '') + ' ---\n' + contenu);
         }
 
         // 1. Fichier actif
-        ajouter(actif, 4000);
+        ajouter(actif, 4000, true);
 
-        // 2. Fichiers liés (CSS / JS / images de la page active)
+        // 2. Fichiers liÃ©s (CSS / JS / images de la page active)
         const contenuActif = String(fichiers[actif] || '');
         const motif = /(?:href|src)\s*=\s*["']([^"']+)["']/gi;
         let m;
@@ -58,7 +64,7 @@
             if (cible !== null && fichiers[cible] !== undefined) ajouter(cible, 2000);
         }
 
-        // 3. Fichiers concernés par la question
+        // 3. Fichiers concernÃ©s par la question
         const mots = (String(question).toLowerCase().match(/[a-z0-9]{4,}/g) || []).filter(function (mot) {
             return [
                 'dans', 'avec', 'pour', 'cette', 'mon', 'mes', 'les', 'des', 'une', 'est',

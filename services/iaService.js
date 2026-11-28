@@ -143,20 +143,31 @@ async function demander(message, historique = [], contexte = "", mode = "lecture
 // ---------------------------------------------------------------------
 // Écriture en direct : la réponse est renvoyée morceau par morceau
 // ---------------------------------------------------------------------
-const INSTRUCTION_ECRITURE = `Tu agis sur le projet VirtEmulator de l'utilisateur. Réponds UNIQUEMENT par un tableau JSON d'actions, sans aucun texte autour.
+const INSTRUCTION_ECRITURE = `Tu modifies un projet VirtEmulator. Réponds UNIQUEMENT par un tableau JSON d'actions, sans aucun texte autour.
 
-Actions possibles :
-- {"action":"dossier","chemin":"css"} → crée un dossier
-- {"action":"fichier","chemin":"js/app.js"} → crée un fichier vide
-- {"action":"ecrire","chemin":"css/style.css","contenu":"..."} → crée ou remplace le fichier avec ce contenu COMPLET
-- {"action":"supprimer","chemin":"vieux.txt"} → supprime un fichier ou un dossier
-- {"action":"renommer","ancien":"a.html","nouveau":"b.html"}
+Le contexte contient les fichiers avec leurs NUMÉROS DE LIGNE (format « 12│ contenu »). Pour modifier un fichier EXISTANT, utilise TOUJOURS :
+
+{"action":"modifier","chemin":"css/style.css","debut":12,"fin":14,"avant":"contenu EXACT des lignes 12 à 14","apres":"nouveau contenu"}
 
 Règles :
-- JSON valide : guillemets doubles, virgules correctes, un seul tableau.
-- Le champ "contenu" contient le fichier entier, prêt à l'emploi (indentation comprise).
-- Ordre logique : dossiers, puis fichiers, puis contenus.
-- Après le tableau, ajoute une ligne « ### RÉSUMÉ » puis une ligne courte par action, en français.`;
+- "debut" et "fin" sont les numéros affichés (1 = première ligne), fin incluse.
+- "avant" reprend exactement ces lignes, SANS les numéros ni le séparateur « │ ».
+- "apres" remplace uniquement ces lignes : garde l'indentation et le style.
+- Fais plusieurs actions "modifier" si plusieurs endroits ; ne réécris JAMAIS un fichier existant avec "ecrire".
+- Si une sélection est fournie, cible-la en priorité (ses numéros de ligne sont indiqués).
+
+Autres actions disponibles :
+- {"action":"dossier","chemin":"css"}
+- {"action":"fichier","chemin":"js/app.js"}
+- {"action":"ecrire","chemin":"nouveau.css","contenu":"..."} (nouveau fichier uniquement)
+- {"action":"supprimer","chemin":"vieux.txt"}
+- {"action":"renommer","ancien":"a.html","nouveau":"b.html"}
+
+Après le tableau, ajoute « ### RÉSUMÉ » puis une ligne courte par action, en français.
+
+Rappels :
+- Le fichier actif est DÉJÀ ouvert dans l'éditeur : tu peux le modifier directement. N'invite jamais l'utilisateur à cliquer ou à « ouvrir » un fichier.
+- Si une condition t'empêche de faire le travail (fichier absent, droit, contexte insuffisant…), réponds UNIQUEMENT par une phrase courte et stylée : « **<cause>** m'empêche de faire **<tâche>**. »`;
 
 async function demanderFlux(message, historique = [], contexte = "", onDelta) {
     const cle = process.env.API_DEEPSEEK;

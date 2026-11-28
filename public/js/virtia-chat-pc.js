@@ -947,12 +947,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return sortie || texte;
     }
+    // Les mots entre backticks deviennent du gras (plus lisible que du code brut)
+    function enGras(texte) {
+        return String(texte).replace(/`([^`\n]+)`/g, "**$1**");
+    }
+
     // Récap des actions (variante A : liste sobre)
     function iconeAction(action) {
         const a = String(action || "").toLowerCase();
         if (a === "dossier" || a === "creer_dossier") return "fa-folder-plus";
         if (a === "fichier" || a === "creer_fichier") return "fa-file-circle-plus";
-        if (a === "ecrire" || a === "modifier" || a === "ecriture") return "fa-pen-nib";
+        if (a === "ecrire" || a === "modifier" || a === "ecriture" || a === "lignes") return "fa-pen-nib";
         if (a === "supprimer") return "fa-trash-can";
         if (a === "renommer") return "fa-right-left";
         return "fa-circle-check";
@@ -966,6 +971,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (action === "ecrire" || action === "modifier" || action === "ecriture") {
             const lignes = String(a.contenu || "").split("\n").length;
             return "Contenu écrit (" + lignes + " lignes) :";
+        }
+        if (action === "modifier" || action === "lignes") {
+            const d = a.debut || "?";
+            const f = a.fin || d;
+            return (String(d) === String(f) ? "Ligne " + d : "Lignes " + d + "–" + f) + " modifiée(s) :";
         }
         if (action === "supprimer") return "Supprimé :";
         if (action === "renommer") return "Renommé :";
@@ -989,7 +999,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (resume) {
             const p = document.createElement("p");
-            p.textContent = resume;
+            remplir(p, enGras(resume));
             conteneur.appendChild(p);
         }
 
@@ -1098,6 +1108,72 @@ document.addEventListener("DOMContentLoaded", function () {
             return null;
         }
 
+        function normaliser(t) {
+            return String(t).replace(/\r/g, "").replace(/[ \t]+$/gm, "").trim();
+        }
+
+        function modifierLignes(chemin, a) {
+            const ed = window.VirtEditor;
+            if (!ed) return false;
+
+            if (window.VirtProjet.actif() !== chemin) {
+                const existant = window.VirtProjet.fichiers()[chemin];
+                if (existant === undefined) return false;
+                window.VirtProjet.ecrire(chemin, existant);
+            }
+
+            const avant = String(a.avant || "");
+            const apres = String(a.apres !== undefined ? a.apres : (a.contenu || ""));
+            const debut = parseInt(a.debut, 10);
+            const fin = parseInt(a.fin, 10);
+
+            // 1. Cible exacte par numéros de ligne, vérifiée par le contenu
+            if (Number.isInteger(debut) && Number.isInteger(fin) && debut >= 1 && fin >= debut) {
+                const finLigne = fin - 1;
+
+                if (finLigne < ed.lineCount()) {
+                    const texteLignes = ed.getRange(
+                        { line: debut - 1, ch: 0 },
+                        { line: finLigne, ch: ed.getLine(finLigne).length }
+                    );
+
+                    if (normaliser(texteLignes) === normaliser(avant)) {
+                        ed.replaceRange(apres, { line: debut - 1, ch: 0 }, { line: finLigne, ch: ed.getLine(finLigne).length });
+                        return true;
+                    }
+                }
+            }
+
+            // 2. Repli : recherche exacte de l'extrait
+            if (avant) {
+                const index = ed.getValue().indexOf(avant);
+
+                if (index >= 0) {
+                    ed.replaceRange(apres, ed.posFromIndex(index), ed.posFromIndex(index + avant.length));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function contexteSelection(texte) {
+            let contexte = window.VirtContexte ? window.VirtContexte(texte) : "";
+
+            const ed = window.VirtEditor;
+            if (!ed) return contexte;
+
+            const selection = ed.getSelection();
+            if (selection && selection.trim()) {
+                const depuis = ed.getCursor("from");
+                const jusqua = ed.getCursor("to");
+
+                contexte += "\n\n--- SÉLECTION ACTIVE (lignes " + (depuis.line + 1) + " à " + (jusqua.line + 1) + ") ---\n" + selection;
+            }
+
+            return contexte;
+        }
+
         function executerAction(a) {
             if (!a || typeof a !== "object") return false;
 
@@ -1124,6 +1200,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 return true;
             }
 
+            if (action === "modifier" || action === "lignes") {
+                return modifierLignes(chemin, a);
+            }
+
             if (action === "renommer") {
                 window.VirtProjet.renommer(String(a.ancien || ""), String(a.nouveau || ""));
                 return true;
@@ -1138,7 +1218,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     message: texte,
-                    contexte: window.VirtContexte ? window.VirtContexte(texte) : ""
+                    contexte: contexteSelection(texte)
                 }),
                 signal: fluxControleur.signal
             });
@@ -1149,7 +1229,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         message: texte + "\n\nRéponds uniquement par un tableau JSON d'actions (dossier / fichier / ecrire / supprimer / renommer), puis ### RÉSUMÉ.",
-                        contexte: window.VirtContexte ? window.VirtContexte(texte) : "",
+                        contexte: contexteSelection(texte),
                         mode: "lecture"
                     }),
                     signal: fluxControleur.signal
@@ -1209,7 +1289,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (resume) {
                 ajouterMessage("ia", resume);
             } else {
-                ajouterMessage("ia", "Aucune action reconnue. Réponse reçue :\n\n" + tampon.slice(0, 900));
+                ajouterReponse(enGras(tampon.trim().slice(0, 900)) || "Je n'ai pas pu appliquer de modification.", false);
             }
 
             if (window.VirtSauver) window.VirtSauver();
