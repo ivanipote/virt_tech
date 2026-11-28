@@ -133,3 +133,21 @@ CREATE TABLE IF NOT EXISTS ia_echanges (
 CREATE INDEX IF NOT EXISTS idx_ia_echanges_date ON ia_echanges (cree_le DESC);
 CREATE INDEX IF NOT EXISTS idx_ia_echanges_note ON ia_echanges (note);
 CREATE INDEX IF NOT EXISTS idx_ia_echanges_marque ON ia_echanges (appareil_marque);
+-- =====================================================================
+-- COURS « Cours De Base » (éditables depuis l'administration)
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS cours (
+    id SERIAL PRIMARY KEY,
+    slug VARCHAR(80) NOT NULL UNIQUE,
+    titre VARCHAR(160) NOT NULL,
+    contenu TEXT NOT NULL,
+    ordre INTEGER NOT NULL DEFAULT 0,
+    visible BOOLEAN NOT NULL DEFAULT TRUE,
+    date_creation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_modification TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_cours_ordre ON cours (ordre ASC, id ASC);
+
+-- Nombre de vues par cours
+ALTER TABLE cours ADD COLUMN IF NOT EXISTS vues INTEGER NOT NULL DEFAULT 0;

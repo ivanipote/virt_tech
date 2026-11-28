@@ -1,4 +1,4 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
@@ -11,13 +11,13 @@ const PORT = process.env.PORT || 3000;
 
 let compteurVisitesAccueil = 0;
 
-// Derrière un proxy (Render, Heroku...) : req.ip = vraie IP du visiteur
-// (nécessaire pour les limiteurs anti-abus des astuces)
+// DerriÃ¨re un proxy (Render, Heroku...) : req.ip = vraie IP du visiteur
+// (nÃ©cessaire pour les limiteurs anti-abus des astuces)
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
 // Middleware
-app.use(express.json({ limit: '50kb' })); // assez pour 10 000 caractères de code
+app.use(express.json({ limit: '50kb' })); // assez pour 10 000 caractÃ¨res de code
 app.use(express.urlencoded({ extended: true }));
 
 // ==========================================
@@ -27,7 +27,7 @@ morgan.format('virttech', (tokens, req, res) => {
     const now = new Date();
     const heure = now.getHours().toString().padStart(2, '0') + 'h' + now.getMinutes().toString().padStart(2, '0');
     const ua = req.headers['user-agent'] || '';
-    const appareil = /mobile|android|iphone|ipad|tablet/i.test(ua) ? '📱 Mobile' : '💻 PC';
+    const appareil = /mobile|android|iphone|ipad|tablet/i.test(ua) ? 'ðŸ“± Mobile' : 'ðŸ’» PC';
     const status = res.statusCode;
     let statusStr = status.toString();
     if (status >= 200 && status < 300) statusStr = `\x1b[32m${status}\x1b[0m`;
@@ -37,7 +37,7 @@ morgan.format('virttech', (tokens, req, res) => {
 
     let url = req.originalUrl;
     if (url === '/') url = 'ACCUEIL';
-    // Les routes API sont testées AVANT les pages (sinon '/api/contact' était vu comme 'CONTACT')
+    // Les routes API sont testÃ©es AVANT les pages (sinon '/api/contact' Ã©tait vu comme 'CONTACT')
     else if (url.includes('/api/contact')) url = 'API_CONTACT';
     else if (url.includes('/api/shorten')) url = 'API_SHORTEN';
     else if (url.includes('/api/astuces')) url = 'API_ASTUCES';
@@ -75,7 +75,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Accueil avec compteur
 app.get('/', (req, res) => {
     compteurVisitesAccueil++;
-    console.log(`👀 Visite n°${compteurVisitesAccueil} sur l'accueil`);
+    console.log(`ðŸ‘€ Visite nÂ°${compteurVisitesAccueil} sur l'accueil`);
     if (compteurVisitesAccueil >= 5) {
         envoyerAlerteVisites(compteurVisitesAccueil);
         compteurVisitesAccueil = 0;
@@ -87,6 +87,8 @@ app.get('/accueil', (req, res) => res.redirect('/'));
 app.get('/virt-dev', (req, res) => res.sendFile(path.join(__dirname, 'public', 'resultats.html')));
 app.get('/virt-dev/resultat', (req, res) => res.sendFile(path.join(__dirname, 'public', 'resultats.html')));
 app.get('/historique', (req, res) => res.sendFile(path.join(__dirname, 'public', 'historique.html')));
+app.get('/cours', (req, res) => res.sendFile(path.join(__dirname, 'public', 'cours.html')));
+app.get('/admin-cours', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-cours.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public', 'contact.html')));
 app.get('/virtemulator', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator.html')));
 app.get('/virtemulator-pc', (req, res) => res.sendFile(path.join(__dirname, 'public', 'virtemulator-pc.html')));
@@ -98,7 +100,7 @@ app.get('/hommage/mrAttoubre', (req, res) => {
 // Page Astuces
 app.get('/astuces', (req, res) => res.sendFile(path.join(__dirname, 'public', 'astuces.html')));
 
-// Pages éditoriales
+// Pages Ã©ditoriales
 app.get('/actualites', (req, res) => res.sendFile(path.join(__dirname, 'public', 'actualites.html')));
 app.get('/apropos', (req, res) => res.sendFile(path.join(__dirname, 'public', 'apropos.html')));
 
@@ -108,12 +110,14 @@ app.get('/apropos', (req, res) => res.sendFile(path.join(__dirname, 'public', 'a
 const contactRoutes = require('./routes/contact');
 app.use('/api/contact', contactRoutes);
 
-// Astuces AVANT le routeur de liens raccourcis monté sur '/'
-// (ainsi aucune route générique ne peut intercepter /api/astuces/...)
+// Astuces AVANT le routeur de liens raccourcis montÃ© sur '/'
+// (ainsi aucune route gÃ©nÃ©rique ne peut intercepter /api/astuces/...)
 const astucesRoutes = require('./routes/astuces');
+const coursRoutes = require('./routes/cours');
 app.use('/api/astuces', astucesRoutes);
+app.use('/api/cours', coursRoutes);
 
-// Compteur de clics « Run » de la page Historique
+// Compteur de clics Â« Run Â» de la page Historique
 const activitesRoutes = require('./routes/activites');
 app.use('/api/activites', activitesRoutes);
 
@@ -135,28 +139,28 @@ app.use((req, res) => {
 
 
 // ==========================================
-// GESTION DES ERREURS (JSON invalide, corps trop gros, imprévus)
+// GESTION DES ERREURS (JSON invalide, corps trop gros, imprÃ©vus)
 // ==========================================
 app.use((err, req, res, next) => {
     if (err.type === 'entity.too.large') {
         return res.status(413).json({ succes: false, message: "Contenu trop volumineux." });
     }
     if (err.type === 'entity.parse.failed') {
-        return res.status(400).json({ succes: false, message: "Requête invalide." });
+        return res.status(400).json({ succes: false, message: "RequÃªte invalide." });
     }
-    console.error('❌ Erreur non gérée :', err);
+    console.error('âŒ Erreur non gÃ©rÃ©e :', err);
     res.status(500).json({ succes: false, message: "Erreur serveur." });
 });
 
 // ==========================================
-// DÉMARRAGE
+// DÃ‰MARRAGE
 // ==========================================
 initDB().then(() => {
-    // Purge des échanges IA de plus de 90 jours (au démarrage, puis 1 fois par jour)
+    // Purge des Ã©changes IA de plus de 90 jours (au dÃ©marrage, puis 1 fois par jour)
     const { purger } = require('./services/iaEchangeService');
     const purgerEchanges = () => {
         purger(90)
-            .then((n) => { if (n > 0) console.log(`🧹 ${n} échange(s) IA de plus de 90 jours supprimé(s).`); })
+            .then((n) => { if (n > 0) console.log(`ðŸ§¹ ${n} Ã©change(s) IA de plus de 90 jours supprimÃ©(s).`); })
             .catch((e) => console.error("Purge IA impossible :", e.message));
     };
     purgerEchanges();
@@ -166,7 +170,7 @@ initDB().then(() => {
         console.log(`Le serveur VirtTech tourne sur http://localhost:${PORT}`);
     });
 
-    // Astuces de démarrage signées VirtTech (ajoutées une seule fois)
+    // Astuces de dÃ©marrage signÃ©es VirtTech (ajoutÃ©es une seule fois)
     require('./services/astucesSeed').semer()
         .catch((e) => console.error("[astuces] semis impossible :", e.message));
 });

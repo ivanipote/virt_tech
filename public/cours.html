@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cours De Base - VirtTech</title>
+
+<meta name="description" content="Les cours de base de VirtTech : HTML, CSS, Git, DeepSeek Harness. Gratuits et pratiques, pour apprendre dans le navigateur." />
+<meta property="og:title" content="Cours De Base - VirtTech" />
+<meta property="og:description" content="Les cours de base de VirtTech, gratuits et pratiques." />
+<meta property="og:image" content="https://virttech.site/logo.png" />
+<meta property="og:url" content="https://virttech.site/cours" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="VirtTech" />
+
+<link rel="icon" type="image/png" href="https://virttech.site/logo.png">
+<link rel="canonical" href="https://virttech.site/cours">
+
+<script>document.documentElement.classList.add('js')</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/historique.css">
+<link rel="stylesheet" href="/css/cours.css">
+</head>
+<body>
+
+<script src="/js/header.js"></script>
+
+<div class="contenu">
+
+    <h1 class="reveal">Cours De Base</h1>
+    <p class="sous-titre reveal">Bienvenue sur la section <strong>Cours De Base</strong> ! Appuie sur <strong>Run</strong> pour lire un cours.</p>
+
+    <div id="liste-cours" class="liste-cours"></div>
+
+</div>
+
+<div class="slide-overlay" id="slide-overlay"></div>
+
+<div class="slide-panel" id="slide-panel" role="dialog" aria-modal="true" aria-labelledby="slide-title">
+    <div class="slide-header">
+        <h3 id="slide-title">Chargementâ€¦</h3>
+        <button class="btn-fermer-slide" id="btn-fermer-slide" aria-label="Fermer le cours">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    <div class="slide-contenu" id="slide-contenu"></div>
+</div>
+
+<script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="/js/cours.js"></script>
+
+</body>
+</html>

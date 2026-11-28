@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administration des cours - VirtTech</title>
+<link rel="icon" type="image/png" href="https://virttech.site/logo.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --or: #D4AF37;
+        --ombre: #161F27;
+        --metal: #3F4C55;
+        --metal-fonce: #5b6b76;
+        --fond: #f4f6f7;
+        --bord: #e2e8ec;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        padding: 26px 18px 60px;
+        background: var(--fond);
+        color: var(--ombre);
+        font-family: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+
+    h1 { font-size: 1.4rem; margin: 0 0 4px; letter-spacing: -.02em; }
+    .sous { color: var(--metal-fonce); font-size: .88rem; margin: 0 0 24px; }
+
+    .grille {
+        max-width: 1180px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 880px) { .grille { grid-template-columns: 1fr; } }
+
+    .bloc {
+        background: #fff;
+        border: 1px solid var(--bord);
+        border-radius: 14px;
+        padding: 16px;
+    }
+
+    .bloc h2 {
+        font-size: .78rem;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: #9aa7b0;
+        margin: 0 0 12px;
+    }
+
+    .liste { display: flex; flex-direction: column; gap: 6px; max-height: 60vh; overflow-y: auto; }
+
+    .ligne-cours {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 9px 10px;
+        border: 1px solid var(--bord);
+        border-radius: 9px;
+        cursor: pointer;
+        font-size: .84rem;
+    }
+
+    .ligne-cours:hover { border-color: var(--or); }
+    .ligne-cours.actif { border-color: var(--or); background: rgba(212, 175, 55, .08); }
+    .ligne-cours small { display: block; color: #9aa7b0; font-size: .68rem; }
+    .ligne-cours .masque { color: #c0392b; font-size: .66rem; }
+
+    label { display: block; font-size: .74rem; font-weight: 700; color: var(--metal); margin: 0 0 5px; }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #dde4e8;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: .86rem;
+        background: #fff;
+        color: var(--ombre);
+    }
+
+    textarea { min-height: 340px; resize: vertical; font-family: ui-monospace, Consolas, monospace; font-size: .78rem; line-height: 1.5; }
+
+    .champ { margin-bottom: 14px; }
+    .rangee { display: grid; grid-template-columns: 1fr 120px; gap: 12px; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+    button {
+        padding: 10px 16px;
+        border-radius: 9px;
+        border: none;
+        font-family: inherit;
+        font-size: .84rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: var(--ombre);
+        color: #fff;
+        transition: background .2s, color .2s;
+    }
+
+    button:hover { background: var(--or); color: var(--ombre); }
+    button.discret { background: #fff; color: var(--metal); border: 1px solid var(--bord); }
+    button.danger { background: #c0392b; }
+
+    .etat { font-size: .78rem; margin-top: 10px; }
+    .aide { font-size: .72rem; color: #7b8891; margin: 6px 0 0; }
+    .etat.ok { color: #2e7d32; }
+    .etat.ko { color: #c0392b; }
+</style>
+</head>
+<body>
+
+<div class="grille">
+
+    <div>
+        <h1>Cours De Base</h1>
+        <p class="sous">CrÃ©e et modifie les cours en base, sans toucher au code.</p>
+
+        <div class="bloc">
+            <h2>Jeton administrateur</h2>
+            <div class="champ">
+                <input type="password" id="jeton" placeholder="ADMIN_TOKEN" autocomplete="off">
+            </div>
+            <button type="button" class="discret" id="btn-charger">Charger</button>
+            <p class="etat" id="etat-connexion"></p>
+        </div>
+
+        <div class="bloc" style="margin-top: 16px;">
+            <h2>Cours existants</h2>
+            <div class="liste" id="liste-cours"></div>
+            <button type="button" class="discret" id="btn-nouveau" style="margin-top: 12px;">+ Nouveau cours</button>
+        </div>
+    </div>
+
+    <div class="bloc">
+        <h2 id="titre-form">Nouveau cours</h2>
+
+        <div class="rangee">
+            <div class="champ">
+                <label for="champ-slug">Slug (minuscules, tirets)</label>
+                <input type="text" id="champ-slug" placeholder="mon-cours">
+            </div>
+            <div class="champ">
+                <label for="champ-ordre">Ordre</label>
+                <input type="number" id="champ-ordre" value="0">
+            </div>
+        </div>
+
+        <div class="champ">
+            <label for="champ-titre">Titre</label>
+            <input type="text" id="champ-titre" placeholder="Formation : ...">
+        </div>
+
+        <div class="champ">
+            <label for="champ-contenu">Contenu (HTML autorisÃ©)</label>
+            <textarea id="champ-contenu" placeholder="Écris le cours en HTML…"></textarea>
+            <p class="aide">HTML autorisé : &lt;h4&gt;titre&lt;/h4&gt;, &lt;p&gt;texte&lt;/p&gt;, &lt;pre class="bloc-code"&gt;&lt;code&gt;…&lt;/code&gt;&lt;/pre&gt;</p>
+        </div>
+
+        <div class="actions">
+            <button type="button" id="btn-enregistrer">Enregistrer</button>
+            <button type="button" class="danger" id="btn-supprimer" hidden>Supprimer</button>
+            <span class="etat" id="etat-form"></span>
+        </div>
+    </div>
+
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    const CLE = 'virttech_admin_token';
+
+    const jeton = document.getElementById('jeton');
+    const liste = document.getElementById('liste-cours');
+    const titreForm = document.getElementById('titre-form');
+    const champSlug = document.getElementById('champ-slug');
+    const champTitre = document.getElementById('champ-titre');
+    const champOrdre = document.getElementById('champ-ordre');
+    const champContenu = document.getElementById('champ-contenu');
+    const etatConnexion = document.getElementById('etat-connexion');
+    const etatForm = document.getElementById('etat-form');
+    const btnSupprimer = document.getElementById('btn-supprimer');
+
+    let cours = [];
+    let actif = null;        // slug en cours d'Ã©dition
+    let suppressionArmee = false;
+
+    function token() { return jeton.value.trim(); }
+
+    function dire(el, message, ok) {
+        el.textContent = message;
+        el.className = 'etat ' + (ok ? 'ok' : 'ko');
+    }
+
+    function charger() {
+        liste.innerHTML = '';
+        suppressionArmee = false;
+
+        fetch('/api/cours/admin/tous', { headers: { 'x-admin-token': token() } })
+            .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+            .then(function (rep) {
+                if (!rep.ok || !rep.d.succes) {
+                    dire(etatConnexion, rep.d.message || 'AccÃ¨s refusÃ©.', false);
+                    return;
+                }
+
+                cours = rep.d.cours || [];
+                dire(etatConnexion, cours.length + ' cours chargÃ©s.', true);
+                try { localStorage.setItem(CLE, token()); } catch (e) { /* rien */ }
+                rendre();
+            })
+            .catch(function () { dire(etatConnexion, 'Connexion impossible.', false); });
+    }
+
+    function rendre() {
+        liste.innerHTML = '';
+
+        cours.forEach(function (c) {
+            const ligne = document.createElement('div');
+            ligne.className = 'ligne-cours' + (c.slug === actif ? ' actif' : '');
+            ligne.innerHTML = '<span><strong></strong><small></small></span>';
+
+            ligne.querySelector('strong').textContent = c.titre;
+            ligne.querySelector('small').textContent = c.slug;
+
+            if (c.visible === false) {
+                const m = document.createElement('span');
+                m.className = 'masque';
+                m.textContent = 'masquÃ©';
+                ligne.querySelector('span').appendChild(m);
+            }
+
+            ligne.addEventListener('click', function () { editer(c.slug); });
+            liste.appendChild(ligne);
+        });
+    }
+
+    function editer(slug) {
+        const c = cours.find(function (x) { return x.slug === slug; });
+        if (!c) return;
+
+        actif = slug;
+        suppressionArmee = false;
+        btnSupprimer.hidden = false;
+
+        fetch('/api/cours/' + encodeURIComponent(slug))
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (!d.succes) return;
+
+                titreForm.textContent = 'Modifier : ' + d.cours.titre;
+                champSlug.value = d.cours.slug;
+                champTitre.value = d.cours.titre;
+                champOrdre.value = d.cours.ordre;
+                champContenu.value = d.cours.contenu;
+                etatForm.textContent = '';
+
+                rendre();
+            });
+    }
+
+    function nouveau() {
+        actif = null;
+        suppressionArmee = false;
+        btnSupprimer.hidden = true;
+        titreForm.textContent = 'Nouveau cours';
+        champSlug.value = '';
+        champTitre.value = '';
+        champOrdre.value = String(cours.length + 1);
+        champContenu.value = '';
+        etatForm.textContent = '';
+        rendre();
+    }
+
+    function enregistrer() {
+        const corps = {
+            slug: champSlug.value.trim(),
+            titre: champTitre.value.trim(),
+            ordre: Number(champOrdre.value || 0),
+            contenu: champContenu.value
+        };
+
+        if (!corps.slug || !corps.titre || !corps.contenu.trim()) {
+            return dire(etatForm, 'Slug, titre et contenu sont obligatoires.', false);
+        }
+
+        const url = actif ? '/api/cours/' + encodeURIComponent(actif) : '/api/cours';
+        const methode = actif ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: methode,
+            headers: { 'Content-Type': 'application/json', 'x-admin-token': token() },
+            body: JSON.stringify(corps)
+        })
+            .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+            .then(function (rep) {
+                if (!rep.ok || !rep.d.succes) return dire(etatForm, rep.d.message || 'Erreur.', false);
+
+                dire(etatForm, 'Cours enregistrÃ©.', true);
+                actif = corps.slug;
+                btnSupprimer.hidden = false;
+                charger();
+            })
+            .catch(function () { dire(etatForm, 'Connexion impossible.', false); });
+    }
+
+    function supprimer() {
+        if (!actif) return;
+
+        if (!suppressionArmee) {
+            suppressionArmee = true;
+            dire(etatForm, 'Clique encore sur Supprimer pour confirmer.', false);
+            return;
+        }
+
+        fetch('/api/cours/' + encodeURIComponent(actif), {
+            method: 'DELETE',
+            headers: { 'x-admin-token': token() }
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (!d.succes) return dire(etatForm, d.message || 'Erreur.', false);
+                dire(etatForm, 'Cours supprimÃ©.', true);
+                nouveau();
+                charger();
+            })
+            .catch(function () { dire(etatForm, 'Connexion impossible.', false); });
+    }
+
+    document.getElementById('btn-charger').addEventListener('click', charger);
+    document.getElementById('btn-nouveau').addEventListener('click', nouveau);
+    document.getElementById('btn-enregistrer').addEventListener('click', enregistrer);
+    btnSupprimer.addEventListener('click', supprimer);
+
+    try {
+        const saved = localStorage.getItem(CLE);
+        if (saved) jeton.value = saved;
+    } catch (e) { /* rien */ }
+})();
+</script>
+
+</body>
+</html>

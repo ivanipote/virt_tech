@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const PAGES = {
         '/':                    { nom: 'Accueil',      icone: 'fa-house' },
         '/accueil':             { nom: 'Accueil',      icone: 'fa-house' },
-        '/historique':          { nom: 'Historique',   icone: 'fa-clock-rotate-left' },
+        '/cours':               { nom: 'Cours De Base', icone: 'fa-graduation-cap' },
         '/virtemulator':        { nom: 'VirtEmulator', icone: 'fa-code' },
         '/transformlink':       { nom: 'TransformLink', icone: 'fa-link' },
         '/astuces':             { nom: 'Astuces',      icone: 'fa-lightbulb' },
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // 2. Détermination de l'onglet actif
     let actifAccueil = "";
-    let actifHistorique = "";
+    let actifCours = "";
     let actifResultats = "";
     let actifVirtEmulator = "";
     let actifTransformLink = "";
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let actifHommage = "";
 
     if (path === "/" || path === "/accueil") { actifAccueil = "actif"; }
-    else if (path === "/historique") { actifHistorique = "actif"; }
+    else if (path === "/cours") { actifCours = "actif"; }
     else if (path.includes("/virt-dev")) { actifResultats = "actif"; }
     else if (path === "/virtemulator") { actifVirtEmulator = "actif"; }
     else if (path === "/transformlink") { actifTransformLink = "actif"; }
@@ -72,8 +72,8 @@ document.addEventListener("DOMContentLoaded", function() {
             </a>
           </li>
           <li>
-            <a href="/historique" class="${actifHistorique}">
-                <span>Historique d'activité</span>
+            <a href="/cours" class="${actifCours}">
+                <span>Cours De Base</span>
                 <i class="fa-solid fa-clock-rotate-left"></i>
             </a>
           </li>
