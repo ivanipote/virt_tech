@@ -1,16 +1,12 @@
-// --- pc-boost.js ---
+﻿// --- pc-boost.js ---
 // Booste le mode PC : diff avant application, console d'erreurs,
-// recherche/remplacement, raccourcis, export/import ZIP, formatage, plein écran.
+// recherche/remplacement, raccourcis, export/import ZIP, formatage, plein Ã©cran.
 
 (function () {
     'use strict';
 
     let editor = null;
-    let panneauConsole = null;
-    let listeConsole = null;
-    let compteurConsole = null;
     let erreurs = [];
-    let consoleOuverte = false;
 
     function toast(message) {
         if (typeof window.virtToast === 'function') window.virtToast(message);
@@ -29,79 +25,79 @@
     }
 
     // =========================================================
-    // CONSOLE D'ERREURS
+    // CONSOLE D'ERREURS (slide)
     // =========================================================
-    function creerConsole() {
-        if (panneauConsole) return;
+    let listeConsole = null;
+    let compteurConsole = null;
+    let panneauConsole = null;
 
-        panneauConsole = document.createElement('div');
-        panneauConsole.className = 'pc-console';
+    function initConsole() {
+        panneauConsole = document.getElementById('consolePanel');
+        listeConsole = document.getElementById('consoleListe');
+        compteurConsole = document.getElementById('consoleCompteur');
 
-        const tete = document.createElement('div');
-        tete.className = 'pc-console-tete';
+        const bouton = document.getElementById('btnConsole');
+        const fermer = document.getElementById('consoleFermer');
+        const effacer = document.getElementById('consoleEffacer');
 
-        const titre = document.createElement('span');
-        titre.className = 'pc-console-titre';
-        titre.innerHTML = '<i class="fa-solid fa-terminal" aria-hidden="true"></i> Console';
+        if (bouton) bouton.addEventListener('click', ouvrirConsole);
+        if (fermer) fermer.addEventListener('click', fermerConsole);
+        if (effacer) {
+            effacer.addEventListener('click', function () {
+                erreurs = [];
+                majConsole();
+            });
+        }
 
-        compteurConsole = document.createElement('span');
-        compteurConsole.className = 'pc-console-compteur';
-        compteurConsole.textContent = '0';
+        majConsole();
+    }
 
-        const effacer = document.createElement('button');
-        effacer.type = 'button';
-        effacer.className = 'pc-console-btn';
-        effacer.textContent = 'Effacer';
-        effacer.addEventListener('click', function (e) {
-            e.stopPropagation();
-            erreurs = [];
-            majConsole();
-        });
+    function ouvrirConsole() {
+        if (typeof window.VirtFermerAutres === 'function') window.VirtFermerAutres('console');
 
-        const basculer = document.createElement('button');
-        basculer.type = 'button';
-        basculer.className = 'pc-console-btn';
-        basculer.textContent = '▾';
+        if (panneauConsole) panneauConsole.classList.add('ouvert');
+        if (typeof window.MajClassePanneau === 'function') window.MajClassePanneau();
 
-        tete.append(titre, compteurConsole, effacer, basculer);
+        majConsole();
+    }
 
-        listeConsole = document.createElement('div');
-        listeConsole.className = 'pc-console-liste';
-
-        tete.addEventListener('click', function () {
-            consoleOuverte = !consoleOuverte;
-            panneauConsole.classList.toggle('ouvert', consoleOuverte);
-            basculer.textContent = consoleOuverte ? '▴' : '▾';
-        });
-
-        panneauConsole.append(tete, listeConsole);
-        document.body.appendChild(panneauConsole);
+    function fermerConsole() {
+        if (panneauConsole) panneauConsole.classList.remove('ouvert');
+        if (typeof window.MajClassePanneau === 'function') window.MajClassePanneau();
     }
 
     function majConsole() {
-        if (!panneauConsole) return;
+        if (!listeConsole) return;
 
-        compteurConsole.textContent = String(erreurs.length);
-        panneauConsole.classList.toggle('a-erreur', erreurs.length > 0);
+        if (compteurConsole) {
+            compteurConsole.textContent = String(erreurs.length);
+            compteurConsole.classList.toggle('a-erreur', erreurs.length > 0);
+        }
 
         listeConsole.innerHTML = '';
 
-        erreurs.slice(-40).forEach(function (e) {
+        if (erreurs.length === 0) {
+            const vide = document.createElement('p');
+            vide.className = 'console-vide';
+            vide.textContent = "Aucune erreur pour le moment. Les erreurs de l'aperÃ§u apparaÃ®tront ici.";
+            listeConsole.appendChild(vide);
+            return;
+        }
+
+        erreurs.slice(-80).forEach(function (e) {
             const ligne = document.createElement('div');
-            ligne.className = 'pc-console-ligne ' + e.niveau;
+            ligne.className = 'console-ligne ' + e.niveau;
             ligne.textContent = e.texte;
             listeConsole.appendChild(ligne);
         });
     }
 
     function ajouterErreur(niveau, texte) {
-        creerConsole();
         erreurs.push({ niveau: niveau, texte: String(texte).slice(0, 400) });
         if (erreurs.length > 80) erreurs.shift();
         majConsole();
     }
 
-    // Appelé depuis emulateur-pc.js après chaque rendu de l'aperçu
     function hookConsole(iframe) {
         if (!iframe || !iframe.contentWindow) return;
 
@@ -127,7 +123,7 @@
             });
 
             win.addEventListener('unhandledrejection', function (e) {
-                ajouterErreur('error', 'Promesse rejetée : ' + e.reason);
+                ajouterErreur('error', 'Promesse rejetÃ©e : ' + e.reason);
             });
         } catch (e) { /* iframe inaccessible */ }
     }
@@ -169,7 +165,7 @@
 
         const blocApres = document.createElement('div');
         const t2 = document.createElement('h4');
-        t2.textContent = 'Après';
+        t2.textContent = 'AprÃ¨s';
         const preApres = document.createElement('pre');
         preApres.textContent = contenu;
         blocApres.append(t2, preApres);
@@ -263,7 +259,7 @@
             }
 
             window.VirtProjet.importer(textes);
-            toast('Projet importé');
+            toast('Projet importÃ©');
         } catch (e) {
             toast('Import impossible');
         }
@@ -297,20 +293,20 @@
             parser = 'json';
             plugins = [P.estree, P.babel];
         } else {
-            return toast('Format non supporté');
+            return toast('Format non supportÃ©');
         }
 
         try {
             const resultat = await prettier.format(contenu, { parser: parser, plugins: plugins.filter(Boolean) });
             window.VirtProjet.ecrire(chemin, resultat);
-            toast('Fichier formaté');
+            toast('Fichier formatÃ©');
         } catch (e) {
             toast('Formatage impossible : ' + e.message);
         }
     }
 
     // =========================================================
-    // ENREGISTREUR D'ÉCRAN
+    // ENREGISTREUR D'Ã‰CRAN
     // =========================================================
     let enregistreur = null;
     let fluxEcran = null;
@@ -339,7 +335,7 @@
 
         boutonRec.classList.toggle('rec-actif', actif);
         boutonRec.innerHTML = actif
-            ? '<i class="fa-solid fa-stop" aria-hidden="true"></i> Arrêter ' + formatChrono(secondes)
+            ? '<i class="fa-solid fa-stop" aria-hidden="true"></i> ArrÃªter ' + formatChrono(secondes)
             : '<i class="fa-solid fa-circle-dot" aria-hidden="true"></i> Enregistrer';
 
         if (boutonPause) boutonPause.hidden = !actif;
@@ -347,11 +343,11 @@
 
     async function demarrerEnregistrement() {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-            return toast("L'enregistrement d'écran n'est pas disponible sur ce navigateur.");
+            return toast("L'enregistrement d'Ã©cran n'est pas disponible sur ce navigateur.");
         }
 
         if (!window.MediaRecorder) {
-            return toast("L'enregistrement vidéo n'est pas disponible sur ce navigateur.");
+            return toast("L'enregistrement vidÃ©o n'est pas disponible sur ce navigateur.");
         }
 
         try {
@@ -360,7 +356,7 @@
                 audio: true
             });
         } catch (e) {
-            return; // l'utilisateur a annulé
+            return; // l'utilisateur a annulÃ©
         }
 
         try {
@@ -413,7 +409,7 @@
             URL.revokeObjectURL(url);
 
             nettoyerEnregistrement();
-            toast('Vidéo enregistrée : ' + nom);
+            toast('VidÃ©o enregistrÃ©e : ' + nom);
         };
 
         const piste = fluxEcran.getVideoTracks()[0];
@@ -465,7 +461,7 @@
     }
 
     // =========================================================
-    // PLEIN ÉCRAN
+    // PLEIN Ã‰CRAN
     // =========================================================
     function basculerPleinEcran() {
         const panel = document.getElementById('slidePanel');
@@ -474,7 +470,7 @@
     }
 
     // =========================================================
-    // DÉMARRAGE
+    // DÃ‰MARRAGE
     // =========================================================
     function demarrer() {
         let essais = 0;
@@ -497,7 +493,7 @@
 
             clearInterval(timer);
 
-            creerConsole();
+            initConsole();
             brancherRaccourcis();
 
             const actions = document.querySelector('.editor-actions');
@@ -518,8 +514,8 @@
                 const rec = document.createElement('button');
                 rec.type = 'button';
                 rec.className = 'btn-header-action';
-                rec.title = "Enregistrer l'écran";
-                rec.setAttribute('aria-label', "Enregistrer l'écran");
+                rec.title = "Enregistrer l'Ã©cran";
+                rec.setAttribute('aria-label', "Enregistrer l'Ã©cran");
                 rec.innerHTML = '<i class="fa-solid fa-circle-dot" aria-hidden="true"></i> Enregistrer';
                 rec.addEventListener('click', function () {
                     if (enregistreur) arreterEnregistrement();
@@ -546,11 +542,14 @@
 
             const enteteSlide = document.querySelector('.slide-header .header-actions');
             if (enteteSlide) {
-                const plein = bouton('fa-expand', 'Plein écran', basculerPleinEcran);
+                const plein = bouton('fa-expand', 'Plein Ã©cran', basculerPleinEcran);
                 enteteSlide.insertBefore(plein, enteteSlide.firstChild);
             }
         }, 250);
     }
+
+    window.VirtConsoleOuvrir = ouvrirConsole;
+    window.VirtConsoleFermer = fermerConsole;
 
     window.PcBoost = {
         proposer: proposer,

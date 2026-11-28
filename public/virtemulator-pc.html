@@ -193,6 +193,10 @@
                     <i class="fa-solid fa-folder"></i>
                     Folder
                 </button>
+                <button class="btn-header-action" id="btnConsole" title="Console d'erreurs">
+                    <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+                    Console
+                </button>
                 <button class="btn-header-action" id="btnExportCode" title="Télécharger">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                     Exporter
@@ -627,6 +631,29 @@
         <span class="fld-selection" id="fldSelection">Aucun fichier sélectionné</span>
         <button type="button" class="fld-btn-ouvrir" id="fldOuvrir" disabled>Ouvrir</button>
     </div>
+</div>
+
+<!-- ========================================= -->
+<!-- CONSOLE D'ERREURS (4e slide) -->
+<!-- ========================================= -->
+<div class="console-panel" id="consolePanel" role="dialog" aria-modal="true" aria-labelledby="consoleTitre">
+    <div class="fld-entete">
+        <div class="fld-id">
+            <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+            <div>
+                <h3 id="consoleTitre">Console</h3>
+                <small>Erreurs de l'aperçu</small>
+            </div>
+        </div>
+        <div class="console-outils">
+            <span class="console-compteur" id="consoleCompteur">0</span>
+            <button type="button" class="console-effacer" id="consoleEffacer">Effacer</button>
+            <button type="button" class="console-fermer" id="consoleFermer" aria-label="Fermer la console">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+    <div class="console-corps" id="consoleListe"></div>
 </div>
 
 <!-- Modale créer / renommer -->

@@ -2314,30 +2314,18 @@ body, html {
         height: auto;
         border-radius: 18px;
     }
-}
 
-/* =========================================
-   Folder / VirtIA à gauche quand l'aperçu est ouvert
-   ========================================= */
-@media (min-width: 900px) {
     body.pc-phone-ouvert .fld-panel,
     body.pc-phone-ouvert .ia-panel {
-        left: 10px;
-        right: auto;
         top: 10px;
         bottom: 10px;
+        right: 10px;
+        left: auto;
         width: 40vw;
         max-width: 40vw;
         height: auto;
     }
 
-    /* Fermé : glisse depuis la gauche */
-    body.pc-phone-ouvert .fld-panel:not(.ouvert),
-    body.pc-phone-ouvert .ia-panel:not(.ouvert) {
-        transform: translateX(calc(-100% - 20px));
-    }
-
-    /* Pas de voile : le téléphone reste visible et net */
     body.pc-phone-ouvert .fld-overlay,
     body.pc-phone-ouvert .ia-overlay {
         opacity: 0;
@@ -2354,3 +2342,87 @@ body, html {
 }
 
 .btn-header-action.rec-actif i { color: #fff !important; }
+
+/* =========================================
+   CONSOLE (4e slide)
+   ========================================= */
+.console-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.22, .8, .3, 1);
+    box-shadow: -8px 0 30px rgba(16, 24, 32, .12);
+}
+
+.console-panel.ouvert { transform: none; }
+
+.console-corps {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 14px;
+    background: #f7f9fa;
+}
+
+.console-vide { color: #7b8891; font-size: .8rem; padding: 10px 4px; }
+
+.console-ligne {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: .72rem;
+    padding: 6px 8px;
+    border-left: 3px solid #3a4650;
+    background: #fff;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #3F4C55;
+}
+
+.console-ligne.error { border-color: #c0392b; color: #8c2f27; }
+.console-ligne.warn { border-color: #D4AF37; color: #7a6416; }
+
+.console-outils { display: flex; align-items: center; gap: 6px; }
+
+.console-compteur {
+    background: #eef2f4;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: .68rem;
+    font-weight: 800;
+    color: #3F4C55;
+}
+
+.console-compteur.a-erreur { background: #8c2f27; color: #fff; }
+
+.console-effacer { background: none; border: none; color: #7b8891; font-size: .68rem; cursor: pointer; }
+.console-effacer:hover { color: #c0392b; }
+
+.console-fermer { background: none; border: none; color: #7b8891; font-size: .95rem; cursor: pointer; }
+.console-fermer:hover { color: #c0392b; }
+
+@media (min-width: 900px) {
+    .console-panel {
+        top: 5px;
+        bottom: 5px;
+        right: 5px;
+        width: 40vw;
+        max-width: 40vw;
+        border-radius: 23px;
+        transform: translateX(calc(100% + 20px));
+    }
+
+    body.pc-phone-ouvert .console-panel {
+        top: 10px;
+        bottom: 10px;
+        right: 10px;
+        border-radius: 18px;
+    }
+}

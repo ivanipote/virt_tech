@@ -122,12 +122,14 @@ document.addEventListener("DOMContentLoaded", function () {
         dernierFocus = document.activeElement;
         overlay.classList.add("ouvert");
         panel.classList.add("ouvert");
+        if (typeof window.MajClassePanneau === "function") window.MajClassePanneau();
         document.body.style.overflow = "hidden";
     }
 
     function fermerAssistant() {
         overlay.classList.remove("ouvert");
         panel.classList.remove("ouvert");
+        if (typeof window.MajClassePanneau === "function") window.MajClassePanneau();
         document.body.style.overflow = "";
         if (dernierFocus) dernierFocus.focus();
     }
