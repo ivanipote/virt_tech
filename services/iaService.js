@@ -143,24 +143,20 @@ async function demander(message, historique = [], contexte = "", mode = "lecture
 // ---------------------------------------------------------------------
 // Écriture en direct : la réponse est renvoyée morceau par morceau
 // ---------------------------------------------------------------------
-const INSTRUCTION_ECRITURE = `Mode édition ciblée : tu modifies UNIQUEMENT les parties concernées du fichier ouvert, sans jamais réécrire tout le fichier.
+const INSTRUCTION_ECRITURE = `Tu agis sur le projet VirtEmulator de l'utilisateur. Réponds UNIQUEMENT par un tableau JSON d'actions, sans aucun texte autour.
 
-Format obligatoire pour CHAQUE modification :
-<<<<<<< CHERCHER
-(extrait EXACT du fichier actuel, 1 à 15 lignes, tel quel, indentation comprise)
-=======
-(nouveau contenu qui remplace cet extrait)
->>>>>>> REMPLACER
+Actions possibles :
+- {"action":"dossier","chemin":"css"} → crée un dossier
+- {"action":"fichier","chemin":"js/app.js"} → crée un fichier vide
+- {"action":"ecrire","chemin":"css/style.css","contenu":"..."} → crée ou remplace le fichier avec ce contenu COMPLET
+- {"action":"supprimer","chemin":"vieux.txt"} → supprime un fichier ou un dossier
+- {"action":"renommer","ancien":"a.html","nouveau":"b.html"}
 
 Règles :
-- L'extrait CHERCHER doit exister à l'identique dans le fichier ; sinon la modification échoue.
-- Fais plusieurs blocs si nécessaire, chacun pour une partie différente.
-- Après les blocs, ajoute toujours :
-
-### RÉSUMÉ
-- une ligne courte par modification, en français (ex. « J'ai changé la couleur du bouton en bleu »).
-
-- Aucun autre texte avant les blocs.`;
+- JSON valide : guillemets doubles, virgules correctes, un seul tableau.
+- Le champ "contenu" contient le fichier entier, prêt à l'emploi (indentation comprise).
+- Ordre logique : dossiers, puis fichiers, puis contenus.
+- Après le tableau, ajoute une ligne « ### RÉSUMÉ » puis une ligne courte par action, en français.`;
 
 async function demanderFlux(message, historique = [], contexte = "", onDelta) {
     const cle = process.env.API_DEEPSEEK;

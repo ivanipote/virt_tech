@@ -74,6 +74,70 @@ document.addEventListener("DOMContentLoaded", function() {
         resoudre: function (base, href) { return resoudreChemin(base, href); },
         estMedia: function (chemin) { return estMedia(chemin); },
         ecrire: function (chemin, contenu) { ecrireFichier(chemin, contenu); },
+        dossier: function (chemin) {
+            const propre = String(chemin || '').replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+            if (!propre) return;
+
+            if (dossiers.indexOf(propre) === -1) dossiers.push(propre);
+            try { localStorage.setItem('virtemulator_dossiers', JSON.stringify(dossiers)); } catch (e) { /* plein */ }
+
+            rendreDossier();
+        },
+        supprimer: function (chemin) {
+            const propre = String(chemin || '').replace(/\\/g, '/').replace(/^\/+|\/+$/g, '');
+            if (!propre) return;
+
+            if (files[propre] !== undefined) {
+                supprimerFichier(propre);
+                return;
+            }
+
+            const prefixe = propre + '/';
+            Object.keys(files).forEach(function (c) {
+                if (c.indexOf(prefixe) === 0) delete files[c];
+            });
+
+            dossiers = dossiers.filter(function (d) {
+                return d !== propre && d.indexOf(prefixe) !== 0;
+            });
+
+            try { localStorage.setItem('virtemulator_dossiers', JSON.stringify(dossiers)); } catch (e) { /* plein */ }
+
+            sauvegarder();
+            mettreAJourOnglets();
+            rendreDossier();
+        },
+        renommer: function (ancien, nouveau) {
+            const a = String(ancien || '').replace(/\\/g, '/');
+            const n = String(nouveau || '').replace(/\\/g, '/');
+            if (!a || !n || a === n) return;
+
+            if (files[a] !== undefined) {
+                files[n] = files[a];
+                delete files[a];
+                if (activeFile === a) activeFile = n;
+            }
+
+            const prefixe = a + '/';
+            Object.keys(files).forEach(function (c) {
+                if (c.indexOf(prefixe) === 0) {
+                    files[n + '/' + c.slice(a.length + 1)] = files[c];
+                    delete files[c];
+                }
+            });
+
+            dossiers = dossiers.map(function (d) {
+                if (d === a) return n;
+                if (d.indexOf(prefixe) === 0) return n + d.slice(a.length);
+                return d;
+            });
+
+            try { localStorage.setItem('virtemulator_dossiers', JSON.stringify(dossiers)); } catch (e) { /* plein */ }
+
+            sauvegarder();
+            mettreAJourOnglets();
+            rendreDossier();
+        },
         importer: function (objets) {
             Object.keys(objets || {}).forEach(function (c) { files[c] = String(objets[c]); });
             sauvegarder();

@@ -1,10 +1,10 @@
-// --- virtia-chat.js ---
-// Moteur VirtIA (issu de la démo validée) + contexte projet.
+﻿// --- virtia-chat.js ---
+// Moteur VirtIA (issu de la dÃ©mo validÃ©e) + contexte projet.
 
 document.addEventListener("DOMContentLoaded", function () {
 
     // ===============================================================
-    // 1. ÉLÉMENTS
+    // 1. Ã‰LÃ‰MENTS
     // ===============================================================
     const overlay = document.getElementById("ia-overlay");
     const panel = document.getElementById("ia-panel");
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const politiqueRefuser = document.getElementById("politique-refuser");
 
     // ===============================================================
-    // 2. CONSTANTES & ÉTAT
+    // 2. CONSTANTES & Ã‰TAT
     // ===============================================================
     const CLE_CONV = "virttech_ia_conversation";
     const CLE_ID = "virttech_ia_conversation_id";
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         try {
             localStorage.setItem(CLE_CONSENT, JSON.stringify(consentement));
-        } catch (e) { /* stockage bloqué */ }
+        } catch (e) { /* stockage bloquÃ© */ }
     }
 
     function estSuspendu() {
@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
     btnRelire.addEventListener("click", ouvrirPolitique);
 
     // ===============================================================
-    // 6. RENDU DES RÉPONSES
+    // 6. RENDU DES RÃ‰PONSES
     // ===============================================================
     const MOTS_CLES = [
         "VirtTech by Ipote", "VirtEmulator", "TransformLink", "Virt_Dev", "VirtTech",
@@ -430,7 +430,7 @@ document.addEventListener("DOMContentLoaded", function () {
         like.type = "button";
         like.className = "ia-action ia-like" + (message.avis === 1 ? " actif" : "");
         like.dataset.message = message.id;
-        like.setAttribute("aria-label", "Réponse utile");
+        like.setAttribute("aria-label", "RÃ©ponse utile");
         like.setAttribute("aria-pressed", message.avis === 1 ? "true" : "false");
         like.innerHTML = '<i class="fa-' + (message.avis === 1 ? "solid" : "regular") + ' fa-thumbs-up"></i>';
 
@@ -438,7 +438,7 @@ document.addEventListener("DOMContentLoaded", function () {
         dislike.type = "button";
         dislike.className = "ia-action ia-dislike" + (message.avis === -1 ? " actif negatif" : "");
         dislike.dataset.message = message.id;
-        dislike.setAttribute("aria-label", "Réponse pas utile");
+        dislike.setAttribute("aria-label", "RÃ©ponse pas utile");
         dislike.setAttribute("aria-pressed", message.avis === -1 ? "true" : "false");
         dislike.innerHTML = '<i class="fa-' + (message.avis === -1 ? "solid" : "regular") + ' fa-thumbs-down"></i>';
 
@@ -480,7 +480,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Mode code (PC) : boutons « Appliquer » pour les fichiers proposés
+    // Mode code (PC) : boutons Â« Appliquer Â» pour les fichiers proposÃ©s
     function proposerFichiers(texte) {
         if (!window.VirtProjet || typeof window.VirtProjet.ecrire !== "function") return;
 
@@ -585,7 +585,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 continue;
             }
 
-            // Liste à puces
+            // Liste Ã  puces
             if (/^\s*[-*]\s+/.test(ligne)) {
                 const ul = document.createElement("ul");
                 while (i < lignes.length && /^\s*[-*]\s+/.test(lignes[i])) {
@@ -598,7 +598,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 continue;
             }
 
-            // Liste numérotée
+            // Liste numÃ©rotÃ©e
             if (/^\s*\d+[.)]\s+/.test(ligne)) {
                 const ol = document.createElement("ol");
                 while (i < lignes.length && /^\s*\d+[.)]\s+/.test(lignes[i])) {
@@ -667,7 +667,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const bouton = document.createElement("button");
         bouton.type = "button";
         bouton.className = "btn-reessayer";
-        bouton.textContent = "Réessayer";
+        bouton.textContent = "RÃ©essayer";
         bouton.dataset.question = question;
 
         bulle.append(tete, bouton);
@@ -719,10 +719,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const date = new Date(message.date || Date.now());
-        const contenu = "VirtIA — VirtTech by Ipote\n" +
+        const contenu = "VirtIA â€” VirtTech by Ipote\n" +
             date.toLocaleString("fr-FR") + "\n\n" +
             "Question :\n" + (question || "(non disponible)") + "\n\n" +
-            "Réponse :\n" + message.texte + "\n\n" +
+            "RÃ©ponse :\n" + message.texte + "\n\n" +
             "https://virttech.site\n";
 
         const blob = new Blob([contenu], { type: "text/plain;charset=utf-8" });
@@ -749,7 +749,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     input.addEventListener("keydown", function (e) {
         if (e.key !== "Enter") return;
-        if (e.ctrlKey || e.metaKey || e.shiftKey) return; // Ctrl + Entrée = nouvelle ligne
+        if (e.ctrlKey || e.metaKey || e.shiftKey) return; // Ctrl + EntrÃ©e = nouvelle ligne
         if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return; // mobile : nouvelle ligne
         e.preventDefault();
 
@@ -774,7 +774,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     : "Limite atteinte : l'assistant va se mettre en pause.";
                 alerte.hidden = false;
             }
-        } catch (e) { /* stockage bloqué */ }
+        } catch (e) { /* stockage bloquÃ© */ }
     }
 
     async function demanderIA(texte) {
@@ -804,7 +804,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ecriture.remove();
 
             if (!data.succes) {
-                ajouterErreur(data.message || "Je n'ai pas pu répondre. Réessaie dans un instant.", texte);
+                ajouterErreur(data.message || "Je n'ai pas pu rÃ©pondre. RÃ©essaie dans un instant.", texte);
                 return;
             }
 
@@ -824,7 +824,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (window.VIRTIA_MODE === "code") proposerFichiers(data.reponse);
         } catch (err) {
             ecriture.remove();
-            ajouterErreur("Connexion impossible. Vérifie ta connexion et réessaie.", texte);
+            ajouterErreur("Connexion impossible. VÃ©rifie ta connexion et rÃ©essaie.", texte);
         } finally {
             envoyer.disabled = false;
         }
@@ -866,7 +866,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ===============================================================
-    // ÉCRITURE EN DIRECT DANS LE FICHIER OUVERT (PC)
+    // Ã‰CRITURE EN DIRECT DANS LE FICHIER OUVERT (PC)
     // ===============================================================
     let modeEcriture = false;
     let ecritureEnCours = false;
@@ -885,8 +885,8 @@ document.addEventListener("DOMContentLoaded", function () {
             modeEcriture = !modeEcriture;
             btnEcrire.classList.toggle("actif", modeEcriture);
             btnEcrire.title = modeEcriture
-                ? "Écriture activée : clique pour désactiver"
-                : "Écrire dans le fichier ouvert";
+                ? "Ã‰criture activÃ©e : clique pour dÃ©sactiver"
+                : "Ã‰crire dans le fichier ouvert";
         });
     }
 
@@ -910,11 +910,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const fichier = window.VirtProjet.actif();
-        const editeur = window.VirtEditor;
-
-        avantEcriture = { chemin: fichier, contenu: window.VirtProjet.fichiers()[fichier] };
-
         input.value = "";
         ajusterHauteur();
         input.blur();
@@ -925,35 +920,73 @@ document.addEventListener("DOMContentLoaded", function () {
         ecritureEnCours = true;
         fluxControleur = new AbortController();
 
+        const attente = ajouterMessage("ia", "VirtIA agit sur le projet…");
+
         let tampon = "";
-        let offset = 0;
-        let appliquees = 0;
-        let echouees = 0;
 
-        const MODELE_BLOC = /<<<<<<< CHERCHER\r?\n([\s\S]*?)\r?\n=======\r?\n([\s\S]*?)\r?\n>>>>>>> REMPLACER/;
+        function extraireActions(txt) {
+            const debutTab = txt.indexOf("[");
+            if (debutTab < 0) return null;
 
-        function appliquerBlocs() {
-            while (true) {
-                const brut = tampon.slice(offset);
-                const mene = brut.replace(/^\s+/, "");
-                const m = mene.match(MODELE_BLOC);
-                if (!m) break;
+            let profondeur = 0;
+            let dansChaine = false;
+            let echappe = false;
 
-                const ancien = m[1];
-                const nouveau = m[2];
-                const index = editeur.getValue().indexOf(ancien);
+            for (let i = debutTab; i < txt.length; i++) {
+                const c = txt[i];
 
-                if (index >= 0) {
-                    const debutPos = editeur.posFromIndex(index);
-                    const finPos = editeur.posFromIndex(index + ancien.length);
-                    editeur.replaceRange(nouveau, debutPos, finPos);
-                    appliquees++;
-                } else {
-                    echouees++;
+                if (dansChaine) {
+                    if (echappe) { echappe = false; continue; }
+                    if (c === "\\") { echappe = true; continue; }
+                    if (c === '"') dansChaine = false;
+                    continue;
                 }
 
-                offset += (brut.length - mene.length) + m.index + m[0].length;
+                if (c === '"') { dansChaine = true; continue; }
+                if (c === "[") profondeur++;
+                else if (c === "]") {
+                    profondeur--;
+                    if (profondeur === 0) {
+                        try { return JSON.parse(txt.slice(debutTab, i + 1)); } catch (e) { return null; }
+                    }
+                }
             }
+
+            return null;
+        }
+
+        function executerAction(a) {
+            if (!a || typeof a !== "object") return false;
+
+            const action = String(a.action || "").toLowerCase();
+            const chemin = String(a.chemin || a.fichier || a.nom || "");
+
+            if (action === "dossier" || action === "creer_dossier") {
+                window.VirtProjet.dossier(chemin);
+                return true;
+            }
+
+            if (action === "fichier" || action === "creer_fichier") {
+                window.VirtProjet.ecrire(chemin, typeof a.contenu === "string" ? a.contenu : "");
+                return true;
+            }
+
+            if (action === "ecrire" || action === "modifier" || action === "ecriture") {
+                window.VirtProjet.ecrire(chemin, String(a.contenu || ""));
+                return true;
+            }
+
+            if (action === "supprimer" || action === "supprimer_fichier") {
+                window.VirtProjet.supprimer(chemin);
+                return true;
+            }
+
+            if (action === "renommer") {
+                window.VirtProjet.renommer(String(a.ancien || ""), String(a.nouveau || ""));
+                return true;
+            }
+
+            return false;
         }
 
         try {
@@ -967,36 +1000,96 @@ document.addEventListener("DOMContentLoaded", function () {
                 signal: fluxControleur.signal
             });
 
-            if (!reponse.ok || !reponse.body) throw new Error("Flux indisponible");
+            if (!reponse.ok || !reponse.body) {
+                const repli = await fetch("/api/ia", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        message: texte + "\n\nRéponds uniquement par un tableau JSON d'actions (dossier / fichier / ecrire / supprimer / renommer), puis ### RÉSUMÉ.",
+                        contexte: window.VirtContexte ? window.VirtContexte(texte) : "",
+                        mode: "lecture"
+                    }),
+                    signal: fluxControleur.signal
+                });
 
-            const lecteur = reponse.body.getReader();
-            const decodeur = new TextDecoder();
+                const data = await repli.json();
+                if (!data.succes) throw new Error(data.message || "Repli impossible");
 
-            while (true) {
-                const { done, value } = await lecteur.read();
-                if (done) break;
+                tampon = data.reponse || "";
+            } else {
+                const lecteur = reponse.body.getReader();
+                const decodeur = new TextDecoder();
+                let reste = "";
 
-                tampon += decodeur.decode(value, { stream: true });
-                appliquerBlocs();
+                while (true) {
+                    const { done, value } = await lecteur.read();
+                    if (done) break;
+
+                    reste += decodeur.decode(value, { stream: true });
+                    const lignes = reste.split("\n");
+                    reste = lignes.pop() || "";
+
+                    for (let i = 0; i < lignes.length; i++) {
+                        const ligne = lignes[i].trim();
+                        if (!ligne.startsWith("data:")) continue;
+
+                        const contenu = ligne.slice(5).trim();
+                        if (!contenu || contenu === "[DONE]") continue;
+
+                        try {
+                            const json = JSON.parse(contenu);
+                            if (json.delta) tampon += json.delta;
+                        } catch (e) { /* morceau partiel */ }
+                    }
+                }
             }
 
-            appliquerBlocs();
+            const actions = extraireActions(tampon);
+            let faites = 0;
 
-            const resume = tampon.match(/###\s*R[ÉE]SUM[ÉE]([\s\S]*)$/i);
-            if (resume && resume[1].trim()) {
-                ajouterMessage("ia", resume[1].trim());
+            if (actions && actions.length) {
+                actions.forEach(function (a) {
+                    try { if (executerAction(a)) faites++; } catch (e) { /* action ignorée */ }
+                });
+            }
+
+            // Repli : ancien format « blocs CHERCHER / REMPLACER »
+            if (faites === 0) {
+                const MODELE_BLOCS = /<{5,}\s*(?:CHERCHER|SEARCH)[^\n]*\n([\s\S]*?)\n={5,}\n([\s\S]*?)\n>{5,}\s*(?:REMPLACER|REPLACE)[^\n]*/gi;
+                let bloc;
+
+                while ((bloc = MODELE_BLOCS.exec(tampon)) !== null) {
+                    const valeur = editeur.getValue();
+                    const index = valeur.indexOf(bloc[1]);
+
+                    if (index >= 0) {
+                        editeur.replaceRange(bloc[2], editeur.posFromIndex(index), editeur.posFromIndex(index + bloc[1].length));
+                        faites++;
+                    }
+                }
+            }
+
+            attente.remove();
+
+            const parties = tampon.split(/###\s*R[ÉE]SUM[ÉE]/i);
+            const resume = parties[1];
+
+            if (resume && resume.trim()) {
+                ajouterMessage("ia", resume.trim());
+            } else if (faites > 0) {
+                ajouterMessage("ia", faites + " action(s) exécutée(s) sur le projet.");
+            } else {
+                ajouterMessage("ia", "Aucune action reconnue. Réponse reçue :\n\n" + tampon.slice(0, 900));
             }
 
             if (window.VirtSauver) window.VirtSauver();
 
             if (window.virtToast) {
-                if (appliquees > 0) {
-                    window.virtToast(appliquees + " modification(s) appliquée(s)" + (echouees ? " · " + echouees + " non trouvée(s)" : ""));
-                } else {
-                    window.virtToast("Aucune modification reconnue");
-                }
+                window.virtToast(faites > 0 ? faites + " action(s) exécutée(s)" : "Aucune action reconnue");
             }
         } catch (e) {
+            if (attente && attente.remove) attente.remove();
+
             if (e.name === "AbortError") {
                 if (window.virtToast) window.virtToast("Écriture arrêtée");
             } else if (window.virtToast) {
@@ -1049,7 +1142,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const simple = e.target.closest ? e.target.closest(".ia-plus-simple") : null;
         if (simple) {
-            envoyerMessage("Reformule ta dernière réponse plus simplement, pour un débutant.");
+            envoyerMessage("Reformule ta derniÃ¨re rÃ©ponse plus simplement, pour un dÃ©butant.");
             return;
         }
 
@@ -1080,7 +1173,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(code).then(function () {
                     const ancien = copier.innerHTML;
-                    copier.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Copié';
+                    copier.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> CopiÃ©';
                     setTimeout(function () { copier.innerHTML = ancien; }, 1600);
                 }).catch(function () {});
             }
@@ -1103,7 +1196,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             localStorage.removeItem(CLE_CONV);
             localStorage.removeItem(CLE_ID);
-        } catch (e) { /* stockage bloqué */ }
+        } catch (e) { /* stockage bloquÃ© */ }
         conversationId = lireConversationId();
 
         messages.querySelectorAll(".ia-message").forEach(function (b) { b.remove(); });
@@ -1132,10 +1225,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ===============================================================
-    // 11. DÉMARRAGE
+    // 11. DÃ‰MARRAGE
     // ===============================================================
     const heure = new Date().getHours();
-    bonjour.textContent = (heure < 12 ? "Bonjour" : heure < 18 ? "Bon après-midi" : "Bonsoir") + ", je suis VirtIA.";
+    bonjour.textContent = (heure < 12 ? "Bonjour" : heure < 18 ? "Bon aprÃ¨s-midi" : "Bonsoir") + ", je suis VirtIA.";
 
     majSuspendu();
     restaurerConversation();
