@@ -165,4 +165,8 @@ initDB().then(() => {
     app.listen(PORT, () => {
         console.log(`Le serveur VirtTech tourne sur http://localhost:${PORT}`);
     });
+
+    // Astuces de démarrage signées VirtTech (ajoutées une seule fois)
+    require('./services/astucesSeed').semer()
+        .catch((e) => console.error("[astuces] semis impossible :", e.message));
 });
