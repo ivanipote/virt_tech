@@ -8,6 +8,10 @@ const echange = require('../services/iaEchangeService');
 // ---------------------------------------------------------------------
 // Limites anti-abus (messages)
 // ---------------------------------------------------------------------
+// ⚠️ PENDANT LES TESTS : limites désactivées.
+// Remettre LIMITES_ACTIVES à true quand les tests sont terminés.
+const LIMITES_ACTIVES = false;
+
 const LIMITE_PAR_IP = 10;                 // messages
 const FENETRE_MS = 10 * 60 * 1000;        // par 10 minutes
 const PLAFOND_JOUR = 300;                 // au total, tous visiteurs confondus
@@ -24,6 +28,8 @@ let jourCourant = new Date().toISOString().slice(0, 10);
 let totalJour = 0;
 
 function autoriser(req) {
+    if (!LIMITES_ACTIVES) return { ok: true };
+
     const aujourdhui = new Date().toISOString().slice(0, 10);
     if (aujourdhui !== jourCourant) {
         jourCourant = aujourdhui;
@@ -145,6 +151,51 @@ router.post('/', async (req, res) => {
                 ? "L'assistant est momentanément indisponible. Réessaie dans un instant."
                 : error.message
         });
+    }
+});
+
+// ---------------------------------------------------------------------
+// POST /api/ia/flux  { message, historique } — écriture en direct (SSE)
+// ---------------------------------------------------------------------
+router.post('/flux', async (req, res) => {
+    try {
+        const message = typeof req.body.message === "string" ? req.body.message.trim() : "";
+
+        if (!message) {
+            return res.status(400).json({ succes: false, message: "Ton message est vide." });
+        }
+        if (message.length > 1000) {
+            return res.status(400).json({ succes: false, message: "Message trop long (1 000 caractères maximum)." });
+        }
+
+        const autorisation = autoriser(req);
+        if (!autorisation.ok) {
+            return res.status(429).json({ succes: false, message: autorisation.message });
+        }
+
+        const historique = nettoyerHistorique(req.body.historique);
+        const contexte = typeof req.body.contexte === "string" ? req.body.contexte.slice(0, 12000) : "";
+
+        res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+        res.setHeader("Cache-Control", "no-cache, no-transform");
+        res.setHeader("Connection", "keep-alive");
+        res.setHeader("X-Accel-Buffering", "no");
+        res.flushHeaders();
+
+        await service.demanderFlux(message, historique, contexte, function (delta) {
+            res.write("data: " + JSON.stringify({ delta: delta }) + "\n\n");
+        });
+
+        res.write("data: [DONE]\n\n");
+        res.end();
+    } catch (error) {
+        if (!res.headersSent) {
+            const status = error.status || 500;
+            res.status(status).json({ succes: false, message: "L'écriture a échoué." });
+            return;
+        }
+        res.write("data: " + JSON.stringify({ erreur: true }) + "\n\n");
+        res.end();
     }
 });
 

@@ -2451,3 +2451,39 @@ body, html {
 }
 
 .btn-retour-slide[hidden] { display: none; }
+
+    /* Écriture en direct (PC) */
+    .ia-ecrire {
+        flex: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 2px solid #dbe2e6;
+        background: #fff;
+        color: var(--metal-fonce);
+        font-size: .9rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .3s, color .3s, border-color .3s, transform .3s;
+        margin-bottom: 2px;
+    }
+    .ia-ecrire:hover { border-color: var(--or); color: var(--ombre); transform: translateY(-2px); }
+    .ia-ecrire.actif { background: var(--or); border-color: var(--or); color: var(--ombre); }
+
+/* =========================================
+   POLICE DU SLIDE IA (Space Grotesk)
+   ========================================= */
+.ia-panel,
+.ia-panel textarea,
+.ia-panel button,
+.ia-panel input {
+    font-family: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+.ia-entete h3 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+}

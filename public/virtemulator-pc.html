@@ -25,6 +25,9 @@
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 
 <!-- CSS VirtTech -->
@@ -582,6 +585,9 @@
 
     <form class="ia-pied" id="ia-form">
         <textarea id="ia-input" rows="1" placeholder="Écris ton message…" autocomplete="off" aria-label="Ton message"></textarea>
+        <button type="button" class="ia-ecrire" id="iaEcrire" title="Écrire dans le fichier ouvert" aria-label="Écrire dans le fichier ouvert">
+            <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
+        </button>
         <button type="submit" class="ia-envoyer" aria-label="Envoyer le message">
             <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
         </button>

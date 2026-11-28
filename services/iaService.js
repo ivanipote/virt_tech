@@ -140,4 +140,115 @@ async function demander(message, historique = [], contexte = "", mode = "lecture
     }
 }
 
-module.exports = { demander };
+// ---------------------------------------------------------------------
+// Écriture en direct : la réponse est renvoyée morceau par morceau
+// ---------------------------------------------------------------------
+const INSTRUCTION_ECRITURE = `Mode édition ciblée : tu modifies UNIQUEMENT les parties concernées du fichier ouvert, sans jamais réécrire tout le fichier.
+
+Format obligatoire pour CHAQUE modification :
+<<<<<<< CHERCHER
+(extrait EXACT du fichier actuel, 1 à 15 lignes, tel quel, indentation comprise)
+=======
+(nouveau contenu qui remplace cet extrait)
+>>>>>>> REMPLACER
+
+Règles :
+- L'extrait CHERCHER doit exister à l'identique dans le fichier ; sinon la modification échoue.
+- Fais plusieurs blocs si nécessaire, chacun pour une partie différente.
+- Après les blocs, ajoute toujours :
+
+### RÉSUMÉ
+- une ligne courte par modification, en français (ex. « J'ai changé la couleur du bouton en bleu »).
+
+- Aucun autre texte avant les blocs.`;
+
+async function demanderFlux(message, historique = [], contexte = "", onDelta) {
+    const cle = process.env.API_DEEPSEEK;
+    if (!cle) throw erreur(500, "L'assistant n'est pas configuré.");
+
+    const messages = [{ role: "system", content: PROMPT_SYSTEME }];
+
+    if (CONNAISSANCE) {
+        messages.push({
+            role: "system",
+            content: "Base de connaissances VirtTech (source de vérité) :\n\n" + CONNAISSANCE
+        });
+    }
+
+    messages.push({ role: "system", content: INSTRUCTION_ECRITURE });
+
+    if (contexte) {
+        messages.push({
+            role: "system",
+            content: "Fichier ouvert et projet de l'utilisateur :\n" + contexte
+        });
+    }
+
+    messages.push(...historique);
+    messages.push({ role: "user", content: message });
+
+    const controleur = new AbortController();
+    const minuteur = setTimeout(() => controleur.abort(), 90000);
+
+    try {
+        const reponse = await fetch(URL_API, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + cle
+            },
+            body: JSON.stringify({
+                model: MODELE,
+                messages: messages,
+                max_tokens: 4000,
+                temperature: 0.3,
+                stream: true
+            }),
+            signal: controleur.signal
+        });
+
+        if (!reponse.ok) {
+            const corps = await reponse.text().catch(() => "");
+            console.error("[ia] flux", reponse.status, corps.slice(0, 200));
+            throw erreur(reponse.status === 401 ? 500 : reponse.status, "L'assistant n'a pas pu écrire.");
+        }
+
+        const lecteur = reponse.body.getReader();
+        const decodeur = new TextDecoder();
+        let tampon = "";
+
+        while (true) {
+            const { done, value } = await lecteur.read();
+            if (done) break;
+
+            tampon += decodeur.decode(value, { stream: true });
+            const lignes = tampon.split("\n");
+            tampon = lignes.pop() || "";
+
+            for (let i = 0; i < lignes.length; i++) {
+                const ligne = lignes[i].trim();
+                if (!ligne.startsWith("data:")) continue;
+
+                const contenu = ligne.slice(5).trim();
+                if (!contenu || contenu === "[DONE]") continue;
+
+                try {
+                    const json = JSON.parse(contenu);
+                    const delta = json.choices && json.choices[0] && json.choices[0].delta;
+                    if (delta && typeof delta.content === "string" && delta.content) {
+                        onDelta(delta.content);
+                    }
+                } catch (e) { /* morceau incomplet, ignoré */ }
+            }
+        }
+
+        return { ok: true };
+    } catch (e) {
+        if (e.name === "AbortError") throw erreur(504, "L'écriture a été interrompue.");
+        throw e;
+    } finally {
+        clearTimeout(minuteur);
+    }
+}
+
+module.exports = { demander, demanderFlux };

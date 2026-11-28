@@ -752,7 +752,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (e.ctrlKey || e.metaKey || e.shiftKey) return; // Ctrl + Entrée = nouvelle ligne
         if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return; // mobile : nouvelle ligne
         e.preventDefault();
-        envoyerMessage(input.value);
+
+        if (typeof modeEcriture !== "undefined" && modeEcriture) ecrireEnDirect(input.value);
+        else envoyerMessage(input.value);
     });
 
     function compterEnvoi() {
@@ -863,9 +865,156 @@ document.addEventListener("DOMContentLoaded", function () {
         demanderIA(texte);
     }
 
+    // ===============================================================
+    // ÉCRITURE EN DIRECT DANS LE FICHIER OUVERT (PC)
+    // ===============================================================
+    let modeEcriture = false;
+    let ecritureEnCours = false;
+    let fluxControleur = null;
+    let avantEcriture = null;
+
+    const btnEcrire = document.getElementById("iaEcrire");
+
+    if (btnEcrire) {
+        btnEcrire.addEventListener("click", function () {
+            if (ecritureEnCours) {
+                if (fluxControleur) fluxControleur.abort();
+                return;
+            }
+
+            modeEcriture = !modeEcriture;
+            btnEcrire.classList.toggle("actif", modeEcriture);
+            btnEcrire.title = modeEcriture
+                ? "Écriture activée : clique pour désactiver"
+                : "Écrire dans le fichier ouvert";
+        });
+    }
+
+    async function ecrireEnDirect(texte) {
+        texte = String(texte || "").trim();
+        if (!texte) return;
+
+        if (!window.VirtProjet || !window.VirtEditor) {
+            ajouterMessage("ia", "L'écriture en direct n'est disponible que dans l'éditeur PC.");
+            return;
+        }
+
+        if (estSuspendu()) {
+            suspendu.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            return;
+        }
+
+        if (!aAccepte()) {
+            messageEnAttente = texte;
+            ouvrirPolitique();
+            return;
+        }
+
+        const fichier = window.VirtProjet.actif();
+        const editeur = window.VirtEditor;
+
+        avantEcriture = { chemin: fichier, contenu: window.VirtProjet.fichiers()[fichier] };
+
+        input.value = "";
+        ajusterHauteur();
+        input.blur();
+
+        ajouterMessage("moi", texte);
+        compterEnvoi();
+
+        ecritureEnCours = true;
+        fluxControleur = new AbortController();
+
+        let tampon = "";
+        let offset = 0;
+        let appliquees = 0;
+        let echouees = 0;
+
+        const MODELE_BLOC = /<<<<<<< CHERCHER\r?\n([\s\S]*?)\r?\n=======\r?\n([\s\S]*?)\r?\n>>>>>>> REMPLACER/;
+
+        function appliquerBlocs() {
+            while (true) {
+                const brut = tampon.slice(offset);
+                const mene = brut.replace(/^\s+/, "");
+                const m = mene.match(MODELE_BLOC);
+                if (!m) break;
+
+                const ancien = m[1];
+                const nouveau = m[2];
+                const index = editeur.getValue().indexOf(ancien);
+
+                if (index >= 0) {
+                    const debutPos = editeur.posFromIndex(index);
+                    const finPos = editeur.posFromIndex(index + ancien.length);
+                    editeur.replaceRange(nouveau, debutPos, finPos);
+                    appliquees++;
+                } else {
+                    echouees++;
+                }
+
+                offset += (brut.length - mene.length) + m.index + m[0].length;
+            }
+        }
+
+        try {
+            const reponse = await fetch("/api/ia/flux", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: texte,
+                    contexte: window.VirtContexte ? window.VirtContexte(texte) : ""
+                }),
+                signal: fluxControleur.signal
+            });
+
+            if (!reponse.ok || !reponse.body) throw new Error("Flux indisponible");
+
+            const lecteur = reponse.body.getReader();
+            const decodeur = new TextDecoder();
+
+            while (true) {
+                const { done, value } = await lecteur.read();
+                if (done) break;
+
+                tampon += decodeur.decode(value, { stream: true });
+                appliquerBlocs();
+            }
+
+            appliquerBlocs();
+
+            const resume = tampon.match(/###\s*R[ÉE]SUM[ÉE]([\s\S]*)$/i);
+            if (resume && resume[1].trim()) {
+                ajouterMessage("ia", resume[1].trim());
+            }
+
+            if (window.VirtSauver) window.VirtSauver();
+
+            if (window.virtToast) {
+                if (appliquees > 0) {
+                    window.virtToast(appliquees + " modification(s) appliquée(s)" + (echouees ? " · " + echouees + " non trouvée(s)" : ""));
+                } else {
+                    window.virtToast("Aucune modification reconnue");
+                }
+            }
+        } catch (e) {
+            if (e.name === "AbortError") {
+                if (window.virtToast) window.virtToast("Écriture arrêtée");
+            } else if (window.virtToast) {
+                window.virtToast("Écriture impossible");
+            }
+        } finally {
+            ecritureEnCours = false;
+            fluxControleur = null;
+            modeEcriture = false;
+            if (btnEcrire) btnEcrire.classList.remove("actif");
+        }
+    }
+
     form.addEventListener("submit", function (e) {
         e.preventDefault();
-        envoyerMessage(input.value);
+
+        if (modeEcriture) ecrireEnDirect(input.value);
+        else envoyerMessage(input.value);
     });
 
     // ===============================================================
