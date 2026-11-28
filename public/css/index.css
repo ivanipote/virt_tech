@@ -685,3 +685,65 @@ h2 {
 }
 
 .liens-nouveautes a:hover { color: var(--ombre); }
+
+/* =========================================
+   COMMUNAUTÉ
+   ========================================= */
+.communaute { margin: 44px 0 8px; }
+
+.intro-communaute {
+    color: var(--metal-fonce);
+    font-size: .95rem;
+    margin-bottom: 18px;
+}
+
+.reseaux { display: flex; flex-direction: column; gap: 12px; }
+
+.reseau {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid #e2e8ec;
+    border-radius: 14px;
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+
+.reseau:hover {
+    border-color: var(--or);
+    box-shadow: 0 10px 26px rgba(16, 24, 32, .08);
+    transform: translateY(-2px);
+}
+
+.reseau-icone {
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, .12);
+    border: 1px solid var(--or);
+    color: var(--or);
+    font-size: 1.05rem;
+}
+
+.reseau-texte { flex: 1; min-width: 0; }
+.reseau-texte strong { display: block; color: var(--ombre); font-size: .95rem; }
+.reseau-texte small { display: block; color: var(--metal-fonce); font-size: .8rem; margin-top: 2px; line-height: 1.45; }
+
+.reseau-fleche { color: #b7c2ca; font-size: .8rem; transition: color .2s, transform .2s; }
+.reseau:hover .reseau-fleche { color: var(--or); transform: translateX(3px); }
+
+.communaute-note {
+    margin-top: 18px;
+    font-size: .82rem;
+    color: var(--metal-fonce);
+}
+
+.communaute-note i { color: var(--or); margin-right: 4px; }
+.communaute-note a { color: var(--ombre); font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--or); }
