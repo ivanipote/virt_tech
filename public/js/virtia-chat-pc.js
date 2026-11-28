@@ -890,6 +890,63 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Lecture propre d'un flux SSE : ne garde que le texte des deltas
+    async function lireFlux(reponse) {
+        const lecteur = reponse.body.getReader();
+        const decodeur = new TextDecoder();
+        let texte = "";
+        let reste = "";
+
+        while (true) {
+            const { done, value } = await lecteur.read();
+            if (done) break;
+
+            reste += decodeur.decode(value, { stream: true });
+            const lignes = reste.split("\n");
+            reste = lignes.pop() || "";
+
+            for (let i = 0; i < lignes.length; i++) {
+                const ligne = lignes[i].trim();
+                if (!ligne.startsWith("data:")) continue;
+
+                const contenu = ligne.slice(5).trim();
+                if (!contenu || contenu === "[DONE]") continue;
+
+                try {
+                    const json = JSON.parse(contenu);
+                    const delta = json.delta ||
+                        (json.choices && json.choices[0] && json.choices[0].delta && json.choices[0].delta.content);
+                    if (delta) texte += delta;
+                } catch (e) { /* morceau partiel, ignoré */ }
+            }
+        }
+
+        return texte;
+    }
+
+    // Filet de sécurité : si du transport SSE a fuité dans le texte
+    function nettoyerSSE(texte) {
+        if (texte.indexOf('data: {"delta"') === -1) return texte;
+
+        let sortie = "";
+
+        texte.split("\n").forEach(function (ligne) {
+            const l = ligne.trim();
+            if (!l.startsWith("data:")) return;
+
+            const contenu = l.slice(5).trim();
+            if (!contenu || contenu === "[DONE]") return;
+
+            try {
+                const json = JSON.parse(contenu);
+                const delta = json.delta ||
+                    (json.choices && json.choices[0] && json.choices[0].delta && json.choices[0].delta.content);
+                if (delta) sortie += delta;
+            } catch (e) { /* ignoré */ }
+        });
+
+        return sortie || texte;
+    }
     async function ecrireEnDirect(texte) {
         texte = String(texte || "").trim();
         if (!texte) return;
@@ -1017,32 +1074,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 tampon = data.reponse || "";
             } else {
-                const lecteur = reponse.body.getReader();
-                const decodeur = new TextDecoder();
-                let reste = "";
-
-                while (true) {
-                    const { done, value } = await lecteur.read();
-                    if (done) break;
-
-                    reste += decodeur.decode(value, { stream: true });
-                    const lignes = reste.split("\n");
-                    reste = lignes.pop() || "";
-
-                    for (let i = 0; i < lignes.length; i++) {
-                        const ligne = lignes[i].trim();
-                        if (!ligne.startsWith("data:")) continue;
-
-                        const contenu = ligne.slice(5).trim();
-                        if (!contenu || contenu === "[DONE]") continue;
-
-                        try {
-                            const json = JSON.parse(contenu);
-                            if (json.delta) tampon += json.delta;
-                        } catch (e) { /* morceau partiel */ }
-                    }
-                }
+                tampon = await lireFlux(reponse);
             }
+
+            tampon = nettoyerSSE(tampon);
 
             const actions = extraireActions(tampon);
             let faites = 0;
