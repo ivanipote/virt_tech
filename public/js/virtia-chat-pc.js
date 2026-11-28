@@ -947,6 +947,92 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return sortie || texte;
     }
+    // Récap des actions (variante A : liste sobre)
+    function iconeAction(action) {
+        const a = String(action || "").toLowerCase();
+        if (a === "dossier" || a === "creer_dossier") return "fa-folder-plus";
+        if (a === "fichier" || a === "creer_fichier") return "fa-file-circle-plus";
+        if (a === "ecrire" || a === "modifier" || a === "ecriture") return "fa-pen-nib";
+        if (a === "supprimer") return "fa-trash-can";
+        if (a === "renommer") return "fa-right-left";
+        return "fa-circle-check";
+    }
+
+    function libelleAction(a) {
+        const action = String(a.action || "").toLowerCase();
+
+        if (action === "dossier" || action === "creer_dossier") return "Dossier créé :";
+        if (action === "fichier" || action === "creer_fichier") return "Fichier créé :";
+        if (action === "ecrire" || action === "modifier" || action === "ecriture") {
+            const lignes = String(a.contenu || "").split("\n").length;
+            return "Contenu écrit (" + lignes + " lignes) :";
+        }
+        if (action === "supprimer") return "Supprimé :";
+        if (action === "renommer") return "Renommé :";
+        return "Action :";
+    }
+
+    function creerCode(texte) {
+        const code = document.createElement("code");
+        code.textContent = texte;
+        return code;
+    }
+
+    function ajouterRecap(actions, resume) {
+        if (vide) vide.hidden = true;
+
+        const bulle = document.createElement("div");
+        bulle.className = "ia-message bot";
+
+        const conteneur = document.createElement("div");
+        conteneur.className = "ia-reponse";
+
+        if (resume) {
+            const p = document.createElement("p");
+            p.textContent = resume;
+            conteneur.appendChild(p);
+        }
+
+        const bloc = document.createElement("div");
+        bloc.className = "recap-actions";
+
+        const titre = document.createElement("p");
+        titre.className = "recap-titre";
+        titre.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> ' +
+            actions.length + (actions.length > 1 ? " actions effectuées" : " action effectuée");
+
+        const liste = document.createElement("ul");
+        liste.className = "recap-liste";
+
+        actions.forEach(function (a) {
+            const li = document.createElement("li");
+
+            const icone = document.createElement("i");
+            icone.className = "fa-solid " + iconeAction(a.action);
+            icone.setAttribute("aria-hidden", "true");
+
+            const texte = document.createElement("span");
+            texte.appendChild(document.createTextNode(libelleAction(a) + " "));
+
+            if (String(a.action).toLowerCase() === "renommer") {
+                texte.appendChild(creerCode(a.ancien || ""));
+                texte.appendChild(document.createTextNode(" → "));
+                texte.appendChild(creerCode(a.nouveau || ""));
+            } else {
+                texte.appendChild(creerCode(a.chemin || a.fichier || a.nom || ""));
+            }
+
+            li.append(icone, texte);
+            liste.appendChild(li);
+        });
+
+        bloc.append(titre, liste);
+        conteneur.appendChild(bloc);
+        bulle.appendChild(conteneur);
+        messages.appendChild(bulle);
+        defilerEnBas();
+    }
+
     async function ecrireEnDirect(texte) {
         texte = String(texte || "").trim();
         if (!texte) return;
@@ -1082,9 +1168,16 @@ document.addEventListener("DOMContentLoaded", function () {
             const actions = extraireActions(tampon);
             let faites = 0;
 
+            const executees = [];
+
             if (actions && actions.length) {
                 actions.forEach(function (a) {
-                    try { if (executerAction(a)) faites++; } catch (e) { /* action ignorée */ }
+                    try {
+                        if (executerAction(a)) {
+                            faites++;
+                            executees.push(a);
+                        }
+                    } catch (e) { /* action ignorée */ }
                 });
             }
 
@@ -1107,12 +1200,14 @@ document.addEventListener("DOMContentLoaded", function () {
             attente.remove();
 
             const parties = tampon.split(/###\s*R[ÉE]SUM[ÉE]/i);
-            const resume = parties[1];
+            const resume = parties[1] ? parties[1].trim() : "";
 
-            if (resume && resume.trim()) {
-                ajouterMessage("ia", resume.trim());
+            if (faites > 0 && executees.length) {
+                ajouterRecap(executees, resume);
             } else if (faites > 0) {
-                ajouterMessage("ia", faites + " action(s) exécutée(s) sur le projet.");
+                ajouterMessage("ia", faites + " modification(s) appliquée(s).");
+            } else if (resume) {
+                ajouterMessage("ia", resume);
             } else {
                 ajouterMessage("ia", "Aucune action reconnue. Réponse reçue :\n\n" + tampon.slice(0, 900));
             }

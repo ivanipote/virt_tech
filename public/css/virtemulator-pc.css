@@ -2487,3 +2487,46 @@ body, html {
     letter-spacing: -0.02em;
     font-weight: 700;
 }
+
+/* =========================================
+   RÉCAP DES ACTIONS VIRTIA (variante A)
+   ========================================= */
+.recap-actions { margin-top: 10px; }
+
+.recap-titre {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: #3F4C55;
+    margin: 0 0 10px;
+}
+
+.recap-titre i { color: #2e7d32; }
+
+.recap-liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.recap-liste li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: .82rem;
+    color: #3F4C55;
+}
+
+.recap-liste i { width: 18px; text-align: center; color: #5b6b76; }
+
+.recap-liste code {
+    background: #eef2f4;
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: .76rem;
+}
