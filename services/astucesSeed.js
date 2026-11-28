@@ -143,7 +143,7 @@ const ASTUCES = [
     },
     {
         titre: "Indice et exposant",
-        contenu: "sub place le texte en indice (H₂O), sup en exposant (m²).",
+        contenu: "sub place le texte en indice (H2O), sup en exposant (m²).",
         langage: "HTML", niveau: "Débutant",
         code: `<p>H<sub>2</sub>O et m<sup>2</sup></p>`
     },
@@ -609,7 +609,7 @@ function bonjour() {
         contenu: "section regroupe un contenu lié, avec souvent un titre. Elle structure la page.",
         langage: "HTML", niveau: "Débutant",
         code: `<section>
-  <h2>À propos</h2>
+  <h2>ì propos</h2>
   <p>...</p>
 </section>`
     },
@@ -627,7 +627,7 @@ function bonjour() {
         contenu: "aside contient un contenu secondaire : pub, liens annexes, informations complémentaires.",
         langage: "HTML", niveau: "Intermédiaire",
         code: `<aside>
-  <h3>À lire aussi</h3>
+  <h3>ì lire aussi</h3>
 </aside>`
     },
     {
@@ -737,7 +737,7 @@ function bonjour() {
   </header>
   <main>
     <section>
-      <h2>À propos</h2>
+      <h2>ì propos</h2>
       <p>Je suis <strong>débutant</strong> et j'apprends le HTML.</p>
     </section>
     <section>
@@ -756,15 +756,28 @@ function bonjour() {
     }
 ];
 
-// Répare les accents abîmés lors d'un copier-coller (Ã© -> é)
+// Répare les accents abîmés lors d'un copier-coller (Ò© -> é)
+const { ASTUCES_3 } = require('./astucesSeed3');
+const TOUTES = ASTUCES.concat(ASTUCES_3);
+
 function textePropre(valeur) {
     let v = String(valeur || '');
 
-    if (/Ã|Â/.test(v)) {
-        try { v = Buffer.from(v, 'latin1').toString('utf8'); } catch (e) { /* inchangé */ }
+    for (let i = 0; i < 3; i++) {
+        if (!/[\u00C3\u00C2]/.test(v)) break;
+        try { v = Buffer.from(v, 'latin1').toString('utf8'); } catch (e) { break; }
     }
 
     return v.normalize('NFC');
+}
+
+// Force un niveau valide accepté par la base
+function niveauPropre(valeur) {
+    const s = textePropre(valeur).toLowerCase();
+
+    if (s.indexOf('inter') !== -1) return 'Interm\u00E9diaire';
+    if (s.indexOf('avan') !== -1) return 'Avanc\u00E9';
+    return 'D\u00E9butant';
 }
 
 async function semer() {
@@ -773,8 +786,8 @@ async function semer() {
 
     let ajoutees = 0;
 
-    for (let i = 0; i < ASTUCES.length; i++) {
-        const a = ASTUCES[i];
+    for (let i = 0; i < TOUTES.length; i++) {
+        const a = TOUTES[i];
         const titre = textePropre(a.titre);
         if (titres.has(titre)) continue;
 
@@ -783,7 +796,7 @@ async function semer() {
         await pool.query(
             `INSERT INTO astuces (auteur, titre, contenu, langage, niveau, code, owner_token)
              VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-            [AUTEUR, titre, textePropre(a.contenu), textePropre(a.langage), textePropre(a.niveau), a.code ? textePropre(a.code) : null, token]
+            [AUTEUR, titre, textePropre(a.contenu), textePropre(a.langage), niveauPropre(a.niveau), a.code ? textePropre(a.code) : null, token]
         );
 
         titres.add(titre);

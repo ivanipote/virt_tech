@@ -1,10 +1,10 @@
-﻿// --- virtia-chat.js ---
-// Moteur VirtIA (issu de la dÃ©mo validÃ©e) + contexte projet.
+// --- virtia-chat.js ---
+// Moteur VirtIA (issu de la démo validée) + contexte projet.
 
 document.addEventListener("DOMContentLoaded", function () {
 
     // ===============================================================
-    // 1. Ã‰LÃ‰MENTS
+    // 1. �0L�0MENTS
     // ===============================================================
     const overlay = document.getElementById("ia-overlay");
     const panel = document.getElementById("ia-panel");
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const politiqueRefuser = document.getElementById("politique-refuser");
 
     // ===============================================================
-    // 2. CONSTANTES & Ã‰TAT
+    // 2. CONSTANTES & �0TAT
     // ===============================================================
     const CLE_CONV = "virttech_ia_conversation";
     const CLE_ID = "virttech_ia_conversation_id";
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         try {
             localStorage.setItem(CLE_CONSENT, JSON.stringify(consentement));
-        } catch (e) { /* stockage bloquÃ© */ }
+        } catch (e) { /* stockage bloqué */ }
     }
 
     function estSuspendu() {
@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
     btnRelire.addEventListener("click", ouvrirPolitique);
 
     // ===============================================================
-    // 6. RENDU DES RÃ‰PONSES
+    // 6. RENDU DES R�0PONSES
     // ===============================================================
     const MOTS_CLES = [
         "VirtTech by Ipote", "VirtEmulator", "TransformLink", "Virt_Dev", "VirtTech",
@@ -430,7 +430,7 @@ document.addEventListener("DOMContentLoaded", function () {
         like.type = "button";
         like.className = "ia-action ia-like" + (message.avis === 1 ? " actif" : "");
         like.dataset.message = message.id;
-        like.setAttribute("aria-label", "RÃ©ponse utile");
+        like.setAttribute("aria-label", "Réponse utile");
         like.setAttribute("aria-pressed", message.avis === 1 ? "true" : "false");
         like.innerHTML = '<i class="fa-' + (message.avis === 1 ? "solid" : "regular") + ' fa-thumbs-up"></i>';
 
@@ -438,7 +438,7 @@ document.addEventListener("DOMContentLoaded", function () {
         dislike.type = "button";
         dislike.className = "ia-action ia-dislike" + (message.avis === -1 ? " actif negatif" : "");
         dislike.dataset.message = message.id;
-        dislike.setAttribute("aria-label", "RÃ©ponse pas utile");
+        dislike.setAttribute("aria-label", "Réponse pas utile");
         dislike.setAttribute("aria-pressed", message.avis === -1 ? "true" : "false");
         dislike.innerHTML = '<i class="fa-' + (message.avis === -1 ? "solid" : "regular") + ' fa-thumbs-down"></i>';
 
@@ -480,7 +480,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Mode code (PC) : boutons Â« Appliquer Â» pour les fichiers proposÃ©s
+    // Mode code (PC) : boutons « Appliquer » pour les fichiers proposés
     function proposerFichiers(texte) {
         if (!window.VirtProjet || typeof window.VirtProjet.ecrire !== "function") return;
 
@@ -585,7 +585,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 continue;
             }
 
-            // Liste Ã  puces
+            // Liste à puces
             if (/^\s*[-*]\s+/.test(ligne)) {
                 const ul = document.createElement("ul");
                 while (i < lignes.length && /^\s*[-*]\s+/.test(lignes[i])) {
@@ -598,7 +598,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 continue;
             }
 
-            // Liste numÃ©rotÃ©e
+            // Liste numérotée
             if (/^\s*\d+[.)]\s+/.test(ligne)) {
                 const ol = document.createElement("ol");
                 while (i < lignes.length && /^\s*\d+[.)]\s+/.test(lignes[i])) {
@@ -667,7 +667,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const bouton = document.createElement("button");
         bouton.type = "button";
         bouton.className = "btn-reessayer";
-        bouton.textContent = "RÃ©essayer";
+        bouton.textContent = "Réessayer";
         bouton.dataset.question = question;
 
         bulle.append(tete, bouton);
@@ -719,10 +719,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const date = new Date(message.date || Date.now());
-        const contenu = "VirtIA â€” VirtTech by Ipote\n" +
+        const contenu = "VirtIA � VirtTech by Ipote\n" +
             date.toLocaleString("fr-FR") + "\n\n" +
             "Question :\n" + (question || "(non disponible)") + "\n\n" +
-            "RÃ©ponse :\n" + message.texte + "\n\n" +
+            "Réponse :\n" + message.texte + "\n\n" +
             "https://virttech.site\n";
 
         const blob = new Blob([contenu], { type: "text/plain;charset=utf-8" });
@@ -749,7 +749,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     input.addEventListener("keydown", function (e) {
         if (e.key !== "Enter") return;
-        if (e.ctrlKey || e.metaKey || e.shiftKey) return; // Ctrl + EntrÃ©e = nouvelle ligne
+        if (e.ctrlKey || e.metaKey || e.shiftKey) return; // Ctrl + Entrée = nouvelle ligne
         if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return; // mobile : nouvelle ligne
         e.preventDefault();
 
@@ -774,11 +774,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     : "Limite atteinte : l'assistant va se mettre en pause.";
                 alerte.hidden = false;
             }
-        } catch (e) { /* stockage bloquÃ© */ }
+        } catch (e) { /* stockage bloqué */ }
     }
 
     // ===============================================================
-    // APPLICATION AUTOMATIQUE DES ACTIONS (plus de bouton « Appliquer »)
+    // APPLICATION AUTOMATIQUE DES ACTIONS (plus de bouton � Appliquer �)
     // ===============================================================
     function prendreSnapshot() {
         if (!window.VirtProjet) return null;
@@ -921,7 +921,7 @@ document.addEventListener("DOMContentLoaded", function () {
         actions.forEach(function (a) {
             try {
                 if (executerActionAuto(a)) faites.push(a);
-            } catch (e) { /* action ignorée */ }
+            } catch (e) { /* action ignor�e */ }
         });
 
         if (window.VirtSauver) window.VirtSauver();
@@ -956,7 +956,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ecriture.remove();
 
             if (!data.succes) {
-                ajouterErreur(data.message || "Je n'ai pas pu rÃ©pondre. RÃ©essaie dans un instant.", texte);
+                ajouterErreur(data.message || "Je n'ai pas pu répondre. Réessaie dans un instant.", texte);
                 return;
             }
 
@@ -979,14 +979,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             if (resultat && resultat.actions.length) {
-                const resume = (String(data.reponse).split(/###\s*R[ÉE]SUM[ÉE]/i)[1] || "").trim();
+                const resume = (String(data.reponse).split(/###\s*R[�E]SUM[�E]/i)[1] || "").trim();
                 ajouterRecap(resultat.actions, resume, resultat.snapshot);
             } else {
                 ajouterReponse(data.reponse, true, msg);
             }
         } catch (err) {
             ecriture.remove();
-            ajouterErreur("Connexion impossible. VÃ©rifie ta connexion et rÃ©essaie.", texte);
+            ajouterErreur("Connexion impossible. Vérifie ta connexion et réessaie.", texte);
         } finally {
             envoyer.disabled = false;
         }
@@ -1028,7 +1028,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ===============================================================
-    // Ã‰CRITURE EN DIRECT DANS LE FICHIER OUVERT (PC)
+    // �0CRITURE EN DIRECT DANS LE FICHIER OUVERT (PC)
     // ===============================================================
     let modeEcriture = false;
     let ecritureEnCours = false;
@@ -1047,8 +1047,8 @@ document.addEventListener("DOMContentLoaded", function () {
             modeEcriture = !modeEcriture;
             btnEcrire.classList.toggle("actif", modeEcriture);
             btnEcrire.title = modeEcriture
-                ? "Ã‰criture activÃ©e : clique pour dÃ©sactiver"
-                : "Ã‰crire dans le fichier ouvert";
+                ? "�0criture activée : clique pour désactiver"
+                : "�0crire dans le fichier ouvert";
         });
     }
 
@@ -1079,14 +1079,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     const delta = json.delta ||
                         (json.choices && json.choices[0] && json.choices[0].delta && json.choices[0].delta.content);
                     if (delta) texte += delta;
-                } catch (e) { /* morceau partiel, ignoré */ }
+                } catch (e) { /* morceau partiel, ignor� */ }
             }
         }
 
         return texte;
     }
 
-    // Filet de sécurité : si du transport SSE a fuité dans le texte
+    // Filet de s�curit� : si du transport SSE a fuit� dans le texte
     function nettoyerSSE(texte) {
         if (texte.indexOf('data: {"delta"') === -1) return texte;
 
@@ -1104,7 +1104,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const delta = json.delta ||
                     (json.choices && json.choices[0] && json.choices[0].delta && json.choices[0].delta.content);
                 if (delta) sortie += delta;
-            } catch (e) { /* ignoré */ }
+            } catch (e) { /* ignor� */ }
         });
 
         return sortie || texte;
@@ -1114,7 +1114,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return String(texte).replace(/`([^`\n]+)`/g, "**$1**");
     }
 
-    // Rendu structuré : paragraphes + listes à puces / numérotées
+    // Rendu structur� : paragraphes + listes � puces / num�rot�es
     function remplirBlocs(conteneur, texte) {
         const lignes = String(texte || "").replace(/\r\n/g, "\n").split("\n");
         let i = 0;
@@ -1163,7 +1163,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Récap des actions (variante A : liste sobre)
+    // R�cap des actions (variante A : liste sobre)
     function iconeAction(action) {
         const a = String(action || "").toLowerCase();
         if (a === "dossier" || a === "creer_dossier") return "fa-folder-plus";
@@ -1177,19 +1177,19 @@ document.addEventListener("DOMContentLoaded", function () {
     function libelleAction(a) {
         const action = String(a.action || "").toLowerCase();
 
-        if (action === "dossier" || action === "creer_dossier") return "Dossier créé :";
-        if (action === "fichier" || action === "creer_fichier") return "Fichier créé :";
+        if (action === "dossier" || action === "creer_dossier") return "Dossier cr�� :";
+        if (action === "fichier" || action === "creer_fichier") return "Fichier cr�� :";
         if (action === "ecrire" || action === "modifier" || action === "ecriture") {
             const lignes = String(a.contenu || "").split("\n").length;
-            return "Contenu écrit (" + lignes + " lignes) :";
+            return "Contenu �crit (" + lignes + " lignes) :";
         }
         if (action === "modifier" || action === "lignes") {
             const d = a.debut || "?";
             const f = a.fin || d;
-            return (String(d) === String(f) ? "Ligne " + d : "Lignes " + d + "–" + f) + " modifiée(s) :";
+            return (String(d) === String(f) ? "Ligne " + d : "Lignes " + d + "" + f) + " modifi�e(s) :";
         }
-        if (action === "supprimer") return "Supprimé :";
-        if (action === "renommer") return "Renommé :";
+        if (action === "supprimer") return "Supprim� :";
+        if (action === "renommer") return "Renomm� :";
         return "Action :";
     }
 
@@ -1221,7 +1221,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const titre = document.createElement("p");
         titre.className = "recap-titre";
         titre.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i> ' +
-            actions.length + (actions.length > 1 ? " actions effectuées" : " action effectuée");
+            actions.length + (actions.length > 1 ? " actions effectu�es" : " action effectu�e");
 
         const liste = document.createElement("ul");
         liste.className = "recap-liste";
@@ -1238,7 +1238,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (String(a.action).toLowerCase() === "renommer") {
                 texte.appendChild(creerCode(a.ancien || ""));
-                texte.appendChild(document.createTextNode(" → "));
+                texte.appendChild(document.createTextNode(" � "));
                 texte.appendChild(creerCode(a.nouveau || ""));
             } else {
                 texte.appendChild(creerCode(a.chemin || a.fichier || a.nom || ""));
@@ -1267,7 +1267,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 if (bulle && bulle.remove) bulle.remove();
-                if (window.virtToast) window.virtToast("Modifications annulées");
+                if (window.virtToast) window.virtToast("Modifications annul�es");
             });
             bloc.appendChild(annuler);
         }
@@ -1283,7 +1283,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!texte) return;
 
         if (!window.VirtProjet || !window.VirtEditor) {
-            ajouterMessage("ia", "L'écriture en direct n'est disponible que dans l'éditeur PC.");
+            ajouterMessage("ia", "L'�criture en direct n'est disponible que dans l'�diteur PC.");
             return;
         }
 
@@ -1308,7 +1308,7 @@ document.addEventListener("DOMContentLoaded", function () {
         ecritureEnCours = true;
         fluxControleur = new AbortController();
 
-        const attente = ajouterMessage("ia", "VirtIA agit sur le projet…");
+        const attente = ajouterMessage("ia", "VirtIA agit sur le projet&");
 
         let tampon = "";
 
@@ -1362,7 +1362,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const debut = parseInt(a.debut, 10);
             const fin = parseInt(a.fin, 10);
 
-            // 1. Cible exacte par numéros de ligne, vérifiée par le contenu
+            // 1. Cible exacte par num�ros de ligne, v�rifi�e par le contenu
             if (Number.isInteger(debut) && Number.isInteger(fin) && debut >= 1 && fin >= debut) {
                 const finLigne = fin - 1;
 
@@ -1403,7 +1403,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const depuis = ed.getCursor("from");
                 const jusqua = ed.getCursor("to");
 
-                contexte += "\n\n--- SÉLECTION ACTIVE (lignes " + (depuis.line + 1) + " à " + (jusqua.line + 1) + ") ---\n" + selection;
+                contexte += "\n\n--- S�LECTION ACTIVE (lignes " + (depuis.line + 1) + " � " + (jusqua.line + 1) + ") ---\n" + selection;
             }
 
             return contexte;
@@ -1463,7 +1463,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        message: texte + "\n\nRéponds uniquement par un tableau JSON d'actions (dossier / fichier / ecrire / supprimer / renommer), puis ### RÉSUMÉ.",
+                        message: texte + "\n\nR�ponds uniquement par un tableau JSON d'actions (dossier / fichier / ecrire / supprimer / renommer), puis ### R�SUM�.",
                         contexte: contexteSelection(texte),
                         mode: "lecture"
                     }),
@@ -1492,11 +1492,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             faites++;
                             executees.push(a);
                         }
-                    } catch (e) { /* action ignorée */ }
+                    } catch (e) { /* action ignor�e */ }
                 });
             }
 
-            // Repli : ancien format « blocs CHERCHER / REMPLACER »
+            // Repli : ancien format � blocs CHERCHER / REMPLACER �
             if (faites === 0) {
                 const MODELE_BLOCS = /<{5,}\s*(?:CHERCHER|SEARCH)[^\n]*\n([\s\S]*?)\n={5,}\n([\s\S]*?)\n>{5,}\s*(?:REMPLACER|REPLACE)[^\n]*/gi;
                 let bloc;
@@ -1514,13 +1514,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             attente.remove();
 
-            const parties = tampon.split(/###\s*R[ÉE]SUM[ÉE]/i);
+            const parties = tampon.split(/###\s*R[�E]SUM[�E]/i);
             const resume = parties[1] ? parties[1].trim() : "";
 
             if (faites > 0 && executees.length) {
                 ajouterRecap(executees, resume);
             } else if (faites > 0) {
-                ajouterMessage("ia", faites + " modification(s) appliquée(s).");
+                ajouterMessage("ia", faites + " modification(s) appliqu�e(s).");
             } else if (resume) {
                 ajouterMessage("ia", resume);
             } else {
@@ -1530,15 +1530,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (window.VirtSauver) window.VirtSauver();
 
             if (window.virtToast) {
-                window.virtToast(faites > 0 ? faites + " action(s) exécutée(s)" : "Aucune action reconnue");
+                window.virtToast(faites > 0 ? faites + " action(s) ex�cut�e(s)" : "Aucune action reconnue");
             }
         } catch (e) {
             if (attente && attente.remove) attente.remove();
 
             if (e.name === "AbortError") {
-                if (window.virtToast) window.virtToast("Écriture arrêtée");
+                if (window.virtToast) window.virtToast("�criture arr�t�e");
             } else if (window.virtToast) {
-                window.virtToast("Écriture impossible");
+                window.virtToast("�criture impossible");
             }
         } finally {
             ecritureEnCours = false;
@@ -1587,7 +1587,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const simple = e.target.closest ? e.target.closest(".ia-plus-simple") : null;
         if (simple) {
-            envoyerMessage("Reformule ta derniÃ¨re rÃ©ponse plus simplement, pour un dÃ©butant.");
+            envoyerMessage("Reformule ta dernière réponse plus simplement, pour un débutant.");
             return;
         }
 
@@ -1618,7 +1618,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(code).then(function () {
                     const ancien = copier.innerHTML;
-                    copier.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> CopiÃ©';
+                    copier.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i> Copié';
                     setTimeout(function () { copier.innerHTML = ancien; }, 1600);
                 }).catch(function () {});
             }
@@ -1641,7 +1641,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             localStorage.removeItem(CLE_CONV);
             localStorage.removeItem(CLE_ID);
-        } catch (e) { /* stockage bloquÃ© */ }
+        } catch (e) { /* stockage bloqué */ }
         conversationId = lireConversationId();
 
         messages.querySelectorAll(".ia-message").forEach(function (b) { b.remove(); });
@@ -1670,10 +1670,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ===============================================================
-    // 11. DÃ‰MARRAGE
+    // 11. D�0MARRAGE
     // ===============================================================
     const heure = new Date().getHours();
-    bonjour.textContent = (heure < 12 ? "Bonjour" : heure < 18 ? "Bon aprÃ¨s-midi" : "Bonsoir") + ", je suis VirtIA.";
+    bonjour.textContent = (heure < 12 ? "Bonjour" : heure < 18 ? "Bon après-midi" : "Bonsoir") + ", je suis VirtIA.";
 
     majSuspendu();
     restaurerConversation();

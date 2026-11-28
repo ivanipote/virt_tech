@@ -1,6 +1,6 @@
 // --- pc-boost.js ---
 // Booste le mode PC : diff avant application, console d'erreurs,
-// recherche/remplacement, raccourcis, export/import ZIP, formatage, plein Ã©cran.
+// recherche/remplacement, raccourcis, export/import ZIP, formatage, plein écran.
 
 (function () {
     'use strict';
@@ -85,7 +85,7 @@
         if (erreurs.length === 0) {
             const vide = document.createElement('p');
             vide.className = 'console-vide';
-            vide.textContent = "Aucune erreur pour le moment. Les erreurs de l'aperÃ§u apparaÃ®tront ici.";
+            vide.textContent = "Aucune erreur pour le moment. Les erreurs de l'aperçu apparaîtront ici.";
             listeConsole.appendChild(vide);
             return;
         }
@@ -129,7 +129,7 @@
             });
 
             win.addEventListener('unhandledrejection', function (e) {
-                ajouterErreur('error', 'Promesse rejetÃ©e : ' + e.reason);
+                ajouterErreur('error', 'Promesse rejetée : ' + e.reason);
             });
         } catch (e) { /* iframe inaccessible */ }
     }
@@ -171,7 +171,7 @@
 
         const blocApres = document.createElement('div');
         const t2 = document.createElement('h4');
-        t2.textContent = 'AprÃ¨s';
+        t2.textContent = 'Après';
         const preApres = document.createElement('pre');
         preApres.textContent = contenu;
         blocApres.append(t2, preApres);
@@ -265,7 +265,7 @@
             }
 
             window.VirtProjet.importer(textes);
-            toast('Projet importÃ©');
+            toast('Projet importé');
         } catch (e) {
             toast('Import impossible');
         }
@@ -299,20 +299,20 @@
             parser = 'json';
             plugins = [P.estree, P.babel];
         } else {
-            return toast('Format non supportÃ©');
+            return toast('Format non supporté');
         }
 
         try {
             const resultat = await prettier.format(contenu, { parser: parser, plugins: plugins.filter(Boolean) });
             window.VirtProjet.ecrire(chemin, resultat);
-            toast('Fichier formatÃ©');
+            toast('Fichier formaté');
         } catch (e) {
             toast('Formatage impossible : ' + e.message);
         }
     }
 
     // =========================================================
-    // ENREGISTREUR D'Ã‰CRAN
+    // ENREGISTREUR D'�0CRAN
     // =========================================================
     let enregistreur = null;
     let fluxEcran = null;
@@ -341,7 +341,7 @@
 
         boutonRec.classList.toggle('rec-actif', actif);
         boutonRec.innerHTML = actif
-            ? '<i class="fa-solid fa-stop" aria-hidden="true"></i> ArrÃªter ' + formatChrono(secondes)
+            ? '<i class="fa-solid fa-stop" aria-hidden="true"></i> Arrêter ' + formatChrono(secondes)
             : '<i class="fa-solid fa-circle-dot" aria-hidden="true"></i> Enregistrer';
 
         if (boutonPause) boutonPause.hidden = !actif;
@@ -349,11 +349,11 @@
 
     async function demarrerEnregistrement() {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-            return toast("L'enregistrement d'Ã©cran n'est pas disponible sur ce navigateur.");
+            return toast("L'enregistrement d'écran n'est pas disponible sur ce navigateur.");
         }
 
         if (!window.MediaRecorder) {
-            return toast("L'enregistrement vidÃ©o n'est pas disponible sur ce navigateur.");
+            return toast("L'enregistrement vidéo n'est pas disponible sur ce navigateur.");
         }
 
         try {
@@ -362,7 +362,7 @@
                 audio: true
             });
         } catch (e) {
-            return; // l'utilisateur a annulÃ©
+            return; // l'utilisateur a annulé
         }
 
         try {
@@ -415,7 +415,7 @@
             URL.revokeObjectURL(url);
 
             nettoyerEnregistrement();
-            toast('VidÃ©o enregistrÃ©e : ' + nom);
+            toast('Vidéo enregistrée : ' + nom);
         };
 
         const piste = fluxEcran.getVideoTracks()[0];
@@ -467,7 +467,7 @@
     }
 
     // =========================================================
-    // PLEIN Ã‰CRAN
+    // PLEIN �0CRAN
     // =========================================================
     function basculerPleinEcran() {
         const panel = document.getElementById('slidePanel');
@@ -476,7 +476,7 @@
     }
 
     // =========================================================
-    // DÃ‰MARRAGE
+    // D�0MARRAGE
     // =========================================================
     function demarrer() {
         let essais = 0;
@@ -520,8 +520,8 @@
                 const rec = document.createElement('button');
                 rec.type = 'button';
                 rec.className = 'btn-header-action';
-                rec.title = "Enregistrer l'Ã©cran";
-                rec.setAttribute('aria-label', "Enregistrer l'Ã©cran");
+                rec.title = "Enregistrer l'écran";
+                rec.setAttribute('aria-label', "Enregistrer l'écran");
                 rec.innerHTML = '<i class="fa-solid fa-circle-dot" aria-hidden="true"></i> Enregistrer';
                 rec.addEventListener('click', function () {
                     if (enregistreur) arreterEnregistrement();
@@ -548,7 +548,7 @@
 
             const enteteSlide = document.querySelector('.slide-header .header-actions');
             if (enteteSlide) {
-                const plein = bouton('fa-expand', 'Plein Ã©cran', basculerPleinEcran);
+                const plein = bouton('fa-expand', 'Plein écran', basculerPleinEcran);
                 enteteSlide.insertBefore(plein, enteteSlide.firstChild);
             }
         }, 250);

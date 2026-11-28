@@ -1,4 +1,4 @@
-﻿// --- virtia-contexte.js ---
+// --- virtia-contexte.js ---
 // Contexte projet pour VirtIA : arborescence + fichiers utiles (lecture seule).
 
 (function () {
@@ -37,24 +37,24 @@
             if (choisis.length >= 6) return;
 
             let contenu = String(fichiers[chemin] || '');
-            if (contenu.length > max) contenu = contenu.slice(0, max) + '\nâ€¦ (tronquÃ©)';
+            if (contenu.length > max) contenu = contenu.slice(0, max) + '\n⬦ (tronqué)';
 
             if (numeroter) {
                 contenu = contenu.split('\n').map(function (l, i) {
-                    return (i + 1) + '│ ' + l;
+                    return (i + 1) + ' ' + l;
                 }).join('\n');
             }
             if (total + contenu.length > MAX) return;
 
             choisis.push(chemin);
             total += contenu.length;
-            blocs.push('--- Fichier : ' + chemin + (numeroter ? ' (numéros de ligne)' : '') + ' ---\n' + contenu);
+            blocs.push('--- Fichier : ' + chemin + (numeroter ? ' (num�ros de ligne)' : '') + ' ---\n' + contenu);
         }
 
         // 1. Fichier actif
         ajouter(actif, 4000, true);
 
-        // 2. Fichiers liÃ©s (CSS / JS / images de la page active)
+        // 2. Fichiers liés (CSS / JS / images de la page active)
         const contenuActif = String(fichiers[actif] || '');
         const motif = /(?:href|src)\s*=\s*["']([^"']+)["']/gi;
         let m;
@@ -64,7 +64,7 @@
             if (cible !== null && fichiers[cible] !== undefined) ajouter(cible, 2000);
         }
 
-        // 3. Fichiers concernÃ©s par la question
+        // 3. Fichiers concernés par la question
         const mots = (String(question).toLowerCase().match(/[a-z0-9]{4,}/g) || []).filter(function (mot) {
             return [
                 'dans', 'avec', 'pour', 'cette', 'mon', 'mes', 'les', 'des', 'une', 'est',
