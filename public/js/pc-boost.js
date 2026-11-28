@@ -1,4 +1,4 @@
-﻿// --- pc-boost.js ---
+// --- pc-boost.js ---
 // Booste le mode PC : diff avant application, console d'erreurs,
 // recherche/remplacement, raccourcis, export/import ZIP, formatage, plein Ã©cran.
 
@@ -41,7 +41,12 @@
         const effacer = document.getElementById('consoleEffacer');
 
         if (bouton) bouton.addEventListener('click', ouvrirConsole);
-        if (fermer) fermer.addEventListener('click', fermerConsole);
+        if (fermer) {
+            fermer.addEventListener('click', function () {
+                fermerConsole();
+                if (window.Panneaux) window.Panneaux.reinitialiser();
+            });
+        }
         if (effacer) {
             effacer.addEventListener('click', function () {
                 erreurs = [];
@@ -53,6 +58,7 @@
     }
 
     function ouvrirConsole() {
+        if (window.Panneaux) window.Panneaux.noter('console');
         if (typeof window.VirtFermerAutres === 'function') window.VirtFermerAutres('console');
 
         if (panneauConsole) panneauConsole.classList.add('ouvert');

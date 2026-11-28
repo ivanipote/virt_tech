@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 4. OUVERTURE / FERMETURE
     // ===============================================================
     function ouvrirAssistant() {
+        if (window.Panneaux) window.Panneaux.noter("virtia");
         if (typeof window.VirtFermerAutres === "function") window.VirtFermerAutres("virtia");
         dernierFocus = document.activeElement;
         overlay.classList.add("ouvert");
@@ -135,9 +136,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     window.VirtIAFermer = fermerAssistant;
+    window.VirtIAOuvrir = ouvrirAssistant;
 
     btnIA.addEventListener("click", ouvrirAssistant);
-    fermer.addEventListener("click", fermerAssistant);
+    fermer.addEventListener("click", function () {
+        fermerAssistant();
+        if (window.Panneaux) window.Panneaux.reinitialiser();
+    });
     overlay.addEventListener("click", fermerAssistant);
 
     document.addEventListener("keydown", function (e) {

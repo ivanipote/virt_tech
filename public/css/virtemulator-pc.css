@@ -2426,3 +2426,28 @@ body, html {
         border-radius: 18px;
     }
 }
+
+/* ===== Bouton retour des slides ===== */
+.btn-retour-slide {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border-radius: 50%;
+    border: 1px solid rgba(63, 76, 85, .18);
+    background: rgba(63, 76, 85, .07);
+    color: inherit;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s;
+}
+
+.btn-retour-slide:hover {
+    background: var(--or);
+    border-color: var(--or);
+    color: var(--ombre);
+}
+
+.btn-retour-slide[hidden] { display: none; }

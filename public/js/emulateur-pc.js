@@ -378,7 +378,10 @@ document.addEventListener("DOMContentLoaded", function() {
         if (btnPlay) btnPlay.onclick = ouvrirSlide;
 
         // --- Fermer slide ---
-        if (btnFermerSlide) btnFermerSlide.onclick = fermerSlide;
+        if (btnFermerSlide) btnFermerSlide.onclick = function () {
+            fermerSlide();
+            window.Panneaux.reinitialiser();
+        };
         if (slideOverlay) slideOverlay.onclick = fermerSlide;
 
         // --- Zoom ---
@@ -413,7 +416,10 @@ document.addEventListener("DOMContentLoaded", function() {
         if (btnFolder) btnFolder.onclick = ouvrirDossier;
 
         const fldFermer = document.getElementById('fldFermer');
-        if (fldFermer) fldFermer.onclick = fermerDossier;
+        if (fldFermer) fldFermer.onclick = function () {
+            fermerDossier();
+            window.Panneaux.reinitialiser();
+        };
 
         const fldOverlay = document.getElementById('fldOverlay');
         if (fldOverlay) fldOverlay.onclick = fermerDossier;
@@ -1000,6 +1006,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function ouvrirDossier() {
         fermerAutresSlides('dossier');
+        window.Panneaux.noter('dossier');
         const overlay = document.getElementById('fldOverlay');
         const panel = document.getElementById('fldPanel');
         if (!overlay || !panel) return;
@@ -1560,10 +1567,56 @@ document.addEventListener("DOMContentLoaded", function() {
         document.body.classList.toggle('pc-phone-ouvert', ouverts.length > 0);
     };
 
+    // Pile des panneaux : bouton « retour » des slides
+    window.Panneaux = {
+        pile: [],
+        courant: null,
+        silencieux: false,
+
+        noter: function (id) {
+            if (this.silencieux) return;
+            if (this.courant && this.courant !== id) this.pile.push(this.courant);
+            this.courant = id;
+            this.majBoutons();
+        },
+
+        retour: function () {
+            const precedent = this.pile.pop();
+            if (!precedent) return;
+
+            this.courant = precedent;
+            this.silencieux = true;
+            ouvrirParId(precedent);
+            this.silencieux = false;
+            this.majBoutons();
+        },
+
+        reinitialiser: function () {
+            this.pile = [];
+            this.courant = null;
+            this.majBoutons();
+        },
+
+        majBoutons: function () {
+            const visibles = this.pile.length > 0;
+            document.querySelectorAll('.btn-retour-slide').forEach(function (b) {
+                b.hidden = !visibles;
+            });
+        }
+    };
+
+    function ouvrirParId(id) {
+        if (id === 'telephone') { ouvrirSlide(); return; }
+        if (id === 'dossier') { ouvrirDossier(); return; }
+        if (id === 'virtia' && typeof window.VirtIAOuvrir === 'function') { window.VirtIAOuvrir(); return; }
+        if (id === 'console' && typeof window.VirtConsoleOuvrir === 'function') { window.VirtConsoleOuvrir(); }
+    }
+
     window.VirtFermerAutres = fermerAutresSlides;
 
     function ouvrirSlide() {
         fermerAutresSlides('telephone');
+        window.Panneaux.noter('telephone');
         if (slideOverlay) slideOverlay.classList.add('ouvert');
         if (slidePanel) slidePanel.classList.add('ouvert');
         window.MajClassePanneau();
@@ -1746,5 +1799,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // ==========================================
     // LANCEMENT
     // ==========================================
+    document.querySelectorAll('.btn-retour-slide').forEach(function (bouton) {
+        bouton.addEventListener('click', function () {
+            if (window.Panneaux) window.Panneaux.retour();
+        });
+    });
+
     init();
 });
